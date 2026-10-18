@@ -11,6 +11,9 @@ The collector discovers public recipe URLs from AHA and Brewer's Friend sitemaps
 # Test a bounded batch: up to 30 pending pages per website.
 .venv/bin/python -m beerllm.collection run --limit 30
 
+# Current target: stop at 1,500 saved records across all sources.
+.venv/bin/python -m beerllm.collection run --limit 0 --max-recipes 1500
+
 # Process the entire remaining queue, resuming saved progress.
 # On macOS, keep the machine awake while the command runs:
 caffeinate -i .venv/bin/python -u -m beerllm.collection run --limit 0 > outputs-collection.log 2>&1
@@ -29,7 +32,7 @@ Request a graceful stop (the current request may finish):
 touch data/collection/STOP
 ```
 
-To resume, remove only that project-local stop flag and run the collection command again. Finished records are skipped. Parse errors are preserved separately rather than retried endlessly; rate-limited requests use a saved cooldown. Only one collecting process may run at a time; a file lock prevents duplicate workers. Discovery can be rerun to add new URLs.
+To resume, remove only that project-local stop flag and run the collection command again. Finished records are skipped. `--max-recipes` counts existing and new saved records across all sources, before content deduplication; it is enforced transactionally so parallel workers cannot overshoot. Parse errors are preserved separately rather than retried endlessly; rate-limited requests use a saved cooldown. Only one collecting process may run at a time; a file lock prevents duplicate workers. Discovery can be rerun to add new URLs.
 
 ## What is saved
 

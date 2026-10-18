@@ -194,16 +194,34 @@ def parse_aha(html,url):
                      'status':'needs_review'}
 
 
-def save_record(db,source,url,record):
+def at_capacity(max_recipes):
+    if max_recipes is None: return False
+    db=connection()
+    count=db.execute('SELECT count(*) FROM recipes').fetchone()[0]
+    db.close()
+    return count>=max_recipes
+
+
+def save_record(db,source,url,record,max_recipes=None):
+    # Serialize the count and insert so two website workers cannot overshoot.
+    db.commit()
+    db.execute('BEGIN IMMEDIATE')
+    exists=db.execute('SELECT 1 FROM recipes WHERE url=?',(url,)).fetchone()
+    if max_recipes is not None and not exists:
+        count=db.execute('SELECT count(*) FROM recipes').fetchone()[0]
+        if count>=max_recipes:
+            db.rollback()
+            return False
     record['source']=source
     record.setdefault('fetched_at',now())
     record['imported_at']=now()
     db.execute('INSERT OR REPLACE INTO recipes(url,source,data) VALUES(?,?,?)',(url,source,json.dumps(record,ensure_ascii=False)))
     db.execute("UPDATE queue SET status='done',error=NULL,updated_at=? WHERE url=?",(now(),url))
     db.commit()
+    return True
 
 
-def import_brewdog():
+def import_brewdog(max_recipes=None):
     path=ROOT/'data/punkapi/raw.json'
     if not path.exists():
         from scripts.fetch_recipes import download
@@ -229,12 +247,12 @@ def import_brewdog():
                 'status':'needs_review','rights_status':'unverified','expert_reviewed':False,
                 'fetched_at':snapshot_time}
         db.execute('INSERT OR IGNORE INTO queue(url,source,source_id) VALUES(?,?,?)',(url,'brewdog',str(r['id'])))
-        save_record(db,'brewdog',url,record)
+        if not save_record(db,'brewdog',url,record,max_recipes): break
     db.close()
     print(f'brewdog: imported {len(recipes)} recipes from the local API snapshot',flush=True)
 
 
-def import_cached_aha():
+def import_cached_aha(max_recipes=None):
     path=ROOT/'data/aha/recipes.jsonl'
     if not path.exists(): return
     db=connection()
@@ -246,11 +264,12 @@ def import_cached_aha():
         if not ident: continue
         db.execute('INSERT OR IGNORE INTO queue(url,source,source_id) VALUES(?,?,?)',(url,'aha',ident))
         r.update(process_text=None,notes=None,instruction_origin='original_written_directions',status='needs_review')
-        save_record(db,'aha',url,r)
+        if not save_record(db,'aha',url,r,max_recipes): break
     db.close()
 
 
-def collect(source,limit):
+def collect(source,limit,max_recipes=None):
+    if at_capacity(max_recipes): return
     db=connection()
     pause=db.execute('SELECT paused_until,reason,failures FROM source_state WHERE source=?',(source,)).fetchone()
     db.close()
@@ -262,13 +281,16 @@ def collect(source,limit):
         if until>time.time():
             print(f'{source}: cooling down until {datetime.fromtimestamp(until,timezone.utc).isoformat()}',flush=True)
             while time.time()<until:
-                if (OUT/'STOP').exists(): return
+                if (OUT/'STOP').exists() or at_capacity(max_recipes): return
                 time.sleep(max(0,min(30,until-time.time())))
     client=Client(source)
     db=connection()
     sql="SELECT url FROM queue WHERE source=? AND status='pending' ORDER BY source_id"
     rows=db.execute(sql+(" LIMIT ?" if limit else ''),(source,limit) if limit else (source,)).fetchall()
     for offset,(url,) in enumerate(rows):
+        if at_capacity(max_recipes):
+            print(f'{source}: total target {max_recipes} reached',flush=True)
+            break
         if (OUT/'STOP').exists():
             print(f'{source}: stopped by data/collection/STOP',flush=True)
             break
@@ -290,7 +312,9 @@ def collect(source,limit):
             record=parser(html,url)
             record['html_sha256']=hashlib.sha256(html.encode()).hexdigest()
             record['raw_html']=str(path.relative_to(ROOT))
-            save_record(db,source,url,record)
+            if not save_record(db,source,url,record,max_recipes):
+                print(f'{source}: total target {max_recipes} reached',flush=True)
+                break
             db.execute('DELETE FROM source_state WHERE source=?',(source,))
             db.commit()
             print(f"{source}: {record['title']}",flush=True)
@@ -309,7 +333,7 @@ def collect(source,limit):
                 db.commit()
                 db.close()
                 if code==429 and failures<3:
-                    return collect(source,max(1,limit-offset) if limit else 0)
+                    return collect(source,max(1,limit-offset) if limit else 0,max_recipes)
                 return
     db.close()
 
@@ -368,18 +392,20 @@ def main():
     parser.add_argument('action',choices=['discover','run','export','status'])
     parser.add_argument('--sources',nargs='+',choices=['aha','brewersfriend','brewdog'],default=['aha','brewersfriend','brewdog'])
     parser.add_argument('--limit',type=int,default=50,help='Maximum pending pages per website; 0 processes the entire queue')
+    parser.add_argument('--max-recipes',type=int,help='Stop at this total saved record count across all sources, including existing records')
     args=parser.parse_args()
     if args.limit<0: parser.error('--limit must be >= 0')
+    if args.max_recipes is not None and args.max_recipes<1: parser.error('--max-recipes must be positive')
     if args.action=='status':
         status()
         return
     if args.action=='discover':
         for source in args.sources:
-            if source=='brewdog': import_brewdog()
+            if source=='brewdog': import_brewdog(args.max_recipes)
             else: discover(source)
     elif args.action=='run':
-        if 'brewdog' in args.sources: import_brewdog()
-        if 'aha' in args.sources: import_cached_aha()
+        if 'brewdog' in args.sources: import_brewdog(args.max_recipes)
+        if 'aha' in args.sources: import_cached_aha(args.max_recipes)
         selected=[s for s in args.sources if s in SITES]
         # One sequential worker per website; independent hosts can run together.
         OUT.mkdir(parents=True,exist_ok=True)
@@ -393,7 +419,7 @@ def main():
             lock.write(str(os.getpid())+'\n')
             lock.flush()
             with ThreadPoolExecutor(max_workers=max(1,len(selected))) as pool:
-                pending={pool.submit(collect,source,args.limit) for source in selected}
+                pending={pool.submit(collect,source,args.limit,args.max_recipes) for source in selected}
                 while pending:
                     done,pending=wait(pending,timeout=60)
                     export()
