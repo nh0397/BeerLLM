@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import time
-from .common import ROOT, MODEL_ID, MODEL_REVISION, load_model, read_jsonl, write_json
+from .common import ROOT, MODEL_ID, MODEL_REVISION, load_model, load_tokenizer, read_jsonl, write_json
 
 
 def encode_example(tokenizer, example, max_length):
@@ -52,6 +52,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config',type=Path,default=ROOT/'configs/laptop.json')
     parser.add_argument('--output',type=Path)
+    parser.add_argument('--data-dir',type=Path,default=ROOT/'data/training',help='Directory with train.jsonl and validation.jsonl')
+    parser.add_argument('--check-data',action='store_true',help='Validate tokenization and answer masking without training')
     parser.add_argument('--max-steps',type=int,default=-1)
     parser.add_argument('--limit',type=int,help='Limit training examples for a smoke test')
     parser.add_argument('--eval-limit',type=int,default=8,help='Validation examples per loss check')
@@ -65,13 +67,13 @@ def main():
     from transformers import Trainer, TrainingArguments, set_seed
     from transformers.trainer_utils import get_last_checkpoint
     from peft import LoraConfig, TaskType, get_peft_model
-    if output.exists() and any(output.iterdir()) and not args.resume:
+    if output.exists() and any(output.iterdir()) and not args.resume and not args.check_data:
         raise ValueError(f'{output} is not empty; use --resume or choose a new --output')
     checkpoint=get_last_checkpoint(str(output)) if args.resume and output.exists() else None
     if args.resume and not checkpoint:
         raise ValueError('No checkpoint found to resume')
-    train_path=ROOT/'data/training/train.jsonl'
-    validation_path=ROOT/'data/training/validation.jsonl'
+    train_path=args.data_dir/'train.jsonl'
+    validation_path=args.data_dir/'validation.jsonl'
     signature={'model_revision': MODEL_REVISION if config['model_id']==MODEL_ID else None, 'config':config,'train_sha256':hashlib.sha256(train_path.read_bytes()).hexdigest(),
                'validation_sha256':hashlib.sha256(validation_path.read_bytes()).hexdigest(),
                'limit':args.limit,'eval_limit':args.eval_limit,'max_steps':args.max_steps}
@@ -79,6 +81,16 @@ def main():
         prior=json.loads((output/'run_config.json').read_text())
         if prior != signature:
             raise ValueError('Resume config/data differs from saved run; use the original arguments and dataset')
+    if args.check_data:
+        tokenizer=load_tokenizer(config['model_id'])
+        report={}
+        for name,path in [('train',train_path),('validation',validation_path)]:
+            dataset=RecipeDataset(read_jsonl(path),tokenizer,config['max_length'])
+            report[name]={'examples_used':len(dataset),'examples_over_context':dataset.skipped,
+                          'longest_tokens':max(len(item['input_ids']) for item in dataset.items),
+                          'answer_tokens_supervised':sum(sum(t!=-100 for t in item['labels']) for item in dataset.items)}
+        print(json.dumps(report,indent=2))
+        return
     set_seed(config['seed'])
     model,tokenizer=load_model(config['model_id'],threads=config['threads'])
     model.config.use_cache=False

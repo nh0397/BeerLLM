@@ -4,6 +4,19 @@ A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Run
 
 **First run:** training and evaluation completed locally. The adapter returned recipe JSON instead of brewing procedures in all three evaluated examples. The workflow is operational, but the model does not yet meet the brewing-instruction goal. See the [first-run report](reports/first-run.md).
 
+## AHA instruction-data pipeline
+
+The next dataset uses actual written recipe directions from selected public AHA pages. See the [roadmap](docs/ROADMAP.md) for milestones and acceptance checks.
+
+```bash
+.venv/bin/python -m pip install -r requirements-data.txt
+.venv/bin/python -m beerllm.aha --urls-file configs/aha-sample.txt
+.venv/bin/python -m beerllm.aha_dataset
+.venv/bin/python -m beerllm.train --data-dir data/aha/training_candidates --check-data
+```
+
+This extracts source instructions, exports natural-language conversation candidates, and checks tokenization without training. Data is saved separately under `data/aha/`. Review the candidate answers before using them in a long run. The existing one-command runner below still reproduces the older PunkAPI experiment; it does not automatically switch to AHA data.
+
 ## Quick start
 
 Python 3.12 is tested. On this Intel Mac, PyTorch is pinned to its last officially supported x86 macOS release. Model files need about 1.5 GB; allow several more GB for the environment and checkpoints.
