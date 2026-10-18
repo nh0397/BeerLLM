@@ -70,7 +70,7 @@ python3 -m beerllm.dataset
 .venv/bin/python -m beerllm.evaluate
 
 # Run tests (the dataset/masking tests do not download models).
-python3 -m unittest discover -s tests
+.venv/bin/python -m unittest discover -s tests
 ```
 
 For a short training check before a longer run:
