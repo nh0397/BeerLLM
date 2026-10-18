@@ -1,0 +1,14 @@
+{
+  "model_id": "HuggingFaceTB/SmolLM2-360M-Instruct",
+  "seed": 42,
+  "threads": 4,
+  "max_length": 2048,
+  "epochs": 1,
+  "learning_rate": 0.0002,
+  "gradient_accumulation_steps": 4,
+  "lora_rank": 8,
+  "lora_alpha": 16,
+  "lora_dropout": 0.05,
+  "save_steps": 10,
+  "output_dir": "outputs/beer-lora"
+}

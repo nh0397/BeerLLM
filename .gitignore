@@ -4,3 +4,6 @@
 data/
 __pycache__/
 .venv/
+.cache/
+outputs/
+*.log

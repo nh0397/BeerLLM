@@ -1,44 +1,100 @@
 # BeerLLM
 
-Collect beer recipes and brewing instructions for a future LoRA/QLoRA fine-tuning dataset.
+A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Runs on an Intel Mac with 32 GB RAM using a small instruction model. No cloud account or paid API is needed.
 
-## Fetch recipes
+## Quick start
 
-Requires Python 3 and internet access. No packages, account, or API key needed.
+Python 3.12 is tested. On this Intel Mac, PyTorch is pinned to its last officially supported x86 macOS release. Model files need about 1.5 GB; allow several more GB for the environment and checkpoints.
 
 ```bash
+bash scripts/run_local.sh
+```
+
+The script installs dependencies into `.venv`, fetches recipes if absent, prepares training examples, trains one epoch, and compares the base model with the adapter. It resumes an interrupted run from the latest checkpoint. It does not re-fetch or rebuild data during resume. Keep the laptop awake and plugged in. On macOS:
+
+```bash
+caffeinate -i bash scripts/run_local.sh > outputs-run.log 2>&1
+```
+
+Use another terminal to watch progress:
+
+```bash
+tail -f outputs-run.log
+```
+
+## Chat after training
+
+```bash
+.venv/bin/python -m beerllm.chat --prompt "Give me the recipe and brewing procedure for Punk IPA 2007 - 2010."
+```
+
+That uses model weights only. Named recipe recall may be inaccurate. To explicitly supply a downloaded recipe as context:
+
+```bash
+.venv/bin/python -m beerllm.chat --recipe-id 1 --prompt "Explain this recipe and its brewing procedure."
+```
+
+Use `--base` to compare the original model. Omit `--prompt` for an interactive terminal. Each question is independent; chat history is not retained.
+
+## Individual commands
+
+```bash
+# Download the whole PunkAPI catalog, or add --limit 10 for a sample.
 python3 scripts/fetch_recipes.py
+
+# Build source-grounded procedure examples and grouped splits.
+python3 -m beerllm.dataset
+
+# Train on CPU with LoRA. Configuration: configs/laptop.json.
+.venv/bin/python -m beerllm.train
+
+# Resume with the same config, input files and command arguments.
+.venv/bin/python -m beerllm.train --resume
+
+# Compare both models on three held-out recipe prompts.
+.venv/bin/python -m beerllm.evaluate
+
+# Run tests (the dataset/masking tests do not download models).
+python3 -m unittest discover -s tests
 ```
 
-This fetches the entire paginated [PunkAPI v3](https://github.com/alxiw/punkapi) catalog. For a small sample:
+For a short training check before a longer run:
 
 ```bash
-python3 scripts/fetch_recipes.py --limit 10
+.venv/bin/python -m beerllm.train --output outputs/my-smoke --max-steps 2 --limit 8 --eval-limit 2
 ```
 
-Inspect the results:
+Use a new output directory for a new experiment. The trainer refuses to overwrite a previous run; `--resume` checks input hashes and configuration. Checkpoints are saved every 10 optimizer steps, so interruptions may lose work since the last checkpoint. The two most recent checkpoints are retained, only inside that run's output folder.
 
-```bash
-python3 -m json.tool data/punkapi/report.json
-head -n 1 data/punkapi/recipes.jsonl | python3 -m json.tool
-```
+## What the project does
 
-## What it saves
+1. Fetches [PunkAPI v3](https://github.com/alxiw/punkapi) recipes, preserving original fields and units.
+2. Rejects missing mash/fermentation fields, invalid ingredient quantities, and selected advanced processes needing specialist review.
+3. Builds full ingredient-and-procedure guides. Recipe facts and general brewing guidance are identified separately. Missing exact boil, dry-hop, conditioning and packaging details remain explicit.
+4. Groups matching names/ingredient sets before splitting. Training includes both named-recipe requests and recipe-in-context requests. Held-out evaluation supplies the recipe context; it does not pretend to test recall of unseen recipes.
+5. Trains `HuggingFaceTB/SmolLM2-360M-Instruct` with LoRA on query/value projections. Only assistant tokens contribute to loss. Overlength examples are counted and skipped, never silently truncated.
+6. Saves an adapter, resumable optimizer checkpoints, logs, and base-versus-adapter answers with small automated evaluation proxies.
 
-- `data/punkapi/raw.json`: original recipe objects, including ingredients, quantities, mash steps, fermentation temperature, brewer tips, and special instructions where provided.
-- `data/punkapi/recipes.jsonl`: one recipe per line with source URL, fetch timestamp, and completeness audit.
-- `data/punkapi/report.json`: field coverage and the number requiring instruction review.
+## Outputs
 
-All original fields and units are preserved. The script never generates missing instructions or assumes labels such as “start” and “end” are exact hop timings. Each run replaces these three files after successful downloading. A sample run fetches full API pages and keeps only the requested number of records. Data remains local and is excluded from Git.
+| Location | Contents |
+|---|---|
+| `data/punkapi/` | Original API records and field-coverage audit |
+| `data/training/` | Train/validation/test JSONL, readable guides, rejected records and dataset report |
+| `outputs/beer-lora/adapter/` | Trained LoRA adapter and tokenizer |
+| `outputs/beer-lora/checkpoint-*/` | Resumable local checkpoints |
+| `outputs/beer-lora/train_metrics.json` | Training runtime and loss |
+| `outputs/evaluation.json` | Base/adapter answers, loss and coverage metrics |
+| `.cache/huggingface/` | Downloaded base model |
 
-## What happens next
+Generated data, models, caches and credentials are ignored by Git. The old GitHub/BeerXML fetcher is removed; any old `data/raw` or `data/curated` files are unused and left alone.
 
-Review source instructions for boil duration, cooling/pitching, fermentation completion, conditioning, and packaging. These may appear in free-text tips, but the script deliberately requires review rather than declaring them complete automatically. Check quantities and unit validity as well; the audit currently checks field presence, not brewing correctness.
+## What is and is not ready
 
-Only sufficiently complete, reviewed recipes should become full-procedure training examples. This script does not yet generate training examples or train a model. The old GitHub/BeerXML fetcher and its yeast-only QA generation have been removed. Old local `data/raw` and `data/curated` files, if present, are unused.
+The software supports the entire fetch → curate → train → evaluate → chat workflow. The recipe corpus is still an experimental dataset, not a collection of expert-validated complete brew sheets. API records do not establish every brewing detail. The guides explicitly identify those gaps, rather than inventing timings to make the dataset appear complete. See [source notes](docs/SOURCES.md) and the [evaluation rubric](docs/EVALUATION.md).
 
-The repository MIT license covers project code; source recipe reuse terms need separate verification.
+This small model may hallucinate ingredients, quantities or process details even after training. An improvement in loss or keyword coverage is not proof that a recipe is accurate or safe to brew. Human review of full procedures is still necessary. Source reuse permissions need checking before redistributing the corpus or derived model; this repository's MIT license covers our code.
 
-## Development
+## Git workflow
 
-Use a feature branch, open a pull request, then squash merge into `main`. Keep commit messages to one concise line.
+Feature branch → pull request → squash merge into `main`. Keep commit messages concise and one line, authored as Naisarg.
