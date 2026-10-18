@@ -32,13 +32,20 @@ def write_jsonl(path, rows):
     path.write_text(''.join(json.dumps(row, ensure_ascii=False) + '\n' for row in rows), encoding='utf-8')
 
 
-def load_model(model_id=MODEL_ID, adapter=None, threads=4):
-    import torch
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-    torch.set_num_threads(threads)
+def load_tokenizer(model_id=MODEL_ID):
+    from transformers import AutoTokenizer
     revision = MODEL_REVISION if model_id == MODEL_ID else None
     tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
     tokenizer.pad_token = tokenizer.eos_token
+    return tokenizer
+
+
+def load_model(model_id=MODEL_ID, adapter=None, threads=4):
+    import torch
+    from transformers import AutoModelForCausalLM
+    torch.set_num_threads(threads)
+    revision = MODEL_REVISION if model_id == MODEL_ID else None
+    tokenizer = load_tokenizer(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float32,
                                                 use_safetensors=True, attn_implementation='eager', revision=revision)
     if adapter:
