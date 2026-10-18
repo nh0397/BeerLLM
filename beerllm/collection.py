@@ -283,7 +283,9 @@ def collect(source,limit):
             else:
                 html=client.get(url).text
                 path.parent.mkdir(parents=True,exist_ok=True)
-                with gzip.open(path,'wt',encoding='utf-8') as stream: stream.write(html)
+                temporary=path.with_suffix(path.suffix+'.tmp')
+                with gzip.open(temporary,'wt',encoding='utf-8') as stream: stream.write(html)
+                temporary.replace(path)
             parser=parse_aha if source=='aha' else parse_brewersfriend
             record=parser(html,url)
             record['html_sha256']=hashlib.sha256(html.encode()).hexdigest()
@@ -292,7 +294,7 @@ def collect(source,limit):
             db.execute('DELETE FROM source_state WHERE source=?',(source,))
             db.commit()
             print(f"{source}: {record['title']}",flush=True)
-        except (requests.RequestException,ValueError) as exc:
+        except (requests.RequestException,ValueError,KeyError,TypeError,EOFError,OSError) as exc:
             db.execute("UPDATE queue SET status='error',error=?,updated_at=? WHERE url=?",(str(exc),now(),url))
             db.commit()
             print(f'{source}: skipped {url}: {exc}',flush=True)
