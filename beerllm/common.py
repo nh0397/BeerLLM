@@ -29,7 +29,11 @@ def write_json(path, value):
 def write_jsonl(path, rows):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(''.join(json.dumps(row, ensure_ascii=False) + '\n' for row in rows), encoding='utf-8')
+    temporary = path.with_suffix(path.suffix + '.tmp')
+    with temporary.open('w',encoding='utf-8') as stream:
+        for row in rows:
+            stream.write(json.dumps(row,ensure_ascii=False)+'\n')
+    temporary.replace(path)
 
 
 def load_tokenizer(model_id=MODEL_ID):
