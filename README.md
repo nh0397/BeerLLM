@@ -1,35 +1,44 @@
 # BeerLLM
 
-A reproducible, standard-library Python pipeline that fetches a bounded Brewtoad archive sample and generates source-grounded chat examples. This is a data feasibility pilot, not a trained model or a publication-ready dataset.
+Collect beer recipes and brewing instructions for a future LoRA/QLoRA fine-tuning dataset.
 
-## Run
+## Fetch recipes
 
-```sh
-python3 scripts/curate.py --limit 100
+Requires Python 3 and internet access. No packages, account, or API key needed.
+
+```bash
+python3 scripts/fetch_recipes.py
 ```
 
-Internet access is required. The maximum pilot limit is 1,000 files (GitHub's directory listing limit). The sample is filename-ordered and not representative of the archive. Runs overwrite curated outputs; raw files from previous runs may remain, but only files selected by the current run enter the outputs. The report and every record include the source commit.
+This fetches the entire paginated [PunkAPI v3](https://github.com/alxiw/punkapi) catalog. For a small sample:
 
-## Outputs
+```bash
+python3 scripts/fetch_recipes.py --limit 10
+```
 
-- `data/raw/`: original XML files.
-- `data/curated/recipes.candidate.jsonl`: parsed recipes, provenance, unit conflicts, missing process fields, and recipe-family splits.
-- `data/curated/qa.candidate.jsonl`: chat examples about yeast and missing process information. Each includes its recipe context and split; this trains interpretation, not closed-book memorization.
-- `data/curated/report.json`: counts, errors, and limitations.
+Inspect the results:
 
-Amounts explicitly labeled in display fields are normalized to kilograms. Conflicts with raw BeerXML amounts are flagged; no quantity questions are generated from these uncertain fields. Raw and display values remain available for review. Temperatures and durations remain source strings; no missing values are imputed. Recipe notes are preserved but are not treated as verified explanations.
+```bash
+python3 -m json.tool data/punkapi/report.json
+head -n 1 data/punkapi/recipes.jsonl | python3 -m json.tool
+```
 
-Splits are assigned before QA generation using a hash of ingredient-name sets. Exact record duplicates are removed. Related recipes with matching names stay together; spelling variations and other near duplicates still require review before a real benchmark.
+## What it saves
 
-## Next stages
+- `data/punkapi/raw.json`: original recipe objects, including ingredients, quantities, mash steps, fermentation temperature, brewer tips, and special instructions where provided.
+- `data/punkapi/recipes.jsonl`: one recipe per line with source URL, fetch timestamp, and completeness audit.
+- `data/punkapi/report.json`: field coverage and the number requiring instruction review.
 
-1. Confirm source reuse permissions before promoting candidates to a training release. Public availability is not a verified data license.
-2. Audit a representative archive sample and inspect the Zenodo ingredient dataset. The current pilot fetches only Brewtoad, not AHA, Craft Beer & Brewing, or MongoDB.
-3. Add licensed instructional sources with explicit attribution and original directions. Keep source instructions separate from generated wording and general brewing guidance.
-4. Normalize ingredient aliases, validate numeric ranges and units, and cluster near duplicates across sources.
-5. Add reviewed process and numerical QA examples. Build a human-reviewed test set independently of training templates.
-6. Export separate train/validation/test chat JSONL files once quality and source rights are resolved, then compare a base model against QLoRA.
+All original fields and units are preserved. The script never generates missing instructions or assumes labels such as “start” and “end” are exact hop timings. Each run replaces these three files after successful downloading. A sample run fetches full API pages and keeps only the requested number of records. Data remains local and is excluded from Git.
 
-Never place MongoDB credentials in code or tracked files. A future MongoDB connector should read environment variables and use certificate verification.
+## What happens next
 
-The repository MIT license covers project code; it does not grant rights to third-party recipe data.
+Review source instructions for boil duration, cooling/pitching, fermentation completion, conditioning, and packaging. These may appear in free-text tips, but the script deliberately requires review rather than declaring them complete automatically. Check quantities and unit validity as well; the audit currently checks field presence, not brewing correctness.
+
+Only sufficiently complete, reviewed recipes should become full-procedure training examples. This script does not yet generate training examples or train a model. The old GitHub/BeerXML fetcher and its yeast-only QA generation have been removed. Old local `data/raw` and `data/curated` files, if present, are unused.
+
+The repository MIT license covers project code; source recipe reuse terms need separate verification.
+
+## Development
+
+Use a feature branch, open a pull request, then squash merge into `main`. Keep commit messages to one concise line.
