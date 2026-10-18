@@ -2,6 +2,8 @@
 
 A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Runs on an Intel Mac with 32 GB RAM using a small instruction model. No cloud account or paid API is needed.
 
+**First run:** training and evaluation completed locally. The adapter returned recipe JSON instead of brewing procedures in all three evaluated examples. The workflow is operational, but the model does not yet meet the brewing-instruction goal. See the [first-run report](reports/first-run.md).
+
 ## Quick start
 
 Python 3.12 is tested. On this Intel Mac, PyTorch is pinned to its last officially supported x86 macOS release. Model files need about 1.5 GB; allow several more GB for the environment and checkpoints.
