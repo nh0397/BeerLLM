@@ -28,7 +28,7 @@ DB = OUT/'queue.sqlite3'
 AGENT = 'BeerLLM-Learning/0.1'
 SITES = {
     'aha': ('https://homebrewersassociation.org', '/sitemap_index.xml', 10),
-    'brewersfriend': ('https://www.brewersfriend.com', '/homebrew/sitemap.xml', 2),
+    'brewersfriend': ('https://www.brewersfriend.com', '/homebrew/sitemap.xml', 5),
 }
 
 
@@ -42,6 +42,7 @@ def connection():
         UNIQUE(source,source_id))''')
     db.execute('''CREATE TABLE IF NOT EXISTS recipes (
         url TEXT PRIMARY KEY, source TEXT NOT NULL, data TEXT NOT NULL)''')
+    db.execute('CREATE TABLE IF NOT EXISTS source_state (source TEXT PRIMARY KEY, paused_until REAL, reason TEXT, failures INTEGER DEFAULT 0)')
     db.commit()
     return db
 
@@ -81,6 +82,7 @@ class Client:
         self.session.headers['User-Agent'] = AGENT
         self.last = 0
         self.blocked = False
+        self.retry_seconds = 3600
         response = self.session.get(self.origin+'/robots.txt',timeout=40)
         response.raise_for_status()
         self.robots = RobotFileParser()
@@ -100,6 +102,14 @@ class Client:
             self.last = time.monotonic()
         if response.status_code in [401,403,429]:
             self.blocked = True
+            if response.status_code==429:
+                value=response.headers.get('Retry-After','')
+                try:
+                    self.retry_seconds=max(3600,float(value))
+                except ValueError:
+                    from email.utils import parsedate_to_datetime
+                    try: self.retry_seconds=max(3600,parsedate_to_datetime(value).timestamp()-time.time())
+                    except (ValueError,TypeError): pass
         response.raise_for_status()
         if response.status_code != 200:
             raise ValueError(f'Unexpected HTTP {response.status_code}; redirects/login are not followed')
@@ -221,11 +231,24 @@ def import_brewdog():
 
 
 def collect(source,limit):
+    db=connection()
+    pause=db.execute('SELECT paused_until,reason,failures FROM source_state WHERE source=?',(source,)).fetchone()
+    db.close()
+    if pause:
+        until,reason,failures=pause
+        if until is None or failures>=3:
+            print(f'{source}: paused; review access errors before resuming: {reason}',flush=True)
+            return
+        if until>time.time():
+            print(f'{source}: cooling down until {datetime.fromtimestamp(until,timezone.utc).isoformat()}',flush=True)
+            while time.time()<until:
+                if (OUT/'STOP').exists(): return
+                time.sleep(max(0,min(30,until-time.time())))
     client=Client(source)
     db=connection()
     sql="SELECT url FROM queue WHERE source=? AND status='pending' ORDER BY source_id"
     rows=db.execute(sql+(" LIMIT ?" if limit else ''),(source,limit) if limit else (source,)).fetchall()
-    for (url,) in rows:
+    for offset,(url,) in enumerate(rows):
         if (OUT/'STOP').exists():
             print(f'{source}: stopped by data/collection/STOP',flush=True)
             break
@@ -246,12 +269,26 @@ def collect(source,limit):
             record['html_sha256']=hashlib.sha256(html.encode()).hexdigest()
             record['raw_html']=str(path.relative_to(ROOT))
             save_record(db,source,url,record)
+            db.execute('DELETE FROM source_state WHERE source=?',(source,))
+            db.commit()
             print(f"{source}: {record['title']}",flush=True)
         except (requests.RequestException,ValueError) as exc:
             db.execute("UPDATE queue SET status='error',error=?,updated_at=? WHERE url=?",(str(exc),now(),url))
             db.commit()
             print(f'{source}: skipped {url}: {exc}',flush=True)
-            if client.blocked: break
+            if client.blocked:
+                code=exc.response.status_code if isinstance(exc,requests.HTTPError) and exc.response is not None else None
+                until=time.time()+client.retry_seconds if code==429 else None
+                previous=db.execute('SELECT failures FROM source_state WHERE source=?',(source,)).fetchone()
+                failures=(previous[0] if previous else 0)+1
+                db.execute('INSERT OR REPLACE INTO source_state VALUES(?,?,?,?)',(source,until,str(exc),failures))
+                if code==429:
+                    db.execute("UPDATE queue SET status='pending' WHERE url=?",(url,))
+                db.commit()
+                db.close()
+                if code==429 and failures<3:
+                    return collect(source,max(1,limit-offset) if limit else 0)
+                return
     db.close()
 
 
@@ -273,11 +310,13 @@ def export_snapshot():
     write_jsonl(OUT/'unique_recipes.jsonl',unique.values())
     related=[{'name_key':key,'content_ids':ids} for key,ids in groups.items() if len(ids)>1]
     write_jsonl(OUT/'similar_recipe_groups.jsonl',related)
+    paused=[dict(source=s,paused_until=until,reason=reason,consecutive_failures=n) for s,until,reason,n in db.execute('SELECT * FROM source_state')]
     queues=[dict(source=s,status=status,count=n) for s,status,n in db.execute('SELECT source,status,count(*) FROM queue GROUP BY source,status')]
     report={'updated_at':now(),'collected_source_records':sum(source_counts.values()),'source_counts':dict(source_counts),
             'unique_exact_content':len(unique),'exact_duplicates_merged':sum(source_counts.values())-len(unique),
-            'possible_related_groups':len(related),'queue':queues,
+            'possible_related_groups':len(related),'queue':queues,'source_pauses':paused,
             'with_written_or_site_structured_directions':sum(bool(r['directions_text']) for r in unique.values()),
+            'with_original_written_directions':sum(r.get('instruction_origin')=='original_written_directions' for r in unique.values()),
             'note':'Unique means conservative exact content after whitespace/case normalization. Similar recipes are flagged, not discarded; cross-source paraphrases and unit variants need review. Collected records are not automatically training-ready.'}
     write_json(OUT/'report.json',report)
     db.close()
@@ -295,9 +334,10 @@ def status():
     db=connection()
     rows=[{'source':s,'status':state,'count':n} for s,state,n in
           db.execute('SELECT source,status,count(*) FROM queue GROUP BY source,status')]
+    pauses=[dict(source=s,paused_until=until,reason=reason,consecutive_failures=n) for s,until,reason,n in db.execute('SELECT * FROM source_state')]
     count=db.execute('SELECT count(*) FROM recipes').fetchone()[0]
     db.close()
-    print(json.dumps({'updated_at':now(),'collected_source_records':count,'queue':rows,
+    print(json.dumps({'updated_at':now(),'collected_source_records':count,'queue':rows,'source_pauses':pauses,
                       'snapshot_report':str(OUT/'report.json')},indent=2))
 
 

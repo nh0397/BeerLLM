@@ -4,6 +4,10 @@ A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Run
 
 **First run:** training and evaluation completed locally. The adapter returned recipe JSON instead of brewing procedures in all three evaluated examples. The workflow is operational, but the model does not yet meet the brewing-instruction goal. See the [first-run report](reports/first-run.md).
 
+## Multi-source recipe collection
+
+Collect AHA and Brewer's Friend public pages alongside the BrewDog API snapshot, with resumable downloads and conservative exact deduplication. See the [collection guide](docs/COLLECTION.md) for full-queue commands, progress checks and stopping/resuming. Full collection runs for days; it is separate from fine-tuning.
+
 ## AHA instruction-data pipeline
 
 The next dataset uses actual written recipe directions from selected public AHA pages. See the [roadmap](docs/ROADMAP.md) for milestones and acceptance checks.

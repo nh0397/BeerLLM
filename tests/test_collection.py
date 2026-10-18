@@ -41,4 +41,61 @@ class CollectionTests(unittest.TestCase):
             parse_brewersfriend('<h1>Login</h1>','https://example.com')
 
 
+
+class CollectionStorageTests(unittest.TestCase):
+    def test_exact_duplicates_keep_both_provenances_and_resume_status(self):
+        import json
+        from pathlib import Path
+        import tempfile
+        from unittest.mock import patch
+        from beerllm import collection
+        from beerllm.common import ROOT
+        with tempfile.TemporaryDirectory(dir=ROOT) as temp:
+            out=Path(temp)
+            with patch.object(collection,'OUT',out),patch.object(collection,'DB',out/'queue.sqlite3'):
+                db=collection.connection()
+                base={'title':'Ale','batch_yield':'20 L','ingredients_text':['4 kg pale malt'],
+                      'directions_text':['Mash at 65 C.'],'process_text':None,'notes':None}
+                for source,url in [('aha','https://example.com/a'),('brewersfriend','https://example.com/b')]:
+                    db.execute('INSERT INTO queue(url,source,source_id) VALUES(?,?,?)',(url,source,'1'))
+                    collection.save_record(db,source,url,base.copy())
+                self.assertEqual(db.execute("SELECT count(*) FROM queue WHERE status='pending'").fetchone()[0],0)
+                db.close()
+                collection.export_snapshot()
+                rows=[json.loads(line) for line in (out/'unique_recipes.jsonl').read_text().splitlines()]
+                self.assertEqual(len(rows),1)
+                self.assertEqual(len(rows[0]['sources']),2)
+                report=json.loads((out/'report.json').read_text())
+                self.assertEqual(report['exact_duplicates_merged'],1)
+
+
+class ThrottleTests(unittest.TestCase):
+    def test_429_marks_source_blocked_and_honors_cooldown(self):
+        from unittest.mock import Mock, patch
+        import requests
+        from beerllm.collection import Client
+        client=Client.__new__(Client)
+        client.origin='https://example.com'
+        client.robots=Mock()
+        client.robots.can_fetch.return_value=True
+        client.delay=0
+        client.last=0
+        client.blocked=False
+        client.retry_seconds=3600
+        response=requests.Response()
+        response.status_code=429
+        response.url='https://example.com/recipe'
+        response.headers['Retry-After']='7200'
+        client.session=Mock()
+        client.session.get.return_value=response
+        with patch('time.sleep'):
+            with self.assertRaises(requests.HTTPError):
+                client.get(response.url)
+        self.assertTrue(client.blocked)
+        self.assertEqual(client.retry_seconds,7200)
+        with self.assertRaisesRegex(ValueError,'paused'):
+            client.get(response.url)
+        self.assertEqual(client.session.get.call_count,1)
+
+
 if __name__=='__main__': unittest.main()
