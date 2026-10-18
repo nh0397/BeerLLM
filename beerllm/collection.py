@@ -196,7 +196,8 @@ def parse_aha(html,url):
 
 def save_record(db,source,url,record):
     record['source']=source
-    record['fetched_at']=now()
+    record.setdefault('fetched_at',now())
+    record['imported_at']=now()
     db.execute('INSERT OR REPLACE INTO recipes(url,source,data) VALUES(?,?,?)',(url,source,json.dumps(record,ensure_ascii=False)))
     db.execute("UPDATE queue SET status='done',error=NULL,updated_at=? WHERE url=?",(now(),url))
     db.commit()
@@ -208,6 +209,8 @@ def import_brewdog():
         from scripts.fetch_recipes import download
         write_json(path,download())
     recipes=json.loads(path.read_text())
+    snapshot=ROOT/'data/punkapi/report.json'
+    snapshot_time=json.loads(snapshot.read_text()).get('fetched_at') if snapshot.exists() else None
     db=connection()
     for r in recipes:
         url=f"https://punkapi.dev/v3/beers/{r['id']}"
@@ -223,11 +226,28 @@ def import_brewdog():
                 'process_text':json.dumps(r.get('method'),ensure_ascii=False,sort_keys=True),
                 'notes':r.get('brewers_tips'),'source_recipe':r,
                 'instruction_origin':'structured_fields_and_brewer_tips',
-                'status':'needs_review','rights_status':'unverified','expert_reviewed':False}
+                'status':'needs_review','rights_status':'unverified','expert_reviewed':False,
+                'fetched_at':snapshot_time}
         db.execute('INSERT OR IGNORE INTO queue(url,source,source_id) VALUES(?,?,?)',(url,'brewdog',str(r['id'])))
         save_record(db,'brewdog',url,record)
     db.close()
     print(f'brewdog: imported {len(recipes)} recipes from the local API snapshot',flush=True)
+
+
+def import_cached_aha():
+    path=ROOT/'data/aha/recipes.jsonl'
+    if not path.exists(): return
+    db=connection()
+    for line in path.read_text().splitlines():
+        r=json.loads(line)
+        url=r['source_url']
+        if db.execute('SELECT 1 FROM recipes WHERE url=?',(url,)).fetchone(): continue
+        ident=source_id('aha',url)
+        if not ident: continue
+        db.execute('INSERT OR IGNORE INTO queue(url,source,source_id) VALUES(?,?,?)',(url,'aha',ident))
+        r.update(process_text=None,notes=None,instruction_origin='original_written_directions',status='needs_review')
+        save_record(db,'aha',url,r)
+    db.close()
 
 
 def collect(source,limit):
@@ -357,6 +377,7 @@ def main():
             else: discover(source)
     elif args.action=='run':
         if 'brewdog' in args.sources: import_brewdog()
+        if 'aha' in args.sources: import_cached_aha()
         selected=[s for s in args.sources if s in SITES]
         # One sequential worker per website; independent hosts can run together.
         OUT.mkdir(parents=True,exist_ok=True)
