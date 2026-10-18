@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import time
-from .common import ROOT, load_model, read_jsonl, write_json
+from .common import ROOT, MODEL_ID, MODEL_REVISION, load_model, read_jsonl, write_json
 
 
 def encode_example(tokenizer, example, max_length):
@@ -72,7 +72,7 @@ def main():
         raise ValueError('No checkpoint found to resume')
     train_path=ROOT/'data/training/train.jsonl'
     validation_path=ROOT/'data/training/validation.jsonl'
-    signature={'config':config,'train_sha256':hashlib.sha256(train_path.read_bytes()).hexdigest(),
+    signature={'model_revision': MODEL_REVISION if config['model_id']==MODEL_ID else None, 'config':config,'train_sha256':hashlib.sha256(train_path.read_bytes()).hexdigest(),
                'validation_sha256':hashlib.sha256(validation_path.read_bytes()).hexdigest(),
                'limit':args.limit,'eval_limit':args.eval_limit,'max_steps':args.max_steps}
     if checkpoint:
