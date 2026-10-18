@@ -98,4 +98,38 @@ class ThrottleTests(unittest.TestCase):
         self.assertEqual(client.session.get.call_count,1)
 
 
+
+class TotalLimitTests(unittest.TestCase):
+    def test_total_cap_is_shared_by_concurrent_sources(self):
+        import json
+        from concurrent.futures import ThreadPoolExecutor
+        from pathlib import Path
+        import tempfile
+        from unittest.mock import patch
+        from beerllm import collection
+        from beerllm.common import ROOT
+        with tempfile.TemporaryDirectory(dir=ROOT) as temp:
+            out=Path(temp)
+            with patch.object(collection,'OUT',out),patch.object(collection,'DB',out/'queue.sqlite3'):
+                db=collection.connection()
+                db.close()
+                def save(source):
+                    db=collection.connection()
+                    url='https://example.com/'+source
+                    db.execute('INSERT INTO queue(url,source,source_id) VALUES(?,?,?)',(url,source,'1'))
+                    result=collection.save_record(db,source,url,{'title':source},max_recipes=1)
+                    db.close()
+                    return result
+                with ThreadPoolExecutor(max_workers=2) as pool:
+                    results=list(pool.map(save,['aha','brewersfriend']))
+                self.assertEqual(sum(results),1)
+                db=collection.connection()
+                self.assertEqual(db.execute('SELECT count(*) FROM recipes').fetchone()[0],1)
+                self.assertEqual(db.execute("SELECT count(*) FROM queue WHERE status='pending'").fetchone()[0],1)
+                row=db.execute('SELECT source,url,data FROM recipes').fetchone()
+                self.assertTrue(collection.save_record(db,row[0],row[1],json.loads(row[2]),max_recipes=1))
+                db.close()
+                self.assertTrue(collection.at_capacity(1))
+
+
 if __name__=='__main__': unittest.main()
