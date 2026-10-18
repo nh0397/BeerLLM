@@ -57,8 +57,11 @@ def main():
         for name in ['base','adapter']:
             with model.disable_adapter() if name=='base' else nullcontext():
                 loss=answer_loss(model,tokenizer,row)
-                prediction=generate(model,tokenizer,row['messages'][:-1],args.max_new_tokens)
-            item[name]={'answer':prediction,'answer_loss':loss,'coverage_proxies':coverage(prediction,recipe)}
+                generation=generate(model,tokenizer,row['messages'][:-1],args.max_new_tokens,return_details=True)
+                prediction=generation['text']
+            item[name]={'answer':prediction,'answer_loss':loss,
+                        'generated_tokens':generation['generated_tokens'], 'hit_token_limit':generation['hit_token_limit'],
+                        'coverage_proxies':coverage(prediction,recipe)}
             print(f"Evaluated {row['recipe_id']} / {name}: loss={loss}",flush=True)
         results.append(item)
         write_json(args.output,{'status':'in_progress','split':args.split,'examples':results})

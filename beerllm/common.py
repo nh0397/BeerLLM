@@ -47,7 +47,7 @@ def load_model(model_id=MODEL_ID, adapter=None, threads=4):
     return model, tokenizer
 
 
-def generate(model, tokenizer, messages, max_new_tokens=600):
+def generate(model, tokenizer, messages, max_new_tokens=600, return_details=False):
     import torch
     text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     batch = tokenizer(text, return_tensors='pt')
@@ -59,4 +59,9 @@ def generate(model, tokenizer, messages, max_new_tokens=600):
         result = model.generate(**batch, max_new_tokens=max_new_tokens, do_sample=False,
                                 pad_token_id=tokenizer.pad_token_id,
                                 eos_token_id=tokenizer.eos_token_id)
-    return tokenizer.decode(result[0, batch.input_ids.shape[1]:], skip_special_tokens=True)
+    generated = result[0, batch.input_ids.shape[1]:]
+    text = tokenizer.decode(generated, skip_special_tokens=True)
+    if return_details:
+        return {'text': text, 'generated_tokens': len(generated),
+                'hit_token_limit': len(generated) >= max_new_tokens and int(generated[-1]) != tokenizer.eos_token_id}
+    return text
