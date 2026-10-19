@@ -4,6 +4,8 @@ This is a small learning experiment with eight source-checked recipes and handwr
 
 The model is the same pinned SmolLM2-360M-Instruct checkpoint as the first experiment. LoRA trains query/value adapters at rank eight for five epochs on CPU. Keeping the base model fixed makes the before/after comparison easier to interpret. The earlier adapter is preserved.
 
+The first run of these commands is complete locally: 40 optimizer steps, 4.71 trainer-reported effective epochs and 18.6 minutes. The [result report](../reports/instruction-run.md) records the failed answer-quality checks. Use chat to inspect the saved adapter. Repeating training requires a new `--output` directory; unchanged interrupted runs can resume. Repeating evaluation after code changes requires new output filenames rather than overwriting the recorded run.
+
 ## Run in this order
 
 From the repository root, use the existing `.venv`:
@@ -51,3 +53,5 @@ Data or lesson changes require a new dataset output directory; supply that direc
 Omit `--prompt` for terminal chat, or add `--base` to compare the unmodified model. Terminal chat retains the conversation in memory until you exit, so you can ask follow-ups. It removes the oldest complete turns if needed to fit the context window and tells you when it does so. It does not save chat history to disk. To test interpretation of another recipe, put its facts into your prompt explicitly. The adapter cannot reliably know a private or unseen recipe from its name alone.
 
 The local benchmark reports contain full answers, references, per-check matches, conditional answer loss/perplexity, response times, repetition and token-limit flags. Read the answers alongside the scores. The [metric guide](METRICS.md) explains the names and limitations.
+
+The comparison command recalculates pattern checks on the saved answers using the frozen suite. It verifies the suite hash and exact prompts/references, preserves the raw generation reports, and records both generation-evaluator and current-scorer hashes. This allows a scoring bug to be corrected consistently without changing or regenerating answers. Fresh evaluation reports also fingerprint the adapter configuration as well as its weights.

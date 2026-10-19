@@ -3,9 +3,9 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from beerllm.benchmark import compare,pattern_checks,repetition,summarize
+from beerllm.benchmark import compare,pattern_checks,repetition,sha,summarize
 from beerllm.chat import fit_history
-from beerllm.common import write_json
+from beerllm.common import write_json,write_jsonl
 from beerllm.instruction_dataset import guide,lesson_rows
 
 
@@ -73,6 +73,36 @@ class InstructionExperimentTests(unittest.TestCase):
         self.assertTrue(pattern_checks('Add 1.2 oz Centennial.',checks)[0]['passed'])
         self.assertEqual(repetition('short answer'),0)
         self.assertGreater(repetition('one two three four one two three four one two three four'),0)
+
+    def test_decimal_volumes_do_not_end_a_fact_check_scope(self):
+        checks=[['steeping',r'(?s)steep[^.\n]{0,90}155[^.\n]{0,70}30']]
+        answer='Steep grains in 3.5 gallons of water at 155°F for 30 minutes.'
+        self.assertTrue(pattern_checks(answer,checks)[0]['passed'])
+        self.assertFalse(pattern_checks('Steep the grains. Separately heat to 155°F for 30 minutes.',checks)[0]['passed'])
+
+    def test_rescoring_preserves_saved_answers_and_checks_frozen_inputs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);suite=root/'suite.jsonl'
+            messages=[{'role':'user','content':'Explain steeping.'},{'role':'assistant','content':'Reference.'}]
+            write_jsonl(suite,[{'case_id':'one','messages':messages,'checks':[['steep',r'steep[^.\n]{0,90}155']]}])
+            signature={k:'same' for k in ['model_id','model_revision','decoding','evaluator_sha256']}
+            signature['suite_sha256']=sha(suite)
+            example={'case_id':'one','category':'heldout','prompt':messages[:-1],'reference':'Reference.',
+                     'answer':'Steep in 3.5 gallons at 155°F.','answer_tokens':1,'total_answer_nll':1,
+                     'pattern_checks':[{'passed':False}],'hit_token_limit':False,'generation_seconds':1,
+                     'repeated_4gram_fraction':0}
+            before={'status':'complete','signature':dict(signature,mode='base'),'summary':{},'examples':[example]}
+            after=copy.deepcopy(before);after['signature']['mode']='adapter';after['limitations']=[]
+            a=root/'before.json';b=root/'after.json';out=root/'comparison.json'
+            write_json(a,before);write_json(b,after);original=a.read_bytes()
+            result=compare(a,b,out,suite)
+            self.assertEqual(result['before']['heldout']['pattern_checks_passed'],1)
+            self.assertTrue(result['pattern_checks_rescored'])
+            self.assertEqual(a.read_bytes(),original)
+            after['examples'][0]['prompt']=[{'role':'user','content':'Another question.'}]
+            write_json(b,after)
+            with self.assertRaisesRegex(ValueError,'Saved prompts'):
+                compare(a,b,out,suite)
 
     def test_comparison_rejects_changed_prompts_or_decoding(self):
         signature={k:'same' for k in ['suite_sha256','model_id','model_revision','decoding','evaluator_sha256']}

@@ -14,11 +14,11 @@ Python, Requests, Beautiful Soup, local HTML snapshots and JSONL. Use argparse c
 |---|---|---|---|
 | 1. Source extraction | Fetch selected public AHA recipe pages, cache HTML and preserve original ingredient/direction text | Every extracted number and instruction can be traced to its source; unavailable pages fail visibly | Implemented; five-page pilot run |
 | 2. Completeness review | Review batch size, ingredient quantities, mash/steep, boil and additions, cooling/pitching, fermentation and packaging | Identify exact gaps and contradictions; stage keywords alone never approve a recipe | First 1,498-record audit complete: 50 candidates; source review and enrichment pending |
-| 3. Training conversations | Convert recipes into natural user requests and assistant answers; then author supported explanations, follow-ups and mistakes-to-avoid answers | No JSON in normal user prompts; accurate source facts; useful beginner language; no invented instructions | Source-text conversation export implemented; teaching rewrites pending |
+| 3. Training conversations | Convert recipes into natural user requests and assistant answers; then author supported explanations, follow-ups and mistakes-to-avoid answers | No JSON in normal user prompts; accurate source facts; useful beginner language; no invented instructions | Eight source-checked teaching plans and 34 conversations implemented; broader release and expert review pending |
 | 4. Freeze dataset | Deduplicate related recipes, keep recipe families together, freeze source hashes and splits | No family leakage; all approved conversations fit the chosen context window intact | Source snapshot/hash and 1,301 grouped families saved; 43 train/four validation candidates fit; approved release and alias review pending |
-| 5. Small training experiment | Verify tokenization, assistant-only loss and a short LoRA run on the new format | Real data loads and trains; inspect whether a tiny set can produce prose and ordered instructions | Passed tokenizer checks and one optimizer step on two pilot examples; see pilot report |
+| 5. Small training experiment | Verify tokenization, assistant-only loss and a short LoRA run on the new format | Real data loads and trains; inspect whether a tiny set can produce prose and ordered instructions | 40-step instructional run completed; software works but generated recipe quality fails; see instructional report |
 | 6. Full fine-tuning | Choose model size after a local benchmark; train on the reviewed release with checkpoints | Save adapter/config/data hashes; verify generated examples during validation | Pending reviewed data and successful small experiment |
-| 7. Evaluate and use | Compare baseline and adapter for correctness, clarity, procedure completeness and follow-up answers | Human inspection of ingredient-quantity pairs, temperatures, timings and explanations; detect copying and repetition | Rubric exists; new-format benchmark pending |
+| 7. Evaluate and use | Compare baseline and adapter for correctness, clarity, procedure completeness and follow-up answers | Human inspection of ingredient-quantity pairs, temperatures, timings and explanations; detect copying and repetition | Frozen nine-question before/after benchmark and assistant review completed; the adapter fails quality checks; independent expert review pending |
 
 ## Dataset design
 
@@ -54,3 +54,5 @@ The importer observes robots.txt, waits at least ten seconds between network req
 Do not replace the old experiment or start a long training job until the new candidate examples have passed review. Use a separate output directory for every experiment.
 
 The multi-source collection is now capped and stopped. The [curation guide](CURATION.md) and [audit report](../reports/curation-v1.md) describe the next-stage commands, exact counts and remaining teaching-data work.
+
+The [instructional run report](../reports/instruction-run.md) records actual training and before/after results. The [experiment guide](EXPERIMENT.md) has reproducible commands and the [metric guide](METRICS.md) explains what the scores can and cannot establish.

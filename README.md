@@ -2,13 +2,13 @@
 
 A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Runs on an Intel Mac with 32 GB RAM using a small instruction model. No cloud account or paid API is needed.
 
-**First run:** training and evaluation completed locally. The adapter returned recipe JSON instead of brewing procedures in all three evaluated examples. The workflow is operational, but the model does not yet meet the brewing-instruction goal. See the [first-run report](reports/first-run.md).
+**Latest run:** the instructional adapter is trained and available for local testing, but it **failed the brewing-teacher quality checks**. Reference perplexity fell slightly while answers still invented quantities and repeated steps. See the [measured before/after report](reports/instruction-run.md). The earlier API-data experiment and its [first-run report](reports/first-run.md) are preserved.
 
 ## Multi-source recipe collection
 
 Collect AHA and Brewer's Friend public pages alongside the BrewDog API snapshot, with resumable downloads and conservative exact deduplication. See the [collection guide](docs/COLLECTION.md) for full-queue commands, progress checks and stopping/resuming. Full collection runs for days; it is separate from fine-tuning.
 
-**Current data:** collection stopped at the requested 1,500 saved records, leaving 1,498 after exact deduplication. The [first curation pass](reports/curation-v1.md) separates 50 instruction candidates, 1,407 records needing enrichment, 16 instruction conflicts and 25 non-beer records. Candidates are unapproved source-text drafts; beginner teaching rewrites remain next. Run `.venv/bin/python -m beerllm.curate` to rebuild the local audit. See the [curation guide](docs/CURATION.md).
+**Current data:** collection stopped at the requested 1,500 saved records, leaving 1,498 after exact deduplication. The [first curation pass](reports/curation-v1.md) separates 50 instruction candidates, 1,407 records needing enrichment, 16 instruction conflicts and 25 non-beer records. The larger reviewed teaching release is pending; the latest experiment uses eight source-checked training recipes. Run `.venv/bin/python -m beerllm.curate` to rebuild the local audit. See the [curation guide](docs/CURATION.md).
 
 **Instructional experiment:** eight source-checked recipes now have handwritten beginner guides and follow-ups, forming 34 training conversations. The [experiment guide](docs/EXPERIMENT.md) gives the exact before → train → after commands for a separate adapter, and the [metric guide](docs/METRICS.md) explains loss, perplexity, fact checks and answer-quality review. This is a user-authorized learning run; the references are not expert-reviewed and it does not train on the full collection.
 
@@ -102,6 +102,9 @@ Use a new output directory for a new experiment. The trainer refuses to overwrit
 
 | Location | Contents |
 |---|---|
+| `data/instruction_v1/` | Eight-recipe teaching experiment, frozen benchmark and dataset hashes |
+| `outputs/instruction-lora-v1/adapter/` | Latest experimental adapter, used by default in chat; failed quality checks |
+| `outputs/instruction-v1/` | Actual before/after answers, comparison and assistant review |
 | `data/punkapi/` | Original API records and field-coverage audit |
 | `data/training/` | Train/validation/test JSONL, readable guides, rejected records and dataset report |
 | `outputs/beer-lora/adapter/` | Trained LoRA adapter and tokenizer |

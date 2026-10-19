@@ -63,6 +63,9 @@ def pattern_checks(answer,checks):
     answer=unicodedata.normalize('NFKC',answer).replace('º','°')
     result=[]
     for label,pattern in checks:
+        # A decimal within a quantity is not a sentence boundary.
+        for scope in [r'[^.\n]',r'[^\n.]']:
+            pattern=pattern.replace(scope,r'(?:[^.\n]|\.(?=\d))')
         m=re.search(pattern,answer,re.I)
         result.append({'label':label,'passed':bool(m),'matched_text':m[0] if m else None})
     return result
@@ -105,7 +108,8 @@ def summarize(results):
 def run(suite,mode,adapter,output):
     signature={'suite_sha256':sha(suite),'mode':mode,'model_id':MODEL_ID,'model_revision':MODEL_REVISION,
                'evaluator_sha256':sha(Path(__file__)),'decoding':'greedy',
-               'adapter_sha256':sha(adapter/'adapter_model.safetensors') if mode=='adapter' else None}
+               'adapter_sha256':sha(adapter/'adapter_model.safetensors') if mode=='adapter' else None,
+               'adapter_config_sha256':sha(adapter/'adapter_config.json') if mode=='adapter' else None}
     rows=read_jsonl(suite)
     results=[]
     if output.exists():
@@ -140,16 +144,34 @@ def run(suite,mode,adapter,output):
     return report
 
 
-def compare(before_path,after_path,output):
+def compare(before_path,after_path,output,suite=None):
     before=json.loads(before_path.read_text());after=json.loads(after_path.read_text())
     if any(x['status']!='complete' for x in [before,after]): raise ValueError('Both evaluations must be complete')
     for key in ['suite_sha256','model_id','model_revision','decoding','evaluator_sha256']:
         if before['signature'][key]!=after['signature'][key]: raise ValueError('Mismatched before/after '+key)
     if before['signature']['mode']!='base' or after['signature']['mode']!='adapter': raise ValueError('Expected base then adapter')
     if [x['case_id'] for x in before['examples']]!=[x['case_id'] for x in after['examples']]: raise ValueError('Mismatched cases')
+    details=[]
+    if suite is not None:
+        if sha(suite)!=before['signature']['suite_sha256']: raise ValueError('Scoring suite differs from frozen generation suite')
+        rows=read_jsonl(suite)
+        if [r['case_id'] for r in rows]!=[r['case_id'] for r in before['examples']]: raise ValueError('Scoring case IDs differ')
+        for index,row in enumerate(rows):
+            pair={'case_id':row['case_id']}
+            for name,report in [('before',before),('after',after)]:
+                example=report['examples'][index]
+                if example['prompt']!=row['messages'][:-1] or example['reference']!=row['messages'][-1]['content']:
+                    raise ValueError('Saved prompts or references differ from scoring suite')
+                example['pattern_checks']=pattern_checks(example['answer'],row['checks'])
+                pair[name]=example['pattern_checks']
+            details.append(pair)
+        for report in [before,after]: report['summary']=summarize(report['examples'])
     result={'status':'complete','before':before['summary'],'after':after['summary'],
             'before_file':str(before_path),'after_file':str(after_path),
-            'suite_sha256':before['signature']['suite_sha256'],'limitations':after['limitations']}
+            'suite_sha256':before['signature']['suite_sha256'],'limitations':after['limitations'],
+            'generation_evaluator_sha256':before['signature']['evaluator_sha256'],
+            'scorer_sha256':sha(Path(__file__)),'pattern_checks_rescored':suite is not None,
+            'pattern_check_details':details}
     write_json(output,result)
     return result
 
@@ -170,10 +192,11 @@ def main():
     comparison.add_argument('--before',type=Path,required=True)
     comparison.add_argument('--after',type=Path,required=True)
     comparison.add_argument('--output',type=Path,required=True)
+    comparison.add_argument('--suite',type=Path,default=ROOT/'data/instruction_v1/benchmark.jsonl')
     args=p.parse_args()
     if args.command=='prepare': report=prepare(args.config,args.data_dir,args.recipes)
     elif args.command=='run': report=run(args.suite,args.mode,args.adapter,args.output)
-    else: report=compare(args.before,args.after,args.output)
+    else: report=compare(args.before,args.after,args.output,args.suite)
     print(json.dumps(report.get('summary',report if args.command!='run' else report['status']),indent=2))
 
 
