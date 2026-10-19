@@ -20,7 +20,7 @@ def fit_history(messages,tokenizer,context_limit,max_new_tokens):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--adapter',type=Path,default=ROOT/'outputs/beer-lora/adapter')
+    parser.add_argument('--adapter',type=Path,default=ROOT/'outputs/instruction-lora-v1/adapter')
     parser.add_argument('--base',action='store_true',help='Use the original model without the adapter')
     parser.add_argument('--recipe-id',type=int,help='Explicitly include this local recipe as context')
     parser.add_argument('--prompt',help='Ask once; otherwise start a terminal chat')

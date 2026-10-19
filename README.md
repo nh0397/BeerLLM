@@ -25,7 +25,7 @@ The next dataset uses actual written recipe directions from selected public AHA 
 
 This extracts source instructions, exports natural-language conversation candidates, and checks tokenization without training. Data is saved separately under `data/aha/`. Review the candidate answers before using them in a long run. The existing one-command runner below still reproduces the older PunkAPI experiment; it does not automatically switch to AHA data.
 
-## Quick start
+## Reproduce the first API-data experiment
 
 Python 3.12 is tested. On this Intel Mac, PyTorch is pinned to its last officially supported x86 macOS release. Model files need about 1.5 GB; allow several more GB for the environment and checkpoints.
 
@@ -48,13 +48,13 @@ tail -f outputs-run.log
 ## Chat after training
 
 ```bash
-.venv/bin/python -m beerllm.chat --prompt "Give me the recipe and brewing procedure for Punk IPA 2007 - 2010."
+.venv/bin/python -m beerllm.chat --prompt "Explain Griffin Spit IPA's fermentation and dry-hop stages."
 ```
 
-That uses model weights only. Named recipe recall may be inaccurate. To explicitly supply a downloaded recipe as context:
+That uses the instructional adapter at `outputs/instruction-lora-v1/adapter/` and model weights only. Named recipe recall may be inaccurate. To explicitly supply an older downloaded PunkAPI recipe to the original adapter as context:
 
 ```bash
-.venv/bin/python -m beerllm.chat --recipe-id 1 --prompt "Explain this recipe and its brewing procedure."
+.venv/bin/python -m beerllm.chat --adapter outputs/beer-lora/adapter --recipe-id 1 --prompt "Explain this recipe and its brewing procedure."
 ```
 
 Use `--base` to compare the original model. Omit `--prompt` for an interactive terminal with in-memory conversation history. Oldest complete turns are removed when the context window fills; history is not saved after exit.

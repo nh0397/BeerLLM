@@ -55,7 +55,7 @@ Reference answers are programmatically composed guides, not expert-reviewed gold
 From the repository root:
 
 ```bash
-.venv/bin/python -m beerllm.chat --recipe-id 5 --prompt "Give me the ingredients and brewing procedure."
+.venv/bin/python -m beerllm.chat --adapter outputs/beer-lora/adapter --recipe-id 5 --prompt "Give me the ingredients and brewing procedure."
 ```
 
 This explicitly includes the downloaded recipe in the prompt. To test model memory without supplying it, omit `--recipe-id`. Such recall is not established by the supplied-context evaluation. Use `--base` to compare the original model.

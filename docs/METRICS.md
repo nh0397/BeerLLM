@@ -44,7 +44,13 @@ For the small run, read every before/after answer and use a 0/1/2 rubric: 0 inco
 
 ## Why not a single accuracy score, BLEU or ROUGE?
 
-An answer is not one class label, so classification accuracy needs a clearly defined factual test first. Precision, recall and F1 can be useful for a defined extraction task, such as predicting a set of ingredient–quantity pairs. They cannot establish correctness by checking ingredient names alone.
+An answer is not one class label, so classification accuracy needs a clearly defined factual test first. Precision, recall and F1 can be useful for a defined extraction task, such as predicting a set of ingredient–quantity pairs:
+
+- **Precision:** correct predicted pairs divided by all predicted pairs. This asks how much of what the model supplied was correct.
+- **Recall:** correct predicted pairs divided by all required source pairs. This asks how much of the required information it recovered.
+- **F1:** `2 × precision × recall / (precision + recall)`, balancing the two. If precision and recall are both zero, define F1 as zero.
+
+For example, suppose there are three required pairs, the model predicts four pairs, and two are correct. Precision is 2/4 = 50%, recall is 2/3 = 66.7%, and F1 is about 57.1%. Matching must account for ingredient identity, amount and compatible units, and handle duplicates consistently. We have not implemented that extraction evaluator here, so no precision/recall/F1 result is claimed. Ingredient-name matches alone cannot establish recipe correctness.
 
 BLEU and ROUGE measure forms of overlap with reference wording. They may be useful for some tasks, but a brewing answer can keep most words while changing a crucial temperature. For this experiment, source correctness, useful explanation and admitted gaps matter more than matching phrasing, so BLEU/ROUGE are not reported.
 
