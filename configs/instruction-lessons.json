@@ -1,0 +1,134 @@
+{
+  "review_status": "source_checked_experiment_not_brewer_reviewed",
+  "general_reference": "https://homebrewersassociation.org/tutorials/all-grain-batch-sparge-homebrewing/all-grain-batch-sparge-homebrewing/",
+  "lessons": [
+    {
+      "slug": "alt-ale-altbier",
+      "steps": [
+        "Mash the grains at 152°F (67°C) for 60 minutes. Mashing is the warm grain-and-water rest before you collect the liquid for boiling.",
+        "Drain the liquid and rinse the grain with sparge water. Aim for about 6.75 gallons (25.6 L) before boiling, to leave 5.5 gallons (20.8 L) after the boil. Actual evaporation depends on your equipment.",
+        "Boil for 90 minutes. Add 1.25 oz (35 g) Tettnang with 60 minutes remaining; add 0.75 oz (21 g) Tettnang and half a Whirlfloc tablet with 15 minutes remaining. These labels mean time left, not time since the boil started.",
+        "Chill the wort to 62°F (17°C), then add the Wyeast 1007. Wort means the sweet liquid before it becomes beer; pitching means adding yeast.",
+        "Ferment at 62°F (17°C) for the source's 10-day primary period. When fermentation is complete, transfer to secondary and hold at the same temperature for another 7–10 days.",
+        "Optionally cold-condition the finished beer for up to four weeks around 34°F (1°C). Bottle or keg to 2.5–2.7 volumes of CO2. The listed 5–5.4 g/L is carbon dioxide, not a priming-sugar dose."
+      ],
+      "gaps": "The source does not give a priming-sugar dose or an exact sparge-water temperature. Do not invent either.",
+      "followups": [
+        ["For Alt Ale Altbier, is 5–5.4 g/L the amount of sugar I put in my bottles?", "No. In this recipe, 5–5.4 g/L describes carbon dioxide, corresponding to the 2.5–2.7 volumes carbonation target. It is not grams of priming sugar per litre. The source does not give a priming-sugar dose, so do not use that CO2 figure as one."],
+        ["How do I run the hop timer for Alt Ale Altbier?", "The boil lasts 90 minutes. Start the timer at the boil. After 30 minutes, add 1.25 oz (35 g) Tettnang: there are 60 minutes left. After 75 minutes total, add 0.75 oz (21 g) Tettnang and half a Whirlfloc tablet: there are 15 minutes left. Stop at 90 minutes. The hop labels count down to the end."]
+      ]
+    },
+    {
+      "slug": "beer-recipe-of-the-week-griffin-spit-ipa",
+      "steps": [
+        "Mash at 154°F (68°C) for one hour. Raise the mash to 170°F (77°C) and rinse the grain with water at that temperature.",
+        "Collect a little over 6 gallons (22.7 L) of wort, aiming for 5 gallons (19 L) after the 90-minute boil.",
+        "Boil 90 minutes. Add 2 oz (56 g) Summit with 20 minutes left, 1 tsp Irish moss with 15 minutes left, 2 oz (56 g) Summit with 10 minutes left, and another 2 oz (56 g) Summit with 5 minutes left. Do not add the dry hops to this boil.",
+        "Chill to 66°F (19°C), transfer to the fermenter, aerate, and pitch two yeast packages or the source's half-gallon starter. Pitching just means adding yeast.",
+        "Ferment at 66–68°F (19–20°C) for two weeks. Transfer to secondary and add 1 oz (28 g) Summit as dry hops. Dry hopping means adding hops later, rather than boiling them.",
+        "Leave the beer with the dry hops for three weeks before bottling or kegging."
+      ],
+      "gaps": "The source does not specify a priming-sugar dose or carbonation target. The two-week primary and three-week dry-hop periods are different stages, not alternative durations.",
+      "followups": [
+        ["For Griffin Spit IPA, do I dry hop during the 90-minute boil?", "No. The boil gets three separate 2 oz (56 g) Summit additions, with 20, 10 and 5 minutes remaining. The separate 1 oz (28 g) Summit dry-hop addition goes into secondary after the two-week primary fermentation. It stays with the beer for three weeks before packaging."],
+        ["Walk me through Griffin Spit IPA's fermentation and dry hopping.", "Chill to 66°F (19°C) before pitching. Ferment at 66–68°F (19–20°C) for two weeks, then transfer to secondary and add 1 oz (28 g) Summit. Leave those dry hops in contact for three weeks before bottling or kegging. Do not treat the three weeks as the primary fermentation period. The source does not give a priming dose."]
+      ]
+    },
+    {
+      "slug": "bells-two-hearted-ale-clone",
+      "steps": [
+        "Start with 4.5 gallons (17 L) carbon-filtered water and the source's 4 g gypsum addition. Mash for 45 minutes at 150°F (66°C). Raise to 170°F (77°C) over 15 minutes, then rest there for 10 minutes. The source offers infusing 2.5 gallons of boiling water as an alternative way to raise the temperature.",
+        "Recirculate until the wort runs clear, then collect 6.6 gallons (25 L), sparging with 175°F (79°C) water. Recirculating means collecting some liquid and returning it to the grain bed; sparging means rinsing the grain.",
+        "Boil for about 75 minutes. Add 1.2 oz (34 g) Centennial with 45 minutes remaining and another 1.2 oz (34 g) with 30 minutes remaining.",
+        "Whirlpool and let the wort settle for 15 minutes. Chill to 64°F (18°C), aerate, and pitch the listed California ale yeast.",
+        "The source says to ferment warm at ale temperature, but gives no exact fermentation target. One week into fermentation, add 3.5 oz (99 g) Centennial as dry hops; keep warm with the hops for another week.",
+        "Transfer, cool rapidly, and cold-age for a week. Transfer again, prime and bottle. Confirm fermentation is complete before packaging."
+      ],
+      "gaps": "The source does not give an exact fermentation temperature, cold-aging temperature or priming-sugar dose. The 64°F chilling instruction is not an explicitly specified fermentation target.",
+      "followups": [
+        ["Bell's Two Hearted clone boils for 75 minutes, but the hops say 45 and 30. When do I add them?", "Those are minutes remaining in the boil. For a 75-minute boil, add the first 1.2 oz (34 g) Centennial after about 30 minutes have elapsed, leaving 45 minutes. Add the second 1.2 oz (34 g) after about 45 minutes have elapsed, leaving 30 minutes. Keep the separate 3.5 oz (99 g) dry-hop addition for fermentation."],
+        ["Does Bell's Two Hearted clone tell me the exact fermentation temperature and bottling sugar dose?", "No. It says to chill to 64°F (18°C) before pitching, then ferment warm at ale temperature. It does not give a numeric fermentation target or a priming-sugar dose. Do not present the chilling temperature as an explicit fermentation instruction, or guess a sugar amount. Check the yeast guidance and a suitable priming calculation for your actual batch."]
+      ]
+    },
+    {
+      "slug": "angies-bursting-citra-ii-aka-juice",
+      "steps": [
+        "Mash at 152°F (67°C) for one hour, then sparge at 168°F (76°C). Sparging means rinsing the grain to collect more of the sweet wort.",
+        "Boil for 60 minutes. Add 0.8 oz (23 g) Nugget with 60 minutes remaining and 2.25 oz (64 g) Citra with 5 minutes remaining. The separate 2.25 oz (64 g) whirlpool Citra addition goes in the whirlpool stage, not as a 60-minute boil addition.",
+        "Chill to 70°F (21°C), oxygenate, and use the listed WLP001 yeast. Ferment at 68–72°F (19–22°C).",
+        "Add the 2.25 oz (64 g) active dry-hop dose two days after fermentation starts. Add the separate 2.25 oz (64 g) complete dose after terminal gravity is reached.",
+        "Leave the second dose for three days, then transfer to secondary for a week. Transfer to a keg, chill, and force carbonate."
+      ],
+      "gaps": "The source does not specify a whirlpool temperature or duration, or a carbonation target. Terminal gravity means fermentation has reached its finishing gravity; it is not simply day two.",
+      "followups": [
+        ["When do the two dry-hop doses go into Angie's Bursting Citra II?", "They are separate 2.25 oz (64 g) Citra doses. Add the active dose two days after fermentation starts. Wait until terminal gravity for the complete dose, then leave it for three days before transferring to secondary for a week. Do not put both doses in on day two."],
+        ["What whirlpool temperature should I use for Angie's Bursting Citra II?", "The source specifies 2.25 oz (64 g) Citra for the whirlpool, but it does not state its temperature or duration. I cannot give an exact recipe-specific number from that source. Keep the whirlpool addition separate from the boil and dry-hop additions, and confirm the missing process details before brewing."]
+      ]
+    },
+    {
+      "slug": "beer-recipe-of-the-week-dusseldorf-altbier",
+      "title_contains": "Düsseldorf Altbier",
+      "steps": [
+        "Put the specialty grains in 2 gallons (7.6 L) of cool water. Heat to 170°F (77°C), then strain out the grain. This is steeping, rather than a specified timed all-grain mash.",
+        "Stir in the malt extracts and add water to make 3 gallons (11.4 L). Bring to a boil.",
+        "Add 1.5 oz (43 g) Perle and boil 45 minutes. Add 1 oz (28 g) Tettnang and 0.75 tsp (3 g) Irish moss, then boil another 15 minutes. That is a 60-minute total boil.",
+        "Cool and transfer to the fermenter, adding cold water to make 5.5 gallons (21 L). Aerate and pitch the listed yeast when the wort is at 65°F (18°C).",
+        "Ferment at 65–68°F (18–20°C) for the source's approximately one-week period, continuing until fermentation is complete. Age in secondary for one week at 65°F (18°C).",
+        "Carbonate to 1.5–2.5 volumes of CO2."
+      ],
+      "gaps": "The source does not give a priming-sugar dose. Do not mistake the 3-gallon kettle volume for the 5.5-gallon finished batch.",
+      "followups": [
+        ["Is Düsseldorf Altbier a three-gallon batch?", "No. The source boils a concentrated 3-gallon (11.4 L) wort, then adds water in the fermenter to reach 5.5 gallons (21 L). Keep those volumes separate; the kettle volume is not the finished batch size."],
+        ["Explain the two hop additions in Düsseldorf Altbier.", "Add 1.5 oz (43 g) Perle at the start of the boil and boil 45 minutes. Then add 1 oz (28 g) Tettnang plus 0.75 tsp (3 g) Irish moss and boil another 15 minutes. The total is 60 minutes; Tettnang gets only the final 15 minutes."]
+      ]
+    },
+    {
+      "slug": "helicious-helles",
+      "steps": [
+        "Mash in at 130°F (54°C) and rest for 10 minutes. Raise to 148°F (64°C) and rest for 60 minutes. These are two different rests, not a choice between temperatures.",
+        "Mash out at 168°F (76°C), then fly sparge at 170°F (77°C). Sparging is rinsing the grain while collecting the wort.",
+        "Boil for 90 minutes. Add 1.9 oz (54 g) Tettnanger with 60 minutes left and one Whirlfloc tablet with 10 minutes left, as listed in the ingredients. Cool promptly afterward.",
+        "Use the listed lager yeast. Ferment at 50°F (10°C) for two to three weeks. The source does not state a separate pitching temperature.",
+        "Keg and add gelatin to clarify, then lager at 40°F (4°C) for three to six weeks. Lagering here means a separate cold-conditioning period after primary fermentation."
+      ],
+      "gaps": "The source gives no exact pitching temperature, gelatin amount or carbonation target. Do not replace the 50°F fermentation stage with the 40°F lagering stage.",
+      "followups": [
+        ["For Helicious Helles, is fermentation at 40°F or 50°F?", "The primary fermentation is at 50°F (10°C) for two to three weeks. The later lagering stage is at 40°F (4°C) for three to six weeks after kegging and the source's gelatin clarification step. They are different stages, so do not swap the temperatures."],
+        ["Helicious Helles boils 90 minutes. Do its 60-minute hops go in immediately?", "No. Add the 1.9 oz (54 g) Tettnanger with 60 minutes left, which is 30 minutes after a 90-minute boil starts. Add the Whirlfloc tablet with 10 minutes left, or 80 minutes after the start. Those timings count backward from the end."]
+      ]
+    },
+    {
+      "slug": "hofters-blanc-pale-ale",
+      "title_contains": "Höfter’s Blanc Pale Ale",
+      "steps": [
+        "Start with 4 gallons (15.1 L) of soft brewing water. Rest the mash at 145°F (63°C), stir in 3 g gypsum, and hold for 20 minutes. Add 1.5 gallons (5.7 L) boiling water to raise the mash to 155°F (68°C), then hold for 40 minutes.",
+        "Collect the first runnings and add 0.5 oz (14 g) Hallertau Blanc as first-wort hops. Batch sparge with 4.5 gallons (17 L) at 170°F (77°C), adding 2 g calcium chloride.",
+        "Boil 90 minutes. The Hallertau Blanc boil additions are 0.25 oz with 60 minutes left, 1 oz with 10 minutes left, 1 oz with 5 minutes left, and 1 oz at flameout. Whirlpool for five minutes after turning off the heat.",
+        "Cool to 65°F (18°C). Rehydrate the 11 g US-05 packet in warm water for 15 minutes and pitch. The source specifies about 10 ppm pure oxygen.",
+        "Ferment to completion, estimated by the source at six to eight days, then keg. The source does not give a separate numeric fermentation target.",
+        "Dry hop with 1 oz (28 g) Hallertau Blanc for three days at 60°F (16°C), transfer to a clean keg, and force carbonate."
+      ],
+      "gaps": "Confirm the unspecified fermentation target, yeast-rehydration water temperature and carbonation target. The 65°F cooling instruction and 60°F dry-hop instruction are not interchangeable fermentation targets.",
+      "followups": [
+        ["In Höfter's Blanc Pale Ale, when do I add the first-wort hops?", "Add the 0.5 oz (14 g) Hallertau Blanc to the first liquid collected from the mash, before the boil. That is a separate first-wort addition. Keep the 0.25 oz 60-minute addition and the later boil, flameout and dry-hop additions separate."],
+        ["Explain Höfter's Blanc Pale Ale's dry-hop step.", "After fermentation is complete and the beer is kegged, the source calls for 1 oz (28 g) Hallertau Blanc for three days at 60°F (16°C). Transfer to a clean keg afterward and force carbonate. That 60°F value belongs to dry hopping; the source does not state a separate numeric primary-fermentation target."]
+      ]
+    },
+    {
+      "slug": "black-is-back",
+      "steps": [
+        "Mix the crushed grain with 13 quarts (12.3 L) of 140°F (60°C) water, stabilizing the mash at 132°F (56°C) for 30 minutes. Add 6.5 quarts (6.2 L) boiling water and heat as needed to reach 155°F (68°C); hold about 30 minutes.",
+        "Raise to 167°F (75°C), drain, and sparge with 3.5 gallons (13.3 L) of 170°F (77°C) water. Collect about 5.5 gallons (21 L) of wort.",
+        "Add the cane sugar and the 1.5 oz (42 g) bittering-hop choice for the 60-minute boil. Add 0.25 tsp Irish moss with 10 minutes left and the 1 oz (28 g) aroma-hop choice with one minute left.",
+        "Turn off the heat and put the covered pot in a running cold-water bath for 30 minutes, then continue chilling as needed. Transfer to a sanitized fermenter and top up to 5 gallons (19 L) if necessary.",
+        "Aerate well, add the strong Belgian-style ale yeast when cool, and ferment to completion. The source does not specify a numeric pitching or fermentation temperature, so confirm those details rather than guessing.",
+        "Bottle only after fermentation is complete. The ingredient list offers 0.75 cup (175 mL) corn sugar OR 1.25 cup (300 mL) dried malt extract for bottling; these are alternatives. The source describes drinking after three weeks in bottle, or aging two to twelve months in a cool, dark place."
+      ],
+      "gaps": "No numeric pitching or fermentation temperature is supplied. The priming quantities are source volume measurements, not weights; do not silently relabel mL as grams.",
+      "followups": [
+        ["Does Black is Back require both corn sugar and dried malt extract for priming?", "No. The source lists alternatives: 0.75 cup (175 mL) corn sugar OR 1.25 cup (300 mL) dried malt extract for bottling. Do not add both. These are volume measures in the source, not gram weights; do not relabel them as grams."],
+        ["What exact fermentation temperature does Black is Back specify?", "It does not specify a numeric fermentation temperature. It says to add the Belgian-style ale yeast when the wort is cool and ferment to completion. The mash temperatures of 132°F and 155°F are not fermentation temperatures. Confirm the yeast's suitable fermentation range before brewing."]
+      ]
+    }
+  ]
+}
