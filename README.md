@@ -10,6 +10,8 @@ Collect AHA and Brewer's Friend public pages alongside the BrewDog API snapshot,
 
 **Current data:** collection stopped at the requested 1,500 saved records, leaving 1,498 after exact deduplication. The [first curation pass](reports/curation-v1.md) separates 50 instruction candidates, 1,407 records needing enrichment, 16 instruction conflicts and 25 non-beer records. Candidates are unapproved source-text drafts; beginner teaching rewrites remain next. Run `.venv/bin/python -m beerllm.curate` to rebuild the local audit. See the [curation guide](docs/CURATION.md).
 
+**Instructional experiment:** eight source-checked recipes now have handwritten beginner guides and follow-ups, forming 34 training conversations. The [experiment guide](docs/EXPERIMENT.md) gives the exact before → train → after commands for a separate adapter, and the [metric guide](docs/METRICS.md) explains loss, perplexity, fact checks and answer-quality review. This is a user-authorized learning run; the references are not expert-reviewed and it does not train on the full collection.
+
 ## AHA instruction-data pipeline
 
 The next dataset uses actual written recipe directions from selected public AHA pages. See the [roadmap](docs/ROADMAP.md) for milestones and acceptance checks.

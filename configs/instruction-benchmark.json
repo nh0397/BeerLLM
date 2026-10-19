@@ -1,0 +1,127 @@
+{
+  "version": "instruction-v1",
+  "cases": [
+    {
+      "id": "recall-alt-full",
+      "category": "seen_recipe_recall",
+      "title": "Alt Ale Altbier",
+      "question": "I want to brew Alt Ale Altbier. Give me its ingredients and walk me through the whole recipe in simple language. Tell me which details are missing.",
+      "reference_task": "named_recipe",
+      "max_new_tokens": 1000,
+      "checks": [
+        ["mash temperature and duration", "(?s)(?:mash)[^\\n.]{0,90}152[^\\n.]{0,80}60"],
+        ["total boil", "(?s)(?:boil)[^\\n.]{0,50}90|90[- ]minute boil"],
+        ["fermentation temperature", "(?s)ferment[^\\n.]{0,80}(?:62\\s*(?:°\\s*|degrees?\\s*)?F|17\\s*(?:°\\s*|degrees?\\s*)?C)"],
+        ["CO2 is not priming sugar", "(?s)(?:not|isn.t)[^\\n.]{0,70}(?:priming|sugar)|(?:no|not specified|does not)[^\\n.]{0,70}priming"]
+      ]
+    },
+    {
+      "id": "recall-griffin-fermentation",
+      "category": "seen_recipe_recall",
+      "title": "Griffin Spit IPA",
+      "question": "For Griffin Spit IPA, explain the primary fermentation temperature and duration, then the dry-hop dose and contact time. Keep those stages separate.",
+      "reference_followup": 1,
+      "max_new_tokens": 240,
+      "checks": [
+        ["fermentation range", "66\\s*[-–]\\s*68|19\\s*[-–]\\s*20"],
+        ["two-week primary", "(?s)(?:ferment|primary)[^.\\n]{0,100}(?:two|2) weeks?"],
+        ["Summit dry hop dose", "(?s)(?:1\\s*oz|one ounce|28\\s*g)[^.\\n]{0,40}Summit|Summit[^.\\n]{0,40}(?:1\\s*oz|one ounce|28\\s*g)"],
+        ["three-week dry hop", "(?s)(?:dry.hop|hops|secondary)[^.\\n]{0,100}(?:three|3) weeks?"]
+      ]
+    },
+    {
+      "id": "recall-bells-timer",
+      "category": "seen_recipe_recall",
+      "title": "Bell’s Two Hearted Ale Clone",
+      "question": "I'm brewing the Bell's Two Hearted Ale clone. At what elapsed times in its 75-minute boil do the two Centennial boil additions go in, and how much goes in each?",
+      "reference_followup": 0,
+      "max_new_tokens": 240,
+      "checks": [
+        ["first elapsed time", "(?s)(?:after|elapsed|at)[^.\\n]{0,30}30\\s*minutes|30\\s*minutes[^.\\n]{0,30}(?:elapsed|after)"],
+        ["second elapsed time", "(?s)(?:after|elapsed|at)[^.\\n]{0,30}45\\s*minutes|45\\s*minutes[^.\\n]{0,30}(?:elapsed|after)"],
+        ["addition quantity", "1\\.2\\s*(?:oz|ounces)|34\\s*(?:g|grams)"],
+        ["correct hop", "Centennial"]
+      ]
+    },
+    {
+      "id": "recall-angie-dryhop",
+      "category": "seen_recipe_recall",
+      "title": "Angie’s Bursting Citra II (AKA Juice)",
+      "question": "For Angie's Bursting Citra II, should I add both dry-hop doses two days after fermentation begins? Explain the correct sequence and amounts.",
+      "reference_followup": 0,
+      "max_new_tokens": 240,
+      "checks": [
+        ["dose", "2\\.25\\s*(?:oz|ounces)|64\\s*(?:g|grams)"],
+        ["active dose timing", "(?:two|2) days"],
+        ["complete dose timing", "terminal gravity"],
+        ["second dose contact", "(?:three|3) days"]
+      ]
+    },
+    {
+      "id": "heldout-dubbel-full",
+      "category": "heldout_supplied_recipe",
+      "title": "Dubious Dubbel",
+      "context": true,
+      "question": "Teach a beginner to brew this recipe. Include ingredients, preserve the quantities, explain the steps and identify missing details.",
+      "max_new_tokens": 1000,
+      "checks": [
+        ["steep temperature and duration", "(?s)steep[^.\\n]{0,90}(?:155|68)[^.\\n]{0,70}30"],
+        ["total boil", "(?s)boil[^.\\n]{0,60}60|60[- ]minute boil"],
+        ["fermentation range", "68\\s*[-–]\\s*70|20\\s*[-–]\\s*21"],
+        ["bottling corn sugar dose", "4\\.4\\s*(?:oz|ounces)|125\\s*(?:g|grams)"]
+      ]
+    },
+    {
+      "id": "heldout-stout-full",
+      "category": "heldout_supplied_recipe",
+      "title": "Black Is Beautiful Imperial Stout (Countdown Brewing Version)",
+      "context": true,
+      "question": "Explain this brewing recipe in ingredients and ordered steps. Preserve the temperatures and timings, and admit anything it does not specify.",
+      "max_new_tokens": 1000,
+      "checks": [
+        ["mash temperature and duration", "(?s)mash[^.\\n]{0,100}(?:150|66)[^.\\n]{0,80}60|mash[^.\\n]{0,100}60[^.\\n]{0,80}(?:150|66)"],
+        ["total boil", "(?s)boil[^.\\n]{0,60}60|60[- ]minute boil"],
+        ["fermentation temperature", "(?s)ferment[^.\\n]{0,80}(?:66\\s*(?:°\\s*|degrees?\\s*)?F|19\\s*(?:°\\s*|degrees?\\s*)?C)"],
+        ["source fermentation duration", "(?:three|3) weeks?"]
+      ]
+    },
+    {
+      "id": "heldout-gose-mash",
+      "category": "heldout_supplied_recipe",
+      "title": "Dollar to Döllnitz Gose",
+      "context": true,
+      "question": "Explain only the acid-malt mash sequence in these notes. How much acid malt goes in initially, how much is reserved, and when is it added?",
+      "reference": "Start with 2 oz of the acid malt alongside the Pilsner malt, wheat malt and rice hulls. Mash at 149°F (65°C) for 45 minutes. The reserved 14 oz of acid malt goes in next. Continue mashing for another 45 minutes, stirring every 15 minutes. Do not add the entire pound of acid malt at the beginning.",
+      "max_new_tokens": 240,
+      "checks": [
+        ["initial acid malt", "(?:2\\s*(?:oz|ounces)|two ounces)"],
+        ["reserved acid malt", "14\\s*(?:oz|ounces)|fourteen ounces"],
+        ["rest duration", "45\\s*minutes"],
+        ["stir interval", "15\\s*minutes"]
+      ]
+    },
+    {
+      "id": "unknown-recipe",
+      "category": "uncertainty",
+      "question": "Give me the exact grain quantities, yeast and fermentation temperature for my private recipe named Moonlight Velvet 932. I have not shared its recipe with you.",
+      "reference": "I do not have your private recipe, so I cannot know its exact grain quantities, yeast or fermentation temperature. Please share the recipe or its ingredient list, batch size and process notes. I can then explain it without inventing those details.",
+      "max_new_tokens": 180,
+      "checks": [
+        ["admits missing recipe", "(?:do not|don.t|cannot|can.t|not (?:have|know|provided)|no access)"],
+        ["asks for facts", "(?:share|provide|send|ingredient list|process notes)"]
+      ]
+    },
+    {
+      "id": "completion-check",
+      "category": "general_process",
+      "question": "The recipe says two weeks and the airlock is quiet. What should I check before deciding fermentation is finished and bottling?",
+      "reference": "Check gravity with repeated readings over a few days and confirm that it stays consistent. A quiet airlock or two weeks on the calendar alone does not establish completion. Do not bottle solely on that basis.",
+      "max_new_tokens": 180,
+      "checks": [
+        ["gravity measurement", "(?:gravity|hydrometer)"],
+        ["stability criterion", "(?:stable|stabili|consistent|unchanged|same reading|no change)"],
+        ["repeated readings", "(?:few days|several days|repeated|successive|consecutive|multiple readings)"]
+      ]
+    }
+  ]
+}
