@@ -48,6 +48,6 @@ Data or lesson changes require a new dataset output directory; supply that direc
   --prompt "Explain the recipe and brewing steps for Alt Ale Altbier."
 ```
 
-Omit `--prompt` for terminal chat, or add `--base` to compare the unmodified model. Questions are independent; the existing CLI does not retain conversation history. To test interpretation of another recipe, put its facts into your prompt explicitly. The adapter cannot reliably know a private or unseen recipe from its name alone.
+Omit `--prompt` for terminal chat, or add `--base` to compare the unmodified model. Terminal chat retains the conversation in memory until you exit, so you can ask follow-ups. It removes the oldest complete turns if needed to fit the context window and tells you when it does so. It does not save chat history to disk. To test interpretation of another recipe, put its facts into your prompt explicitly. The adapter cannot reliably know a private or unseen recipe from its name alone.
 
 The local benchmark reports contain full answers, references, per-check matches, conditional answer loss/perplexity, response times, repetition and token-limit flags. Read the answers alongside the scores. The [metric guide](METRICS.md) explains the names and limitations.

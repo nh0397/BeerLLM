@@ -57,7 +57,7 @@ That uses model weights only. Named recipe recall may be inaccurate. To explicit
 .venv/bin/python -m beerllm.chat --recipe-id 1 --prompt "Explain this recipe and its brewing procedure."
 ```
 
-Use `--base` to compare the original model. Omit `--prompt` for an interactive terminal. Each question is independent; chat history is not retained.
+Use `--base` to compare the original model. Omit `--prompt` for an interactive terminal with in-memory conversation history. Oldest complete turns are removed when the context window fills; history is not saved after exit.
 
 ## Individual commands
 

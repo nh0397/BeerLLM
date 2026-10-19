@@ -4,6 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from beerllm.benchmark import compare,pattern_checks,repetition,summarize
+from beerllm.chat import fit_history
 from beerllm.common import write_json
 from beerllm.instruction_dataset import guide,lesson_rows
 
@@ -17,6 +18,23 @@ def recipe():
 
 
 class InstructionExperimentTests(unittest.TestCase):
+    def test_chat_retains_recent_complete_turns(self):
+        class Tokenizer:
+            def apply_chat_template(self,messages,**kwargs):
+                return '|'.join(m['content'] for m in messages)
+            def __call__(self,value,**kwargs): return {'input_ids':list(value)}
+        messages=[{'role':'system','content':'sys'},
+                  {'role':'user','content':'old question'},
+                  {'role':'assistant','content':'old answer'},
+                  {'role':'user','content':'new question'}]
+        fitted=fit_history(messages,Tokenizer(),30,10)
+        self.assertEqual([m['role'] for m in fitted],['system','user'])
+        self.assertEqual(fitted[-1]['content'],'new question')
+        self.assertEqual(len(messages),4)
+        self.assertEqual(fit_history(messages,Tokenizer(),100,10),messages)
+        with self.assertRaisesRegex(ValueError,'shorten the question'):
+            fit_history(messages,Tokenizer(),10,10)
+
     def test_authored_guides_preserve_source_ingredients_and_mark_general_guidance(self):
         r=recipe()
         answer=guide(r,['Mash as specified.'],'No sugar dose is specified.')
