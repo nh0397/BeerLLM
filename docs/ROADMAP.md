@@ -56,3 +56,5 @@ Do not replace the old experiment or start a long training job until the new can
 The multi-source collection is now capped and stopped. The [curation guide](CURATION.md) and [audit report](../reports/curation-v1.md) describe the next-stage commands, exact counts and remaining teaching-data work.
 
 The [instructional run report](../reports/instruction-run.md) records actual training and before/after results. The [experiment guide](EXPERIMENT.md) has reproducible commands and the [metric guide](METRICS.md) explains what the scores can and cannot establish.
+
+The [training-fit diagnostic](../reports/training-fit-check.md) demonstrates exact fitting on two short training answers but failure on rewordings. Before the next full experiment, expand task/wording coverage, benchmark a stronger base locally and use new held-out families for final evaluation. The small memorization checkpoint is not promoted as a brewing assistant.

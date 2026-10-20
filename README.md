@@ -4,6 +4,8 @@ A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Run
 
 **Latest run:** the instructional adapter is trained and available for local testing, but it **failed the brewing-teacher quality checks**. Reference perplexity fell slightly while answers still invented quantities and repeated steps. See the [measured before/after report](reports/instruction-run.md). The earlier API-data experiment and its [first-run report](reports/first-run.md) are preserved.
 
+**Diagnosis:** a focused fitting check can learn two exact training answers, but fails fixed rewordings of those facts. The [diagnostic report and next-run plan](reports/training-fit-check.md) explain why fitting checks, broader teaching tasks and a stronger validated baseline come before another full run. The diagnostic adapter does not replace the default model.
+
 ## Multi-source recipe collection
 
 Collect AHA and Brewer's Friend public pages alongside the BrewDog API snapshot, with resumable downloads and conservative exact deduplication. See the [collection guide](docs/COLLECTION.md) for full-queue commands, progress checks and stopping/resuming. Full collection runs for days; it is separate from fine-tuning.
