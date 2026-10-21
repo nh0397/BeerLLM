@@ -51,6 +51,8 @@ At step 570, all three factual probes pass on full-answer inspection. The exact 
 
 Validation loss is 0.157951 across four recipe references, down from 0.188804 at epoch one. Neither this loss nor the three probes establish complete recipe quality. The final pass continues with the same frozen configuration.
 
+Improvement is not monotonic. At checkpoint 665, the reworded volume answer regresses to unrelated hop quantities and boil timers, while the other two probes pass. At checkpoint 760, all three pass again. The final full development set, rather than a cherry-picked early checkpoint, will determine the broader result.
+
 **Status:** two of three epochs complete; final pass running; after/final evaluation pending. No full adapter has been promoted.
 
 ## Reproduction

@@ -65,7 +65,7 @@ The no-argument chat default remains the older failed instructional adapter at `
 
 Named recipe recall and source interpretation both require checking the generated answer against the recipe.
 
-## Individual commands
+## Individual commands for the first API experiment
 
 ```bash
 # Download the whole PunkAPI catalog, or add --limit 10 for a sample.
@@ -101,7 +101,7 @@ Use a new output directory for a new experiment. The trainer refuses to overwrit
 2. Rejects missing mash/fermentation fields, invalid ingredient quantities, and selected advanced processes needing specialist review.
 3. Builds full ingredient-and-procedure guides. Recipe facts and general brewing guidance are identified separately. Missing exact boil, dry-hop, conditioning and packaging details remain explicit.
 4. Groups matching names/ingredient sets before splitting. Training includes both named-recipe requests and recipe-in-context requests. Held-out evaluation supplies the recipe context; it does not pretend to test recall of unseen recipes.
-5. Trains `HuggingFaceTB/SmolLM2-360M-Instruct` with LoRA on query/value projections. Only assistant tokens contribute to loss. Overlength examples are counted and skipped, never silently truncated.
+5. Trains LoRA adapters with configurable pinned models and attention/feed-forward targets. The original runner uses SmolLM2-360M; the refined config selects Qwen2.5-1.5B. Only assistant tokens contribute to loss. Overlength examples are counted and skipped, never silently truncated.
 6. Saves an adapter, resumable optimizer checkpoints, logs, and base-versus-adapter answers with small automated evaluation proxies.
 
 ## Outputs
