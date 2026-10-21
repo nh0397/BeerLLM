@@ -143,6 +143,11 @@ def main():
     result=trainer.train(resume_from_checkpoint=checkpoint)
     trainer.save_model(str(output/'adapter'))
     tokenizer.save_pretrained(output/'adapter')
+    systems={r['messages'][0]['content'] for r in rows if r['messages'][0]['role']=='system'}
+    if len(systems)==1 and all(r['messages'][0]['role']=='system' for r in rows):
+        write_json(output/'adapter/beerllm.json',{'format_version':1,'system_prompt':next(iter(systems)),
+                   'model_id':config['model_id'],'model_revision':revision,
+                   'train_sha256':signature['train_sha256']})
     trainer.save_state()
     metrics=result.metrics | {'wall_seconds':time.monotonic()-started,'train_examples':len(train),
                               'skipped_overlength':train.skipped,

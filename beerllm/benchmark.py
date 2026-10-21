@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 import time
 import unicodedata
-from .common import ROOT, MODEL_ID, MODEL_REVISION, generate, load_model, model_revision, read_jsonl, write_json, write_jsonl
+from .common import ROOT, MODEL_ID, MODEL_REVISION, GREEDY_DEFAULTS, generate, load_model, model_revision, read_jsonl, write_json, write_jsonl
 from .curate import SYSTEM
 from .instruction_dataset import guide, source_notes
 from .train import encode_example
@@ -107,7 +107,7 @@ def summarize(results):
 
 def run(suite,mode,adapter,output,model_id=MODEL_ID,revision=None):
     signature={'suite_sha256':sha(suite),'mode':mode,'model_id':model_id,'model_revision':model_revision(model_id,revision),
-               'evaluator_sha256':sha(Path(__file__)),'decoding':'greedy',
+               'evaluator_sha256':sha(Path(__file__)),'decoding':dict(GREEDY_DEFAULTS),
                'loader_sha256':sha(Path(__file__).with_name('common.py')),
                'adapter_sha256':sha(adapter/'adapter_model.safetensors') if mode=='adapter' else None,
                'adapter_config_sha256':sha(adapter/'adapter_config.json') if mode=='adapter' else None}

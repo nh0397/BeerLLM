@@ -8,6 +8,16 @@ from .dataset import compact_recipe
 from .instruction_dataset import source_notes
 
 
+def adapter_system_prompt(adapter):
+    path=adapter/'beerllm.json'
+    if not path.exists(): return SYSTEM
+    metadata=json.loads(path.read_text())
+    prompt=metadata.get('system_prompt')
+    if metadata.get('format_version')!=1 or not isinstance(prompt,str) or not prompt.strip():
+        raise ValueError('Invalid adapter system-prompt metadata')
+    return prompt
+
+
 def curated_context(path,title):
     matches=[r for r in read_jsonl(path) if r['title'].casefold()==title.casefold()]
     if len(matches)!=1: raise ValueError(f'Expected one exact recipe title; found {len(matches)}')
@@ -43,10 +53,13 @@ def main():
     if args.max_new_tokens<1: parser.error('--max-new-tokens must be positive')
     if args.context_limit<=args.max_new_tokens: parser.error('--context-limit must exceed --max-new-tokens')
     model_id=args.model_id
+    system_prompt=SYSTEM
     if not args.base:
         if not args.adapter.exists(): parser.error('Adapter not found. Train first or use --base.')
         from peft import PeftConfig
         model_id=PeftConfig.from_pretrained(str(args.adapter)).base_model_name_or_path
+        try: system_prompt=adapter_system_prompt(args.adapter)
+        except ValueError as error: parser.error(str(error))
     context=''
     if args.recipe_id is not None:
         recipes=json.loads((ROOT/'data/punkapi/raw.json').read_text())
@@ -61,7 +74,7 @@ def main():
         print(f"Using source notes for {recipe['title']}: {recipe['source_url']}")
     model,tokenizer=load_model(model_id,None if args.base else str(args.adapter))
     print('Experimental model: verify quantities and procedure against the source before brewing.')
-    messages=[{'role':'system','content':SYSTEM}]
+    messages=[{'role':'system','content':system_prompt}]
     while True:
         try:
             prompt=args.prompt or input('\nYou (exit to stop): ').strip()

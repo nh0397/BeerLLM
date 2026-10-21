@@ -1,6 +1,6 @@
 # Instructional run v2
 
-Started October 21, 2026 (America/Los_Angeles). This report will record the completed local run; training and the base evaluation are complete. The after-evaluation and next fitting diagnostic are in progress.
+Started October 21, 2026 (America/Los_Angeles). This report will record the completed local run; the 138-conversation trial and its before/after evaluation are complete. It failed the factual quality gate. A revised curriculum is undergoing a small fitting check before another full experiment.
 
 ## Frozen plan
 
@@ -20,21 +20,31 @@ Before/after results compare the same pinned model, prompts, references and gree
 
 All eight base development answers fail the strict [factual review criteria](../configs/instruction-v2-rubric.json) on assistant inspection. This is a small convenience sample, not a population accuracy estimate or independent brewer review. The base invents the named recipes and the unavailable private recipe. Even with Ardley Brown Ale supplied, it omits hop doses, invents water amounts and turns the source's batch priming-sugar dose into a per-gallon dose. A lexical match on the sugar number would miss that error.
 
-| Development task | Base reference perplexity |
-|---|---:|
-| New wordings of seen recipe facts (four cases) | 9.428 |
-| Complete seen-recipe guide | 7.990 |
-| Supplied validation recipe | 2.184 |
-| Unavailable private recipe | 18.792 |
-| Completion check | 75.526 |
+| Development task | Base reference perplexity | Adapted reference perplexity |
+|---|---:|---:|
+| New wordings of seen recipe facts (four cases) | 9.428 | 1.494 |
+| Complete seen-recipe guide | 7.990 | 3.883 |
+| Supplied validation recipe | 2.184 | 1.160 |
+| Unavailable private recipe | 18.792 | 10.692 |
+| Completion check | 75.526 | 14.091 |
 
-Six of eight answers reach their token limits. Base generation takes about 16 minutes for the eight cases, including reference-loss calculations and loading; peak process RSS is 9.14 GiB. Raw results are in `outputs/instruction-v2/development-before.json`.
+Six of eight base answers reach their token limits; none of the adapted answers do. Both versions still fail all eight strict case reviews. The adapted model copies Ardley ingredients but corrupts its brewing procedure and packaging doses. Its much lower reference perplexity does not establish reliable generation. Base generation takes about 16 minutes for the eight cases, including reference-loss calculations and loading; peak process RSS is 9.14 GiB. Raw results are in `outputs/instruction-v2/development-before.json`.
 
 At all six checkpoints (46, 92, 138, 184, 230 and 276), the exact-volume question and both new-wording probes still fail their requested factual relationships. Responses have become shorter, but incorrect quantities and temperatures remain. Those checkpoints are not promoted. Full probe answers and assistant inspection notes are preserved locally. Validation loss is 0.155856 at epoch one and 0.097959 at epoch two across four supplied-recipe examples. These are teacher-forced losses, not generated-answer correctness scores. The completed 276-step run took 4,068.1 seconds (67.8 minutes), with mean training loss 1.235754 and peak process RSS 18.24 GiB. No training examples were skipped.
+
+## Decoder diagnostic
+
+Qwen's pinned generation preset includes `repetition_penalty=1.1`. The first matched before/after pair inherited that same value. [Transformers documents that this penalty includes prompt tokens](https://github.com/huggingface/transformers/blob/v4.46.3/src/transformers/generation/logits_process.py#L308), which is undesirable when exact recipe facts need copying. A controlled diagnostic disables the penalty on the same trained adapter: all four reworded recall cases still fail. In a supplied Helicious extraction, disabling it recovers the two correct temperatures but omits durations. This setting was not the sole cause of failure.
+
+Future generation explicitly records neutral greedy settings, including repetition penalty 1.0. Old paired outputs are preserved. A new paired baseline is required for a revised prompt/decoder; comparisons will not attribute a decoding change to training.
 
 ## Next fitting gate
 
 The broad attention-adapter run has not learned the checked factual answers. Before choosing another full training run, use `configs/qwen-fit-check.json` on two existing training follow-ups. This diagnostic includes feed-forward projections (`gate_proj`, `up_proj`, `down_proj`) as well as attention, a higher learning rate, no dropout and many passes over two examples. These changes occur together, so success would not isolate one cause. Its repeated-training validation is deliberately not a generalization score, and the tiny adapter will not replace the chat default.
+
+The wider two-answer fitting run completed in 469.5 seconds (7.8 minutes), with 18,464,768 trainable parameters and 8.87 GiB peak process RSS. It answers both exact training questions correctly but fails both fixed rewordings. Its post-training reference loss on the two exact prompts is about 0.000029. This is memorization, not a generalization result, and the tiny adapter is not promoted. Multiple training settings changed together, so this does not isolate the effect of feed-forward adaptation.
+
+A frozen refinement now has 197 conversations from the same eleven recipes. It uses direct answer variants, source-specific factual Q&A, clearer scope instructions and additional uncertainty/completion examples. The new system prompt is stored with future adapters so chat can use the training prompt. A twelve-example variant of the two-fact fitting check is running before the next full configuration is selected. All 58 tests pass.
 
 The reserved final recipe families have not been evaluated. They remain available for the selected full experiment after development choices finish.
 

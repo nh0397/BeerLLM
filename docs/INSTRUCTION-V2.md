@@ -18,6 +18,8 @@ The builder makes a separate frozen `data/instruction_v2/` release. The old data
 
 The old nine-question benchmark has informed previous decisions and is not used as a fresh final test.
 
+The recorded original before/after pair used the inherited Qwen repetition penalty of 1.1. Current code explicitly uses 1.0 and records all greedy settings. Preserve the original results and choose unused output paths for a new comparison; [commit 70f3a9a](https://github.com/nh0397/BeerLLM/tree/70f3a9a) preserves the earlier generation code. See [the refinement experiment](REFINEMENT.md) for the new prompt/curriculum.
+
 ## Commands
 
 ```bash
