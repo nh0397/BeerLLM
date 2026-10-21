@@ -1,11 +1,15 @@
 import hashlib
+import contextlib
+import io
 import tempfile
 from pathlib import Path
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 from beerllm.common import MODEL_ID, MODEL_REVISION, model_revision
 from beerllm.common import write_jsonl
 from beerllm.chat import curated_context
+from beerllm.chat import main as chat_main
 from beerllm.instruction_v2 import ensure_disjoint, expanded_rows, verify_source
 from beerllm.train import encode_example
 from test_training import TinyTokenizer
@@ -13,6 +17,24 @@ from test_instruction_experiment import recipe
 
 
 class InstructionV2Tests(unittest.TestCase):
+    def test_source_chat_keeps_prior_turns_without_duplicating_notes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);write_jsonl(root/'data/curated_v1/recipes.jsonl',[recipe()])
+            calls=[]
+            def answer(model,tokenizer,messages,max_new_tokens):
+                calls.append(messages)
+                return 'A plain explanation.'
+            with patch('beerllm.chat.ROOT',root), patch('sys.argv',['chat','--base','--recipe-title','Example Ale','--max-new-tokens','20','--context-limit','3000']), \
+                 patch('beerllm.chat.load_model',return_value=(SimpleNamespace(config=SimpleNamespace(max_position_embeddings=3000)),TinyTokenizer())), \
+                 patch('beerllm.chat.generate',side_effect=answer), patch('builtins.input',side_effect=['Explain the mash.','Why that temperature?','exit']), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                chat_main()
+            self.assertEqual(len(calls),2)
+            self.assertEqual([m['role'] for m in calls[1]],['system','user','assistant','user'])
+            self.assertEqual(calls[1][1]['content'],'Explain the mash.')
+            self.assertEqual(sum(m['content'].count('Source recipe notes:') for m in calls[1]),1)
+            self.assertIn('Why that temperature?',calls[1][-1]['content'])
+
     def test_explicit_source_selection_preserves_notes_and_rejects_unreviewed_records(self):
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'recipes.jsonl';r=recipe()

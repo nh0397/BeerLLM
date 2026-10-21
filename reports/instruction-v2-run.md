@@ -30,7 +30,7 @@ All eight base development answers fail the strict [factual review criteria](../
 
 Six of eight answers reach their token limits. Base generation takes about 16 minutes for the eight cases, including reference-loss calculations and loading; peak process RSS is 9.14 GiB. Raw results are in `outputs/instruction-v2/development-before.json`.
 
-At checkpoints 46 and 92, the exact-volume question and both new-wording probes still fail their requested factual relationships. Responses have become shorter, but incorrect quantities and temperatures remain. Those checkpoints are not promoted. Full probe answers and assistant inspection notes are preserved locally.
+At checkpoints 46, 92 and 138, the exact-volume question and both new-wording probes still fail their requested factual relationships. Responses have become shorter, but incorrect quantities and temperatures remain. Those checkpoints are not promoted. Full probe answers and assistant inspection notes are preserved locally. Epoch-one validation loss is 0.155856 across four supplied-recipe examples; this is teacher-forced loss, not a generated-answer correctness score.
 
 ## Reproduction and artifacts
 

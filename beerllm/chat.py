@@ -76,7 +76,9 @@ def main():
             print(str(error));continue
         if len(fitted)<len(proposed): print('Older turns were removed to fit the context window.')
         answer=generate(model,tokenizer,fitted,args.max_new_tokens)
-        messages=fitted+[{'role':'assistant','content':answer}]
+        # Attach the fixed source only to the current generation, rather than
+        # storing another copy in every older user turn.
+        messages=fitted[:-1]+[{'role':'user','content':prompt},{'role':'assistant','content':answer}]
         print('\nBeerLLM: '+answer)
         if args.prompt: break
 
