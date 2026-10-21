@@ -23,7 +23,21 @@ The full model starts from pinned Qwen revision `989aa7980e4cf806f80c7fef2b1adb7
 
 A fresh base evaluation uses the exact revised system prompt and neutral decoder that will be used after training. Existing older-prompt/penalized results are not relabeled as a matched control. After development choices finish, the same selected model/base pair will be evaluated on the two reserved final families with source notes supplied. They have not been evaluated yet.
 
-**Status:** small fitting gate passed; fresh full baseline in progress; full training and final evaluation pending. No full adapter has been promoted.
+## Fresh baseline
+
+One of eight development cases passes the frozen factual rubric on assistant inspection: the unavailable private-recipe request correctly asks for notes. Named recipe recall fails, the supplied Ardley procedure corrupts hop timing/yeast identification, and the completion check invents a universal final-gravity threshold. This is a small convenience sample, not a population accuracy estimate.
+
+| Task | Before reference perplexity |
+|---|---:|
+| Seen facts under new wording (four cases) | 9.742 |
+| Complete seen-recipe guide | 7.816 |
+| Supplied validation recipe | 2.128 |
+| Unavailable private recipe | 14.957 |
+| Completion check | 66.175 |
+
+Two of eight answers hit their output-token limits. Peak base process RSS is 8.86 GiB. Raw answers and the inspection are preserved under `outputs/instruction-v3/`.
+
+**Status:** small fitting gate and baseline complete; full 855-step training in progress; after/final evaluation pending. No full adapter has been promoted.
 
 ## Reproduction
 
