@@ -36,9 +36,10 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \
 # Run one training process only. Six checkpoints and their probe answers are retained.
 HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
   --config configs/qwen-instruction-laptop.json --data-dir data/instruction_v2 \
-  --eval-limit 4 --probe-suite data/instruction_v2/probes.jsonl
+  --eval-limit 4 --probe-suite data/instruction_v2/probes.jsonl > outputs-v2-train.log 2>&1
 
 # Resume only an interrupted run, with identical arguments plus --resume.
+# Append its log with >> instead of replacing it with >.
 # Choose an unused output directory for a new experiment instead.
 
 HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \

@@ -1,6 +1,6 @@
 # Instructional run v2
 
-Started October 21, 2026 (America/Los_Angeles). This report will record the completed local run; training and evaluation are still pending.
+Started October 21, 2026 (America/Los_Angeles). This report will record the completed local run; the base evaluation is complete, while training and after-evaluation are still pending.
 
 ## Frozen plan
 
@@ -15,6 +15,22 @@ The plan uses two epochs, batch size one, no accumulation, learning rate 0.0003,
 Eight frozen development cases include new wordings of seen facts, a complete seen-recipe guide, one supplied validation recipe, uncertainty and a completion check. The new final evaluation reserves Anchor Steam Clone and Holier than Meow Hefeweizen from training and development. It supplies their original recipe notes and measures interpretation, not closed-book recall of unseen facts. Final answers will be generated only after development choices are finished, and will not be used for further tuning in this experiment.
 
 Before/after results compare the same pinned model, prompts, references and greedy decoding. Assistant-token cross-entropy and conditional perplexity are secondary measurements. Separate answer inspection records quantity/stage relationships, omissions, unsupported claims, scope and clarity. Empty lexical-check lists deliberately avoid presenting keyword matches as factual accuracy.
+
+## Baseline and early checkpoints
+
+All eight base development answers fail the strict [factual review criteria](../configs/instruction-v2-rubric.json) on assistant inspection. This is a small convenience sample, not a population accuracy estimate or independent brewer review. The base invents the named recipes and the unavailable private recipe. Even with Ardley Brown Ale supplied, it omits hop doses, invents water amounts and turns the source's batch priming-sugar dose into a per-gallon dose. A lexical match on the sugar number would miss that error.
+
+| Development task | Base reference perplexity |
+|---|---:|
+| New wordings of seen recipe facts (four cases) | 9.428 |
+| Complete seen-recipe guide | 7.990 |
+| Supplied validation recipe | 2.184 |
+| Unavailable private recipe | 18.792 |
+| Completion check | 75.526 |
+
+Six of eight answers reach their token limits. Base generation takes about 16 minutes for the eight cases, including reference-loss calculations and loading; peak process RSS is 9.14 GiB. Raw results are in `outputs/instruction-v2/development-before.json`.
+
+At checkpoints 46 and 92, the exact-volume question and both new-wording probes still fail their requested factual relationships. Responses have become shorter, but incorrect quantities and temperatures remain. Those checkpoints are not promoted. Full probe answers and assistant inspection notes are preserved locally.
 
 ## Reproduction and artifacts
 
