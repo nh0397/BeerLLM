@@ -45,7 +45,13 @@ Full checkpoint answers and inspection notes are preserved under `outputs/qwen-i
 
 At checkpoint 475, both fixed reworded probes preserve the correct quantities, units and stage relationships for the first time. The exact volume prompt recovers the correct numbers but appends the confusing unsupported sentence “It does not boil the kettle.” It therefore still fails full-answer review. These probes cover only two trained facts; broader development and final answers remain untested for this adapter.
 
-**Status:** small fitting gate and baseline complete; second of three epochs in progress; after/final evaluation pending. No full adapter has been promoted.
+## Epoch-two observation
+
+At step 570, all three factual probes pass on full-answer inspection. The exact and reworded volume questions preserve 3 gallons / 11.4 L in the kettle and 5.5 gallons / 21 L after dilution. The Helles rewording preserves primary fermentation at 50°F / 10°C for two to three weeks and later lagering at 40°F / 4°C for three to six weeks after kegging/clarification. The exact answer repeats “in the fermenter” harmlessly; it does not add a conflicting instruction.
+
+Validation loss is 0.157951 across four recipe references, down from 0.188804 at epoch one. Neither this loss nor the three probes establish complete recipe quality. The final pass continues with the same frozen configuration.
+
+**Status:** two of three epochs complete; final pass running; after/final evaluation pending. No full adapter has been promoted.
 
 ## Reproduction
 
