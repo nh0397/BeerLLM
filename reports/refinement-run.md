@@ -1,6 +1,6 @@
 # Refined Qwen LoRA experiment
 
-Training completed on this Intel Mac. The selected Qwen2.5-1.5B adapter passes **5 of 8 development cases, versus 1 of 8 before training**, on assistant inspection of the frozen factual rubric. All four reworded short-fact cases improve from fail to pass. **Both complete recipe guides still fail**, as does the general fermentation-completion check. This is a useful partial learning result, not a reliable brewing teacher.
+Training completed on this Intel Mac. The selected Qwen2.5-1.5B adapter passes **5 of 8 development cases, versus 1 of 8 before training**, on assistant inspection of the frozen factual rubric. All four reworded short-fact cases improve from fail to pass. **Both complete recipe guides still fail**, as does the general fermentation-completion check. The two reserved full-guide cases also score 0/2 before and 0/2 after. This is a useful partial learning result, not a reliable brewing teacher.
 
 ## Matched development comparison
 
@@ -78,9 +78,15 @@ Improvement is not monotonic. These passing short probes cannot establish comple
 
 ## Reserved final families
 
-After selection and the full development review, the same fixed model/base pair is evaluated on Anchor Steam Clone and Holier than Meow Hefeweizen. Their families are excluded from this project's teaching data; both models receive identical actual source notes. This tests interpretation, not recall of never-supplied recipe facts. Public base pretraining exposure is unknown.
+After selection and the full development review, the same fixed model/base pair was evaluated on Anchor Steam Clone and Holier than Meow Hefeweizen. Their families are excluded from this project's teaching data; both models receive identical actual source notes. This tests interpretation, not recall of never-supplied recipe facts. Public base pretraining exposure is unknown.
 
-**Status:** training and matched development comparison complete; reserved final evaluation is running. No adapter is promoted as a reliable brewing assistant.
+Both base and adapter fail both complete guides: **0/2 before and 0/2 after** under the frozen rubric. Across 968 reference answer tokens, cross-entropy falls from 0.741743 to 0.339562 and conditional perplexity from 2.100 to 1.404. Neither model hits the 1,100-token output cap on these cases. Better reference prediction still does not establish correct autonomous instructions.
+
+The adapted Anchor Steam guide invents a 20-minute boil and repeated clarifier additions, omits hop/volume relationships, and falsely denies explicit source settings. The Hefeweizen guide invents a 50°F pre-brew stage, omits the boil/hop/packaging sequence and repeatedly denies the source's explicit 9.5 oz / 270 g priming dose. Copying that number elsewhere in the answer does not repair the contradiction. The tendency to deny present information deserves attention alongside invented information.
+
+Matched signatures, complete answers and the comparison are saved in `outputs/instruction-v3/final-{before,after,comparison}.json`; `answer-review.json` records both case-level decisions. These final families are now consumed evaluation data and must not be called untouched in another tuning cycle.
+
+**Status:** training, matched development evaluation and reserved-family evaluation complete. The adapter is available for local experiments; complete recipe generation remains unreliable. No adapter is promoted as a reliable brewing assistant.
 
 ## Test locally and reproduce
 
@@ -93,6 +99,8 @@ HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat \
 ```
 
 Omit `--prompt` for interactive chat. Add `--recipe-title 'Helicious Helles'` to explicitly supply saved source notes. Add `--base` to compare the selected adapter's starting model and saved system prompt without adapter weights. Source context is not evidence that the weights memorized a recipe. The old no-argument adapter default remains unchanged; select this experiment explicitly.
+
+A scripted two-turn CLI chat with the selected adapter and explicit Helles source notes completed normally. Both replies retain the correct temperature/duration pairs. The first over-answers a primary-only request, and both contain the awkward phrase “not alternative alternatives.” This is an operational smoke test, not a full clarity or brewing-quality pass. Inputs and complete output are saved in `outputs/instruction-v3/chat-source-smoke.txt`.
 
 All 60 unit tests pass, including masking, source/context integrity, held-out-family guards, neutral decoding, varied-fit selection, replay weights, prompt metadata and chat history checks. Compilation and diff checks pass. Generated data, weights, full answers, caches and logs remain local and ignored by Git.
 

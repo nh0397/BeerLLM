@@ -2,6 +2,8 @@
 
 The first Qwen attention-adapter trial failed all eight strict development cases. The wider two-answer check can memorize exact prompts but fails rewordings. This refinement addresses response scope and factual-answer coverage before another full run. The [trial report](../reports/instruction-v2-run.md) preserves those negative results.
 
+The completed refined run improves strict development passes from 1/8 to 5/8, including all four short factual rewordings. Both complete-guide cases still fail. The [refined report](../reports/refinement-run.md) records actual results and limitations; this remains a learning experiment.
+
 `data/instruction_v3/` contains 197 conversations from the same eleven source-checked recipes. Added examples pair specific questions with actual source notes, vary direct factual answers, reinforce unknown-private-recipe handling and completion checks, and vary ingredient requests. The system prompt asks for the requested scope rather than ingredients and a full guide on every turn. These are additional teaching contexts, not independent recipes or expert-reviewed brew sheets.
 
 The four validation families and two final families remain excluded from training. Development/final questions and references are retained, with the new system prompt applied consistently. A fresh base evaluation is necessary because both this prompt and the explicit neutral decoder differ from the original trial. Future adapters save their system prompt in `beerllm.json`, which local chat reads automatically. Older adapters retain their existing fallback prompt.
@@ -88,6 +90,22 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \
 Use unused output locations for a new experiment. Resume an interrupted training process with identical arguments plus `--resume`; append logs with `>>`. Do not launch simultaneous training jobs. Nine checkpoints and generated probes are retained. Inspect the full answers against [the factual rubric](../configs/instruction-v2-rubric.json); lower perplexity, matched numbers or shorter outputs do not pass the quality gate by themselves.
 
 Once development choices are finished, evaluate the same selected `best-adapter/` and model/base pair with `data/instruction_v3/final.jsonl` and separate `final-before.json` / `final-after.json` files. Do not use those answers for more tuning while continuing to call them an untouched final test.
+
+```bash
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \
+  --model-id Qwen/Qwen2.5-1.5B-Instruct --suite data/instruction_v3/final.jsonl \
+  --mode base --output outputs/instruction-v3/final-before.json
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \
+  --model-id Qwen/Qwen2.5-1.5B-Instruct --suite data/instruction_v3/final.jsonl \
+  --mode adapter --adapter outputs/qwen-instruction-v3/best-adapter \
+  --output outputs/instruction-v3/final-after.json
+
+.venv/bin/python -m beerllm.benchmark compare --suite data/instruction_v3/final.jsonl \
+  --before outputs/instruction-v3/final-before.json \
+  --after outputs/instruction-v3/final-after.json \
+  --output outputs/instruction-v3/final-comparison.json
+```
 
 After a full adapter exists, test it explicitly:
 
