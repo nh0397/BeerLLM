@@ -2,7 +2,7 @@
 
 A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Runs on an Intel Mac with 32 GB RAM. The latest experiment uses Qwen2.5-1.5B-Instruct on CPU; the earlier SmolLM2-360M runs are preserved. No cloud account or paid API is needed.
 
-**Latest experiment:** a refined Qwen curriculum is training with 197 distinct conversations from eleven source-checked recipes. Short factual rows receive explicit replay weighting; they are not additional independent examples. See the [refined run report](reports/refinement-run.md) for measured progress and the [reproduction guide](docs/REFINEMENT.md) for commands. Full before/after and reserved-family evaluation are pending.
+**Latest experiment:** a refined Qwen adapter has finished training on 197 distinct conversations from eleven source-checked recipes. Short factual rows receive explicit replay weighting; they are not additional independent examples. See the [refined run report](reports/refinement-run.md) for measured progress and the [reproduction guide](docs/REFINEMENT.md) for commands. The epoch-two checkpoint is selected by lowest validation loss; matched after and reserved-family evaluation are in progress.
 
 **Why the refinement:** the [earlier instructional model](reports/instruction-run.md) and [first Qwen trial](reports/instruction-v2-run.md) failed strict answer review despite lower reference perplexity. A varied two-fact fitting check now passes both exact questions and both fixed rewordings, but that does not establish full brewing competence. Every broad run retains actual generated answers and a separate factual review. References are not expert brewer-reviewed.
 
@@ -51,7 +51,7 @@ tail -f outputs-run.log
 
 ```bash
 HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat \
-  --adapter outputs/qwen-instruction-v3/adapter \
+  --adapter outputs/qwen-instruction-v3/best-adapter \
   --prompt "List Helicious Helles primary fermentation and later cold storage as two stages, with the temperature and duration of each."
 ```
 
@@ -109,7 +109,8 @@ Use a new output directory for a new experiment. The trainer refuses to overwrit
 | Location | Contents |
 |---|---|
 | `data/instruction_v3/` | Refined conversations, frozen development/final suites and provenance |
-| `outputs/qwen-instruction-v3/adapter/` | Refined full-run Qwen adapter, selected explicitly in chat |
+| `outputs/qwen-instruction-v3/best-adapter/` | Selected epoch-two Qwen adapter, used explicitly in chat |
+| `outputs/qwen-instruction-v3/adapter/` | Preserved final epoch-three adapter |
 | `outputs/instruction-v3/` | Matching baseline/adapter answers, metrics and factual inspection |
 | `outputs/qwen-instruction-v3/probes/` | Actual factual answers at each saved training checkpoint |
 | `data/instruction_v1/` | Eight-recipe teaching experiment, frozen benchmark and dataset hashes |

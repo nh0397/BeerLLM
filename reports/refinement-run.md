@@ -51,9 +51,15 @@ At step 570, all three factual probes pass on full-answer inspection. The exact 
 
 Validation loss is 0.157951 across four recipe references, down from 0.188804 at epoch one. Neither this loss nor the three probes establish complete recipe quality. The final pass continues with the same frozen configuration.
 
-Improvement is not monotonic. At checkpoint 665, the reworded volume answer regresses to unrelated hop quantities and boil timers, while the other two probes pass. At checkpoint 760, all three pass again. The final full development set, rather than a cherry-picked early checkpoint, will determine the broader result.
+Improvement is not monotonic. At checkpoint 665, the reworded volume answer regresses to unrelated hop quantities and boil timers, while the other two probes pass. At checkpoint 760, all three pass again. The full development set is still required; these two-fact probes cannot determine the broader result.
 
-**Status:** two of three epochs complete; final pass running; after/final evaluation pending. No full adapter has been promoted.
+## Completed training and checkpoint selection
+
+All 855 steps / three epochs finished in 9,763.4 seconds (2 hours 43 minutes). Mean training loss is 0.525402; peak process RSS is 19.10 GiB. All 285 sampled rows fit without truncation or overlength skips. The final adapter and all nine optimizer checkpoints are preserved.
+
+Epoch validation losses are 0.188804, 0.157951 and 0.233387. Although the final three factual probes all pass, validation prediction worsens in epoch three. Before generating the full development or final answers, checkpoint 570 (epoch two) was selected by lowest epoch-end validation loss. This selection rule is recorded after the completed run, not claimed as a preregistered choice. The selected files are copied to `outputs/qwen-instruction-v3/best-adapter/` with the matching saved system prompt; the final epoch remains at `adapter/`. Local `selection.json` records the source checkpoint, criterion and weight hash.
+
+**Status:** training complete; the selected epoch-two adapter is undergoing the matched after evaluation. Reserved final evaluation remains pending. No adapter has been promoted as a reliable brewing assistant.
 
 ## Reproduction
 
