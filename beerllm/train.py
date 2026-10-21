@@ -3,8 +3,21 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import resource
+import sys
 import time
-from .common import ROOT, MODEL_ID, MODEL_REVISION, load_model, load_tokenizer, read_jsonl, write_json
+from .common import ROOT, MODEL_ID, MODEL_REVISION, generate, load_model, load_tokenizer, model_revision, read_jsonl, write_json
+
+SHORT_FACT_TASKS = ['direct_fact','followup','followup_variant']
+
+
+def replay_short_facts(rows,repeat):
+    """Weight existing short facts without pretending they are independent examples."""
+    if not isinstance(repeat,int) or isinstance(repeat,bool) or repeat<1:
+        raise ValueError('short_fact_repeat must be a positive integer')
+    if any(r.get('split','train')!='train' for r in rows):
+        raise ValueError('Training rows must not contain held-out split labels')
+    return list(rows)+[r for r in rows if r.get('task') in SHORT_FACT_TASKS for _ in range(repeat-1)]
 
 
 def encode_example(tokenizer, example, max_length):
@@ -58,6 +71,7 @@ def main():
     parser.add_argument('--limit',type=int,help='Limit training examples for a smoke test')
     parser.add_argument('--eval-limit',type=int,default=8,help='Validation examples per loss check')
     parser.add_argument('--resume',action='store_true',help='Resume latest checkpoint in the output directory')
+    parser.add_argument('--probe-suite',type=Path,help='Development-only generated answers at each saved checkpoint')
     args=parser.parse_args()
     if args.max_steps == 0 or args.max_steps < -1 or (args.limit is not None and args.limit < 1) or args.eval_limit < 1:
         parser.error('Limits must be positive; max-steps may also be -1 for epochs')
@@ -74,54 +88,93 @@ def main():
         raise ValueError('No checkpoint found to resume')
     train_path=args.data_dir/'train.jsonl'
     validation_path=args.data_dir/'validation.jsonl'
-    signature={'model_revision': MODEL_REVISION if config['model_id']==MODEL_ID else None, 'config':config,'train_sha256':hashlib.sha256(train_path.read_bytes()).hexdigest(),
+    revision=model_revision(config['model_id'],config.get('model_revision'))
+    signature={'model_revision': revision, 'config':config,'train_sha256':hashlib.sha256(train_path.read_bytes()).hexdigest(),
                'validation_sha256':hashlib.sha256(validation_path.read_bytes()).hexdigest(),
                'limit':args.limit,'eval_limit':args.eval_limit,'max_steps':args.max_steps}
+    fact_repeat=config.get('short_fact_repeat',1)
+    if fact_repeat!=1:
+        signature['sampling']={'version':1,'short_fact_repeat':fact_repeat,'tasks':SHORT_FACT_TASKS}
+    if args.probe_suite:
+        signature['probe_suite_sha256']=hashlib.sha256(args.probe_suite.read_bytes()).hexdigest()
     if checkpoint:
         prior=json.loads((output/'run_config.json').read_text())
         if prior != signature:
             raise ValueError('Resume config/data differs from saved run; use the original arguments and dataset')
     if args.check_data:
-        tokenizer=load_tokenizer(config['model_id'])
+        tokenizer=load_tokenizer(config['model_id'],revision)
         report={}
         for name,path in [('train',train_path),('validation',validation_path)]:
-            dataset=RecipeDataset(read_jsonl(path),tokenizer,config['max_length'])
+            rows=read_jsonl(path)
+            if name=='train' and args.limit: rows=rows[:args.limit]
+            unique_count=len(rows)
+            if name=='train': rows=replay_short_facts(rows,fact_repeat)
+            dataset=RecipeDataset(rows,tokenizer,config['max_length'])
             report[name]={'examples_used':len(dataset),'examples_over_context':dataset.skipped,
+                          'source_examples':unique_count,
                           'longest_tokens':max(len(item['input_ids']) for item in dataset.items),
                           'answer_tokens_supervised':sum(sum(t!=-100 for t in item['labels']) for item in dataset.items)}
         print(json.dumps(report,indent=2))
         return
     set_seed(config['seed'])
-    model,tokenizer=load_model(config['model_id'],threads=config['threads'])
+    model,tokenizer=load_model(config['model_id'],threads=config['threads'],revision=revision)
     model.config.use_cache=False
     model=get_peft_model(model,LoraConfig(task_type=TaskType.CAUSAL_LM,r=config['lora_rank'],
                         lora_alpha=config['lora_alpha'],lora_dropout=config['lora_dropout'],
-                        target_modules=['q_proj','v_proj'],bias='none'))
+                        target_modules=config.get('target_modules',['q_proj','v_proj']),bias='none',revision=revision))
     model.print_trainable_parameters()
     rows=read_jsonl(train_path)
     if args.limit: rows=rows[:args.limit]
+    source_train_count=len(rows)
+    rows=replay_short_facts(rows,fact_repeat)
     train=RecipeDataset(rows,tokenizer,config['max_length'])
     validation=RecipeDataset(read_jsonl(validation_path)[:args.eval_limit],tokenizer,config['max_length'])
     write_json(output/'run_config.json',signature)
     write_json(output/'tokenization.json',{'train_used':len(train),'train_skipped_overlength':train.skipped,
+                                          'source_train_examples':source_train_count,'short_fact_repeat':fact_repeat,
                                           'validation_used':len(validation),'validation_skipped_overlength':validation.skipped})
     training_args=TrainingArguments(output_dir=str(output),use_cpu=True,num_train_epochs=config['epochs'],
         max_steps=args.max_steps,per_device_train_batch_size=1,per_device_eval_batch_size=1,
         gradient_accumulation_steps=config['gradient_accumulation_steps'],learning_rate=config['learning_rate'],
         warmup_ratio=0.05,weight_decay=0.01,max_grad_norm=1.0,logging_steps=1,
-        save_steps=config['save_steps'],save_total_limit=2,save_safetensors=True,
+        save_steps=config['save_steps'],save_total_limit=config.get('save_total_limit',2),save_safetensors=True,
         eval_strategy='epoch',report_to=[],seed=config['seed'],data_seed=config['seed'],
         dataloader_num_workers=0,dataloader_pin_memory=False,fp16=False,bf16=False,
         optim='adamw_torch',remove_unused_columns=False)
+    callbacks=[]
+    if args.probe_suite:
+        from transformers import TrainerCallback
+        probes=read_jsonl(args.probe_suite)
+        if any(r.get('category') not in ['training_fit','seen_fact_new_wording','validation_supplied_recipe'] for r in probes):
+            raise ValueError('Periodic probes must use training/development cases, never final tests')
+        class GenerationProbe(TrainerCallback):
+            def on_save(self,args,state,control,model=None,**kwargs):
+                answers=[]
+                started=time.monotonic()
+                for probe in probes:
+                    answers.append({'case_id':probe['case_id'],'category':probe['category'],
+                                    'prompt':probe['messages'][:-1],'reference':probe['messages'][-1]['content'],
+                                    **generate(model,tokenizer,probe['messages'][:-1],probe['max_new_tokens'],True)})
+                model.train()
+                write_json(output/f'probes/step-{state.global_step}.json',
+                           {'step':state.global_step,'examples':answers,'wall_seconds':time.monotonic()-started})
+        callbacks.append(GenerationProbe())
     trainer=Trainer(model=model,args=training_args,train_dataset=train,eval_dataset=validation,
-                    data_collator=Collator(tokenizer.pad_token_id))
+                    data_collator=Collator(tokenizer.pad_token_id),callbacks=callbacks)
     started=time.monotonic()
     result=trainer.train(resume_from_checkpoint=checkpoint)
     trainer.save_model(str(output/'adapter'))
     tokenizer.save_pretrained(output/'adapter')
+    systems={r['messages'][0]['content'] for r in rows if r['messages'][0]['role']=='system'}
+    if len(systems)==1 and all(r['messages'][0]['role']=='system' for r in rows):
+        write_json(output/'adapter/beerllm.json',{'format_version':1,'system_prompt':next(iter(systems)),
+                   'model_id':config['model_id'],'model_revision':revision,
+                   'train_sha256':signature['train_sha256']})
     trainer.save_state()
     metrics=result.metrics | {'wall_seconds':time.monotonic()-started,'train_examples':len(train),
-                              'skipped_overlength':train.skipped}
+                              'source_train_examples':source_train_count,'short_fact_repeat':fact_repeat,
+                              'skipped_overlength':train.skipped,
+                              'peak_process_rss_bytes':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*(1 if sys.platform=='darwin' else 1024)}
     write_json(output/'train_metrics.json',metrics)
     print(json.dumps(metrics,indent=2))
 

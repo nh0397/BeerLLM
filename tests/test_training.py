@@ -1,5 +1,5 @@
 import unittest
-from beerllm.train import encode_example
+from beerllm.train import encode_example,replay_short_facts
 
 
 class TinyTokenizer:
@@ -11,6 +11,20 @@ class TinyTokenizer:
 
 
 class TrainingTests(unittest.TestCase):
+    def test_short_fact_replay_weights_existing_rows_without_mutation_or_heldout_data(self):
+        rows=[{'task':'followup','split':'train','messages':[]},
+              {'task':'named_recipe','split':'train','messages':[]},
+              {'task':'source_fact','split':'train','messages':[]}]
+        replayed=replay_short_facts(rows,2)
+        self.assertEqual(len(rows),3)
+        self.assertEqual(len(replayed),4)
+        self.assertIs(replayed[-1],rows[0])
+        self.assertEqual(replay_short_facts(rows,1),rows)
+        for repeat in [0,-1,True,1.5]:
+            with self.assertRaises(ValueError): replay_short_facts(rows,repeat)
+        with self.assertRaisesRegex(ValueError,'held-out'):
+            replay_short_facts([{'task':'followup','split':'test'}],2)
+
     def setUp(self):
         self.row={'messages':[{'role':'user','content':'Question'},{'role':'assistant','content':'Answer'}]}
         self.tok=TinyTokenizer()
