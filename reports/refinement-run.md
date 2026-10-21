@@ -43,7 +43,9 @@ The first 285 optimizer steps are complete. Validation loss is 0.188804 across t
 
 Full checkpoint answers and inspection notes are preserved under `outputs/qwen-instruction-v3/probes/` and `outputs/instruction-v3/probe-review.json`. Training continues with the fixed data, replay weights and three-epoch plan.
 
-**Status:** small fitting gate and baseline complete; epoch one of three complete; after/final evaluation pending. No full adapter has been promoted.
+At checkpoint 475, both fixed reworded probes preserve the correct quantities, units and stage relationships for the first time. The exact volume prompt recovers the correct numbers but appends the confusing unsupported sentence “It does not boil the kettle.” It therefore still fails full-answer review. These probes cover only two trained facts; broader development and final answers remain untested for this adapter.
+
+**Status:** small fitting gate and baseline complete; second of three epochs in progress; after/final evaluation pending. No full adapter has been promoted.
 
 ## Reproduction
 

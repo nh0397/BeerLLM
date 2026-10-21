@@ -1,6 +1,6 @@
 # What the evaluation metrics mean
 
-We compare the same base model before training and with the new LoRA adapter afterward. Prompts, references, tokenizer, maximum answer lengths and greedy decoding stay fixed. Results are separated by task: four seen-recipe recall questions, three held-out supplied-recipe questions, one private-recipe uncertainty question and one general fermentation check. Nine questions are a diagnostic sample, not a representative brewing benchmark.
+We compare the same base model before training and with the new LoRA adapter afterward. Prompts, references, tokenizer, maximum answer lengths and greedy decoding stay fixed within each experiment. The original instructional suite has nine questions. The refined Qwen suite separates eight development questions from two final questions on reserved recipe families. These are small diagnostic samples, not representative brewing benchmarks. Compare before/after within a suite; different models, prompts or reference sets do not form a matched comparison.
 
 ## Cross-entropy loss / negative log-likelihood (NLL)
 
@@ -20,6 +20,8 @@ Each question has small, predefined text checks, such as a particular hop dose, 
 
 These checks are reproducible diagnostics, not factual accuracy. They can miss a valid paraphrase, accept a correct-looking number in the wrong explanation, or fail to detect a negation or an invented extra step. A wrong answer can pass some checks. Read the actual answers and score correctness separately. We deliberately avoid presenting ingredient-name recall or stage-keyword coverage as brewing accuracy.
 
+The Qwen suites deliberately leave lexical checks empty and report their pass rate as null. Full-answer inspection against the frozen factual rubric supplies a separate strict case pass/fail result. An empty set of text checks is not a zero-percent accuracy score.
+
 ## Factual correctness, groundedness and completeness
 
 These require judging the generated answer against its source, not just measuring likelihood:
@@ -33,7 +35,7 @@ These require judging the generated answer against its source, not just measurin
 | Instruction following | Does it answer the question in the requested form? | An ordered brewing guide should not be replaced by raw JSON. |
 | Clarity | Can a beginner understand what to do and why? | Explain that “pitch” means adding yeast. |
 
-For the small run, read every before/after answer and use a 0/1/2 rubric: 0 incorrect or missing, 1 partly correct, 2 correct for the specified criterion. Record the errors, reviewer identity and whether the answer was cut off. An assistant review is not an independent human or expert brewer review. Do not claim a measured hallucination percentage without defining and counting the assessed claims.
+Read every before/after answer and record the errors, reviewer identity and whether the answer was cut off. The original run uses a 0/1/2 rubric: 0 incorrect or missing, 1 partly correct, 2 correct for the specified criterion. The Qwen experiments use the [strict factual rubric](../configs/instruction-v2-rubric.json): a whole case passes only if its requested facts, stage relationships and required procedure are correct, without unsupported recipe parameters. Correct temperatures attached to the wrong stages still fail. An assistant review is not an independent human or expert brewer review. Do not claim a measured hallucination percentage without defining and counting the assessed claims.
 
 ## Operational diagnostics
 
