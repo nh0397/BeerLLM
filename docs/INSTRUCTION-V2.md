@@ -88,3 +88,23 @@ tail -f outputs-v2-train.log
 ```
 
 A changing optimizer-step counter and finite loss show that optimization is progressing. `outputs/qwen-instruction-v2/probes/step-*.json` contains actual generated answers at each save. After completion, `train_metrics.json` records runtime and peak process memory. Those checks show execution health; answer review determines whether the model is useful.
+
+## Fitting gate after the attention-only pilot
+
+The completed attention-adapter run still fails exact factual recall. Check whether a wider adapter can fit two short training answers before selecting another full run. This tiny checkpoint is a diagnostic and is not promoted as a beer assistant.
+
+```bash
+.venv/bin/python -m beerllm.fit_check prepare \
+  --source data/instruction_v2/train.jsonl --output data/qwen_fit_check
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-fit-check.json --data-dir data/qwen_fit_check \
+  --max-steps 80 --eval-limit 2 > outputs-qwen-fit-train.log 2>&1
+
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.fit_check evaluate \
+  --model-id Qwen/Qwen2.5-1.5B-Instruct --data-dir data/qwen_fit_check \
+  --adapter outputs/qwen-fit-check-v1/adapter --include-paraphrases \
+  --output outputs/instruction-v2/qwen-fit-after.json
+```
+
+This checks two exact training prompts and two new wordings of the same facts, not held-out recipe knowledge. The higher learning rate and repeated exposure are part of the fitting setup, not a validated prescription for the full dataset.

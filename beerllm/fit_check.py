@@ -4,7 +4,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
-from .common import ROOT, MODEL_ID, MODEL_REVISION, generate, load_model, read_jsonl, write_json, write_jsonl
+from .common import ROOT, MODEL_ID, MODEL_REVISION, generate, load_model, model_revision, read_jsonl, write_json, write_jsonl
 from .benchmark import loss_stats
 
 QUESTIONS = ['Is Düsseldorf Altbier a three-gallon batch?',
@@ -52,13 +52,13 @@ def evaluation_rows(rows,include_paraphrases):
     return result
 
 
-def evaluate(data_dir,adapter,output,max_new_tokens=180,include_paraphrases=False):
+def evaluate(data_dir,adapter,output,max_new_tokens=180,include_paraphrases=False,model_id=MODEL_ID,revision=None):
     if output.exists(): raise ValueError('Preserve the existing diagnostic; choose a new output file')
     rows=evaluation_rows(read_jsonl(data_dir/'train.jsonl'),include_paraphrases)
-    model,tokenizer=load_model(MODEL_ID,str(adapter) if adapter else None)
+    model,tokenizer=load_model(model_id,str(adapter) if adapter else None,revision=revision)
     results=[]
     report={'status':'in_progress','scope':'training-fit only; not held-out evaluation',
-            'model_id':MODEL_ID,'model_revision':MODEL_REVISION,'adapter':str(adapter) if adapter else None,
+            'model_id':model_id,'model_revision':model_revision(model_id,revision),'adapter':str(adapter) if adapter else None,
             'data_sha256':hashlib.sha256((data_dir/'train.jsonl').read_bytes()).hexdigest(),
             'max_new_tokens':max_new_tokens,'decoding':'greedy','examples':results}
     for row in rows:
@@ -83,9 +83,11 @@ def main():
     check.add_argument('--adapter',type=Path,help='Omit to evaluate the original base model')
     check.add_argument('--output',type=Path,required=True)
     check.add_argument('--include-paraphrases',action='store_true',help='Also ask two fixed rewordings of the same training facts; these are not held-out recipe tests')
+    check.add_argument('--model-id',default=MODEL_ID)
+    check.add_argument('--revision',help='Immutable commit; registered models use their pinned revision')
     args=parser.parse_args()
     if args.command=='prepare': print(json.dumps(prepare(args.source,args.output),indent=2))
-    else: evaluate(args.data_dir,args.adapter,args.output,include_paraphrases=args.include_paraphrases)
+    else: evaluate(args.data_dir,args.adapter,args.output,include_paraphrases=args.include_paraphrases,model_id=args.model_id,revision=args.revision)
 
 
 if __name__=='__main__': main()

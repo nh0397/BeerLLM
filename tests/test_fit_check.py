@@ -1,9 +1,12 @@
 import copy
+import contextlib
+import io
 from pathlib import Path
 import tempfile
 import unittest
-from beerllm.common import write_jsonl
-from beerllm.fit_check import PARAPHRASES,QUESTIONS,evaluation_rows,prepare,select_examples
+from unittest.mock import patch
+from beerllm.common import model_revision,write_jsonl
+from beerllm.fit_check import PARAPHRASES,QUESTIONS,evaluate,evaluation_rows,prepare,select_examples
 
 
 def rows():
@@ -12,6 +15,19 @@ def rows():
 
 
 class FitCheckTests(unittest.TestCase):
+    def test_evaluation_uses_the_requested_pinned_model(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);write_jsonl(root/'train.jsonl',rows())
+            model_id='Qwen/Qwen2.5-1.5B-Instruct'
+            with patch('beerllm.fit_check.load_model',return_value=(object(),object())) as loader, \
+                 patch('beerllm.fit_check.generate',return_value={'text':'Answer','generated_tokens':1,'hit_token_limit':False}), \
+                 patch('beerllm.fit_check.loss_stats',return_value={'answer_nll':1,'answer_tokens':1,'total_answer_nll':1}), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                report=evaluate(root,None,root/'result.json',include_paraphrases=True,model_id=model_id)
+            loader.assert_called_once_with(model_id,None,revision=None)
+            self.assertEqual(report['model_revision'],model_revision(model_id))
+            self.assertEqual(len(report['examples']),4)
+
     def test_rewordings_preserve_answers_and_do_not_change_training_examples(self):
         examples=rows();original=copy.deepcopy(examples)
         variants=evaluation_rows(examples,True)

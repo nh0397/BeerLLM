@@ -1,6 +1,6 @@
 # Instructional run v2
 
-Started October 21, 2026 (America/Los_Angeles). This report will record the completed local run; the base evaluation is complete, while training and after-evaluation are still pending.
+Started October 21, 2026 (America/Los_Angeles). This report will record the completed local run; training and the base evaluation are complete. The after-evaluation and next fitting diagnostic are in progress.
 
 ## Frozen plan
 
@@ -30,7 +30,13 @@ All eight base development answers fail the strict [factual review criteria](../
 
 Six of eight answers reach their token limits. Base generation takes about 16 minutes for the eight cases, including reference-loss calculations and loading; peak process RSS is 9.14 GiB. Raw results are in `outputs/instruction-v2/development-before.json`.
 
-At checkpoints 46, 92 and 138, the exact-volume question and both new-wording probes still fail their requested factual relationships. Responses have become shorter, but incorrect quantities and temperatures remain. Those checkpoints are not promoted. Full probe answers and assistant inspection notes are preserved locally. Epoch-one validation loss is 0.155856 across four supplied-recipe examples; this is teacher-forced loss, not a generated-answer correctness score.
+At all six checkpoints (46, 92, 138, 184, 230 and 276), the exact-volume question and both new-wording probes still fail their requested factual relationships. Responses have become shorter, but incorrect quantities and temperatures remain. Those checkpoints are not promoted. Full probe answers and assistant inspection notes are preserved locally. Validation loss is 0.155856 at epoch one and 0.097959 at epoch two across four supplied-recipe examples. These are teacher-forced losses, not generated-answer correctness scores. The completed 276-step run took 4,068.1 seconds (67.8 minutes), with mean training loss 1.235754 and peak process RSS 18.24 GiB. No training examples were skipped.
+
+## Next fitting gate
+
+The broad attention-adapter run has not learned the checked factual answers. Before choosing another full training run, use `configs/qwen-fit-check.json` on two existing training follow-ups. This diagnostic includes feed-forward projections (`gate_proj`, `up_proj`, `down_proj`) as well as attention, a higher learning rate, no dropout and many passes over two examples. These changes occur together, so success would not isolate one cause. Its repeated-training validation is deliberately not a generalization score, and the tiny adapter will not replace the chat default.
+
+The reserved final recipe families have not been evaluated. They remain available for the selected full experiment after development choices finish.
 
 ## Reproduction and artifacts
 
