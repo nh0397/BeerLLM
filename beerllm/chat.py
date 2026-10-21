@@ -2,9 +2,19 @@
 import argparse
 import json
 from pathlib import Path
-from .common import MODEL_ID, ROOT, generate, load_model
+from .common import MODEL_ID, ROOT, generate, load_model, read_jsonl
 from .curate import SYSTEM
 from .dataset import compact_recipe
+from .instruction_dataset import source_notes
+
+
+def curated_context(path,title):
+    matches=[r for r in read_jsonl(path) if r['title'].casefold()==title.casefold()]
+    if len(matches)!=1: raise ValueError(f'Expected one exact recipe title; found {len(matches)}')
+    recipe=matches[0]
+    if recipe['audit']['tier']!='instruction_candidate':
+        raise ValueError('This recipe needs source review before use as a brewing guide')
+    return recipe, '\n\nSource recipe notes:\n'+source_notes(recipe)
 
 
 def fit_history(messages,tokenizer,context_limit,max_new_tokens):
@@ -23,11 +33,15 @@ def main():
     parser.add_argument('--adapter',type=Path,default=ROOT/'outputs/instruction-lora-v1/adapter')
     parser.add_argument('--base',action='store_true',help='Use the original model without the adapter')
     parser.add_argument('--model-id',default=MODEL_ID,help='Starting model for --base; adapters identify their own base')
-    parser.add_argument('--recipe-id',type=int,help='Explicitly include this local recipe as context')
+    context_group=parser.add_mutually_exclusive_group()
+    context_group.add_argument('--recipe-id',type=int,help='Explicitly include this local PunkAPI recipe as context')
+    context_group.add_argument('--recipe-title',help='Explicitly include an exact title from the curated instruction candidates')
     parser.add_argument('--prompt',help='Ask once; otherwise start a terminal chat')
     parser.add_argument('--max-new-tokens',type=int,default=800)
+    parser.add_argument('--context-limit',type=int,default=2048,help='Practical laptop context budget, including the answer')
     args=parser.parse_args()
     if args.max_new_tokens<1: parser.error('--max-new-tokens must be positive')
+    if args.context_limit<=args.max_new_tokens: parser.error('--context-limit must exceed --max-new-tokens')
     model_id=args.model_id
     if not args.base:
         if not args.adapter.exists(): parser.error('Adapter not found. Train first or use --base.')
@@ -40,6 +54,11 @@ def main():
         if recipe is None: parser.error('Recipe ID not found in the downloaded catalog')
         context='\nRecipe record:\n'+json.dumps(compact_recipe(recipe),ensure_ascii=False,separators=(',',':'))
         print(f"Using source recipe {recipe['id']}: {recipe['name']}")
+    if args.recipe_title:
+        try:
+            recipe,context=curated_context(ROOT/'data/curated_v1/recipes.jsonl',args.recipe_title)
+        except (ValueError,FileNotFoundError) as error: parser.error(str(error))
+        print(f"Using source notes for {recipe['title']}: {recipe['source_url']}")
     model,tokenizer=load_model(model_id,None if args.base else str(args.adapter))
     print('Experimental model: verify quantities and procedure against the source before brewing.')
     messages=[{'role':'system','content':SYSTEM}]
@@ -51,7 +70,7 @@ def main():
         if not prompt: continue
         proposed=messages+[{'role':'user','content':prompt+context}]
         try:
-            fitted=fit_history(proposed,tokenizer,model.config.max_position_embeddings,args.max_new_tokens)
+            fitted=fit_history(proposed,tokenizer,min(model.config.max_position_embeddings,args.context_limit),args.max_new_tokens)
         except ValueError as error:
             if args.prompt: parser.error(str(error))
             print(str(error));continue

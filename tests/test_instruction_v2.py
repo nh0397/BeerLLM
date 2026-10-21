@@ -4,6 +4,8 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 from beerllm.common import MODEL_ID, MODEL_REVISION, model_revision
+from beerllm.common import write_jsonl
+from beerllm.chat import curated_context
 from beerllm.instruction_v2 import ensure_disjoint, expanded_rows, verify_source
 from beerllm.train import encode_example
 from test_training import TinyTokenizer
@@ -11,6 +13,19 @@ from test_instruction_experiment import recipe
 
 
 class InstructionV2Tests(unittest.TestCase):
+    def test_explicit_source_selection_preserves_notes_and_rejects_unreviewed_records(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'recipes.jsonl';r=recipe()
+            write_jsonl(path,[r])
+            selected,context=curated_context(path,'example ale')
+            self.assertEqual(selected['recipe_id'],r['recipe_id'])
+            self.assertIn('Mash at 65°C for 60 minutes.',context)
+            self.assertIn('2 oz Cascade (60 min)',context)
+            r['audit']['tier']='quarantine_conflict';write_jsonl(path,[r])
+            with self.assertRaisesRegex(ValueError,'source review'): curated_context(path,'Example Ale')
+            r['audit']['tier']='instruction_candidate';write_jsonl(path,[r,r])
+            with self.assertRaisesRegex(ValueError,'found 2'): curated_context(path,'Example Ale')
+
     def test_pins_models_and_rejects_mutable_or_missing_revision(self):
         self.assertEqual(model_revision(MODEL_ID), MODEL_REVISION)
         self.assertEqual(model_revision('another/model','a'*40),'a'*40)

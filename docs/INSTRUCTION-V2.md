@@ -4,6 +4,8 @@ This is a local CPU LoRA experiment on the Intel Mac with 32 GB RAM. It uses the
 
 The first capability probe fits in memory but still invents source parameters and private-recipe details. Model size alone has not fixed the assistant.
 
+The current laptop already has the pinned model cached. On a new machine, leave `HF_HUB_OFFLINE` unset for the first model command so the loader can download its weights.
+
 ## Dataset
 
 The builder makes a separate frozen `data/instruction_v2/` release. The old data and adapters remain intact.
@@ -68,6 +70,16 @@ HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat \
 ```
 
 The default adapter is not changed merely because this training finishes. A model must pass generated-answer review before promotion. Evaluate ingredient/quantity/stage relationships, omissions, unsupported claims, understandable explanations and scope. Perplexity is compared within the same pinned model, prompts and reference tokens; raw perplexity across different tokenizers is not a model ranking. Token-limit hits and process memory/runtime are operational measurements, not brewing accuracy.
+
+To test explanation with actual AHA source notes supplied explicitly:
+
+```bash
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat \
+  --adapter outputs/qwen-instruction-v2/adapter --recipe-title 'Helicious Helles' \
+  --prompt 'Explain only the fermentation and later lagering stages, including their temperatures and durations.'
+```
+
+The title selects a saved instruction candidate exactly and prints its source URL. Omit `--recipe-title` to test recall from weights. Chat defaults to a practical 2,048-token context budget on this laptop, removing whole older turns as needed; `--context-limit` can explicitly change that budget within the model's native window.
 
 For a live progress check in another terminal:
 
