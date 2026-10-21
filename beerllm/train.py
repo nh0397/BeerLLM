@@ -3,6 +3,8 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import resource
+import sys
 import time
 from .common import ROOT, MODEL_ID, MODEL_REVISION, generate, load_model, load_tokenizer, model_revision, read_jsonl, write_json
 
@@ -143,7 +145,8 @@ def main():
     tokenizer.save_pretrained(output/'adapter')
     trainer.save_state()
     metrics=result.metrics | {'wall_seconds':time.monotonic()-started,'train_examples':len(train),
-                              'skipped_overlength':train.skipped}
+                              'skipped_overlength':train.skipped,
+                              'peak_process_rss_bytes':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*(1 if sys.platform=='darwin' else 1024)}
     write_json(output/'train_metrics.json',metrics)
     print(json.dumps(metrics,indent=2))
 

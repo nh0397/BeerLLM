@@ -67,3 +67,11 @@ HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat \
 ```
 
 The default adapter is not changed merely because this training finishes. A model must pass generated-answer review before promotion. Evaluate ingredient/quantity/stage relationships, omissions, unsupported claims, understandable explanations and scope. Perplexity is compared within the same pinned model, prompts and reference tokens; raw perplexity across different tokenizers is not a model ranking. Token-limit hits and process memory/runtime are operational measurements, not brewing accuracy.
+
+For a live progress check in another terminal:
+
+```bash
+tail -f outputs-v2-train.log
+```
+
+A changing optimizer-step counter and finite loss show that optimization is progressing. `outputs/qwen-instruction-v2/probes/step-*.json` contains actual generated answers at each save. After completion, `train_metrics.json` records runtime and peak process memory. Those checks show execution health; answer review determines whether the model is useful.
