@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 import time
 import unicodedata
-from .common import ROOT, MODEL_ID, MODEL_REVISION, generate, load_model, read_jsonl, write_json, write_jsonl
+from .common import ROOT, MODEL_ID, MODEL_REVISION, generate, load_model, model_revision, read_jsonl, write_json, write_jsonl
 from .curate import SYSTEM
 from .instruction_dataset import guide, source_notes
 from .train import encode_example
@@ -105,9 +105,10 @@ def summarize(results):
     return summary
 
 
-def run(suite,mode,adapter,output):
-    signature={'suite_sha256':sha(suite),'mode':mode,'model_id':MODEL_ID,'model_revision':MODEL_REVISION,
+def run(suite,mode,adapter,output,model_id=MODEL_ID,revision=None):
+    signature={'suite_sha256':sha(suite),'mode':mode,'model_id':model_id,'model_revision':model_revision(model_id,revision),
                'evaluator_sha256':sha(Path(__file__)),'decoding':'greedy',
+               'loader_sha256':sha(Path(__file__).with_name('common.py')),
                'adapter_sha256':sha(adapter/'adapter_model.safetensors') if mode=='adapter' else None,
                'adapter_config_sha256':sha(adapter/'adapter_config.json') if mode=='adapter' else None}
     rows=read_jsonl(suite)
@@ -117,7 +118,11 @@ def run(suite,mode,adapter,output):
         if old['signature']!=signature: raise ValueError('Output signature differs; choose a new output file')
         if old['status']=='complete': return old
         results=old['examples']
-    model,tokenizer=load_model(MODEL_ID,str(adapter) if mode=='adapter' else None)
+    import resource
+    started_load=time.monotonic()
+    model,tokenizer=load_model(model_id,str(adapter) if mode=='adapter' else None,revision=revision)
+    runtime={'load_seconds':time.monotonic()-started_load,'threads':4,
+             'parameters':sum(p.numel() for p in model.parameters()),'dtype':str(next(model.parameters()).dtype)}
     model.eval()
     done={r['case_id'] for r in results}
     for row in rows:
@@ -132,9 +137,10 @@ def run(suite,mode,adapter,output):
                         'hit_token_limit':generated['hit_token_limit'],'generation_seconds':elapsed,
                         'repeated_4gram_fraction':repetition(generated['text']),
                         'pattern_checks':pattern_checks(generated['text'],row['checks']),**stats})
-        write_json(output,{'status':'in_progress','signature':signature,'examples':results,'summary':summarize(results)})
+        runtime['peak_process_rss_bytes']=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        write_json(output,{'status':'in_progress','signature':signature,'runtime':runtime,'examples':results,'summary':summarize(results)})
         print(f"{mode}: {row['case_id']} ({generated['generated_tokens']} tokens, {elapsed:.1f}s)",flush=True)
-    report={'status':'complete','signature':signature,'examples':results,'summary':summarize(results),
+    report={'status':'complete','signature':signature,'runtime':runtime,'examples':results,'summary':summarize(results),
             'limitations':['Pattern checks are lexical diagnostics; they cannot detect every wrong relationship, negation or unsupported claim.',
                            'Held-out recipe facts are supplied in the prompt; seen-recipe questions separately test recall.',
                            'Perplexity is conditional on the prompt and measured only on reference assistant tokens, weighted by token count.',
@@ -149,6 +155,8 @@ def compare(before_path,after_path,output,suite=None):
     if any(x['status']!='complete' for x in [before,after]): raise ValueError('Both evaluations must be complete')
     for key in ['suite_sha256','model_id','model_revision','decoding','evaluator_sha256']:
         if before['signature'][key]!=after['signature'][key]: raise ValueError('Mismatched before/after '+key)
+    if before['signature'].get('loader_sha256')!=after['signature'].get('loader_sha256'):
+        raise ValueError('Mismatched before/after loader_sha256')
     if before['signature']['mode']!='base' or after['signature']['mode']!='adapter': raise ValueError('Expected base then adapter')
     if [x['case_id'] for x in before['examples']]!=[x['case_id'] for x in after['examples']]: raise ValueError('Mismatched cases')
     details=[]
@@ -188,6 +196,8 @@ def main():
     evaluate.add_argument('--mode',choices=['base','adapter'],required=True)
     evaluate.add_argument('--adapter',type=Path,default=ROOT/'outputs/instruction-lora-v1/adapter')
     evaluate.add_argument('--output',type=Path,required=True)
+    evaluate.add_argument('--model-id',default=MODEL_ID)
+    evaluate.add_argument('--revision',help='Immutable model commit; registered models are pinned automatically')
     comparison=commands.add_parser('compare')
     comparison.add_argument('--before',type=Path,required=True)
     comparison.add_argument('--after',type=Path,required=True)
@@ -195,7 +205,7 @@ def main():
     comparison.add_argument('--suite',type=Path,default=ROOT/'data/instruction_v1/benchmark.jsonl')
     args=p.parse_args()
     if args.command=='prepare': report=prepare(args.config,args.data_dir,args.recipes)
-    elif args.command=='run': report=run(args.suite,args.mode,args.adapter,args.output)
+    elif args.command=='run': report=run(args.suite,args.mode,args.adapter,args.output,args.model_id,args.revision)
     else: report=compare(args.before,args.after,args.output,args.suite)
     print(json.dumps(report.get('summary',report if args.command!='run' else report['status']),indent=2))
 

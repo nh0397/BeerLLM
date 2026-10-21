@@ -1,0 +1,21 @@
+# Instructional run v2
+
+Started October 21, 2026 (America/Los_Angeles). This report will record the completed local run; training and evaluation are still pending.
+
+## Frozen plan
+
+Use Qwen2.5-1.5B-Instruct at commit `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`, CPU float32, four threads. Its 1,543,714,304 parameters load locally. The initial three-question capability probe reached about 7.0 GiB peak process RSS. It still invented a private recipe, broadened a source's fermentation target and gave unreliable completion advice. A larger starting model alone is not an adequate fix.
+
+The next dataset has 138 conversations across eleven AHA training recipes, with four separate validation families. The original eight authored recipes are expanded with distinct factual-question wordings, prior-conversation context, ingredient requests and explicit gaps. Three new recipes add examples distinguishing strike/mash temperatures, dry-hop stages and carbonation from sugar. These examples reuse source facts; 138 conversations are not 138 independent recipes.
+
+The original cached HTML hashes and re-extracted ingredients/directions match for all seventeen selected training, validation and final sources. The lessons are assistant-checked against those records, not expert brewer-reviewed. Source typos and procedure gaps remain explicitly identified; automatic verification checks extraction integrity, not brewing accuracy.
+
+The plan uses two epochs, batch size one, no accumulation, learning rate 0.0003, LoRA rank 16/alpha 32/dropout 0.05 on query, key, value and attention output projections. These choices are exploratory, not a proven optimum. Save every 46 optimizer steps and retain six checkpoints plus generated probes. The model must be reviewed on actual answers, not promoted solely for lower reference loss.
+
+Eight frozen development cases include new wordings of seen facts, a complete seen-recipe guide, one supplied validation recipe, uncertainty and a completion check. The new final evaluation reserves Anchor Steam Clone and Holier than Meow Hefeweizen from training and development. It supplies their original recipe notes and measures interpretation, not closed-book recall of unseen facts. Final answers will be generated only after development choices are finished, and will not be used for further tuning in this experiment.
+
+Before/after results compare the same pinned model, prompts, references and greedy decoding. Assistant-token cross-entropy and conditional perplexity are secondary measurements. Separate answer inspection records quantity/stage relationships, omissions, unsupported claims, scope and clarity. Empty lexical-check lists deliberately avoid presenting keyword matches as factual accuracy.
+
+## Reproduction and artifacts
+
+See [the experiment commands](../docs/INSTRUCTION-V2.md). Local data, downloaded models, adapters, full generated answers and logs remain ignored by Git. The previous adapters, source collection and datasets are preserved. The old default chat adapter is unchanged pending review.

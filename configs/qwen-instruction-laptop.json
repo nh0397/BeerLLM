@@ -1,0 +1,17 @@
+{
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "seed": 42,
+  "threads": 4,
+  "max_length": 2048,
+  "epochs": 2,
+  "learning_rate": 0.0003,
+  "gradient_accumulation_steps": 1,
+  "lora_rank": 16,
+  "lora_alpha": 32,
+  "lora_dropout": 0.05,
+  "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj"],
+  "save_steps": 46,
+  "save_total_limit": 6,
+  "output_dir": "outputs/qwen-instruction-v2"
+}

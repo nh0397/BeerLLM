@@ -1,0 +1,67 @@
+{
+  "base_lessons": "configs/instruction-lessons.json",
+  "review_status": "source_checked_experiment_not_brewer_reviewed",
+  "reserved_final_titles": ["Anchor Steam Clone", "Holier than Meow Hefeweizen"],
+  "variants": [
+    {"slug":"alt-ale-altbier","questions":[["How much bottling sugar does Alt Ale Altbier specify? Is the CO2 number a sugar dose?","Can I prime Alt Ale Altbier using the printed 5–5.4 g/L value?"],["For Alt Ale Altbier, translate the hop labels into elapsed boil times.","When does each Tettnang dose enter Alt Ale Altbier's kettle, measured from the start?"]]},
+    {"slug":"beer-recipe-of-the-week-griffin-spit-ipa","questions":[["Which Griffin Spit IPA hops go in the kettle and which go in secondary?","I'm tempted to boil Griffin Spit's dry-hop dose. What does the recipe actually say?"],["Separate the primary and dry-hop periods for Griffin Spit IPA, including amounts and temperatures.","After chilling Griffin Spit IPA, what is the sequence through fermentation, dry hopping and packaging?"]]},
+    {"slug":"bells-two-hearted-ale-clone","questions":[["Give me a stopwatch schedule for the two Centennial boil doses in Bell's Two Hearted clone.","In the Two Hearted clone, do the 45-minute hops go in 45 minutes after boiling starts?"],["Which temperature and priming details are absent from Bell's Two Hearted clone?","Is the Two Hearted clone's chilling temperature also an explicitly stated fermentation target?"]]},
+    {"slug":"angies-bursting-citra-ii-aka-juice","questions":[["Angie's Citra recipe lists active and complete dry hops. Explain the amounts and order.","Do both Citra dry-hop doses belong on day two in Angie's Bursting Citra II?"],["Give me the source's exact whirlpool settings for Angie's Bursting Citra II, or say what is missing.","Can you confirm a whirlpool temperature and contact time for Angie's Citra recipe?"]]},
+    {"slug":"beer-recipe-of-the-week-dusseldorf-altbier","questions":[["Compare Düsseldorf Altbier's concentrated boil volume with the volume in the fermenter.","The Düsseldorf kettle contains three gallons. Is that also the amount of finished beer?"],["What goes into Düsseldorf Altbier's kettle first, and what goes in for the final fifteen minutes?","Give the hop amounts and boil durations for Düsseldorf Altbier without combining the doses."]]},
+    {"slug":"helicious-helles","questions":[["For Helicious Helles, distinguish primary fermentation from cold conditioning, with durations.","Should I keep Helicious Helles at forty degrees throughout fermentation? Explain the source's stages."],["In Helicious Helles, translate the Tettnanger and Whirlfloc countdown labels into elapsed times.","Does the Helles bittering addition boil for the entire ninety minutes? Give its dose and schedule."]]},
+    {"slug":"hofters-blanc-pale-ale","questions":[["For Höfter's Blanc, are first-wort hops the same dose as its sixty-minute hops?","Where does the first Hallertau Blanc addition go in Höfter's pale ale?"],["For Höfter's Blanc, explain the dry-hop amount, temperature and contact period.","Is sixty degrees the explicitly stated primary fermentation target in Höfter's Blanc?"]]},
+    {"slug":"black-is-back","questions":[["For Black is Back, should I combine the two listed priming options?","Black is Back gives corn sugar and malt extract in mL. Are those gram doses, and do I use both?"],["Can you name the source's numeric fermentation temperature for Black is Back?","Are the two mash temperatures in Black is Back also fermentation instructions?"]]}
+  ],
+  "extra_lessons": [
+    {
+      "slug":"columbus-pale-ale",
+      "steps":[
+        "Mash at 152°F (67°C) for 60 minutes, then mash out at 168°F (76°C). The pre-boil volume is printed as '6.5 g (25 L)'; the gallon abbreviation appears mistyped, so confirm it rather than reading g as grams.",
+        "Boil for 75 minutes. Add 0.5 oz (14 g) Columbus with 60 minutes left, another 0.5 oz (14 g) with 15 left, another 0.5 oz (14 g) with 5 left, and 1 oz (28 g) at the end. The 8 oz (227 g) orange blossom honey belongs during the boil, but its exact addition time is not stated.",
+        "Chill to 68°F (20°C) and pitch one of the listed yeast options. After nine days, transfer to secondary and add the separate 1.5 oz (43 g) Centennial dry hops.",
+        "Rest another nine days at 68°F (20°C). These nine days follow the first nine; they are not a replacement for them.",
+        "After fermentation is complete, keg to 2.5 volumes of CO2 or bottle condition with the source's 4 oz (113 g) corn sugar. Those are alternative packaging paths."
+      ],
+      "gaps":"The source gives a chilling temperature and a secondary-rest temperature, but does not explicitly state a separate primary-fermentation target. Confirm the pre-boil unit typo and the unspecified exact honey-addition time.",
+      "followups":[
+        ["For Columbus Pale Ale, when do the Centennial dry hops go in?","After the first nine days, transfer to secondary and add 1.5 oz (43 g) Centennial. Rest for another nine days at 68°F (20°C). The Columbus hops are separate boil additions; do not boil the Centennial dry-hop dose."],
+        ["Does Columbus Pale Ale specify the exact honey-addition minute?","No. It lists 8 oz (227 g) orange blossom honey added during the boil, but does not give an exact minute. Keep that gap explicit instead of inventing a schedule."]
+      ],
+      "questions":[["Separate Columbus Pale Ale's dry-hop variety, amount and contact period from its boil hops.","Do I dry hop Columbus Pale Ale immediately after chilling?"],["At exactly what countdown time does Columbus Pale Ale's honey enter?","Can you confirm a precise honey-addition time for Columbus Pale Ale from the source?"]]
+    },
+    {
+      "slug":"fullers-chiswick-bitter-clone",
+      "title_contains":"Fuller’s Chiswick Bitter Clone",
+      "steps":[
+        "Mash at 149°F (65°C) for 60 minutes. Mash out at 160°F (71°C) and sparge with the source's 170°F (76°C) water. Collect about 6 gallons (22.7 L) to yield 5 gallons (18.9 L) after boiling.",
+        "Boil 60 minutes. Add 0.5 oz (14 g) UK Target with 60 minutes left. With 15 minutes left, add 0.25 oz (7 g) UK Northdown, 0.25 oz (7 g) UK Challenger and 3/4 tsp (3 g) Irish moss.",
+        "Chill to 63–68°F (17–20°C), transfer, pitch a listed yeast and aerate. After three or four days, add the first 0.5 oz (14 g) East Kent Golding dry-hop dose. Continue fermentation at 63°F (17°C) for a total of seven to ten days.",
+        "Transfer to secondary with the second 0.5 oz (14 g) East Kent Golding dose and age three weeks, at 50°F (10°C) if possible.",
+        "For kegging, put the third 0.5 oz (14 g) East Kent Golding dose in a hop bag in the keg. For bottling, put that third dose in secondary instead, then bottle. Carbonate to 1–1.5 volumes of CO2; the accompanying 2–3 g/L measures CO2, not priming sugar."
+      ],
+      "gaps":"No priming-sugar dose or exact contact time for the third dry-hop dose is supplied. The water profile is a source target, not a universal salt dose for every water supply.",
+      "followups":[
+        ["In Fuller's Chiswick Bitter clone, do all three dry-hop doses go in the keg?","No. Each dose is 0.5 oz (14 g) East Kent Golding. The first goes into primary after three or four days; the second goes into secondary for the three-week aging stage. The third goes in a hop bag in the keg, or into secondary if you are bottling."],
+        ["Can I use Fuller's Chiswick Bitter clone's 2–3 g/L as bottling sugar?","No. That value describes CO2 at the 1–1.5 volumes carbonation target. The source does not provide a priming-sugar dose. Do not turn a CO2 measurement into a sugar instruction."]
+      ],
+      "questions":[["Map each East Kent Golding dry-hop dose to its stage in Fuller's Chiswick clone.","I'm bottling Fuller's Chiswick Bitter. Where does its third dry-hop dose go?"],["How much priming sugar per litre does the Chiswick source actually specify?","In Fuller's Chiswick clone, what does the grams-per-litre carbonation figure measure?"]]
+    },
+    {
+      "slug":"your-first-smash-ale",
+      "steps":[
+        "This is a 1 US gallon (3.8 L) batch. Heat 1 gallon (3.8 L) mash water to 160°F (71°C). Add 2.25 lb (1.02 kg) milled base malt and hold the mash at 147–150°F (64–66°C) for 60 minutes. The hotter strike water and cooler mash rest are different instructions.",
+        "Raise to 170°F (77°C) for a ten-minute mash-out. Separately heat 0.75 gallon (2.8 L) sparge water to 170°F (77°C). Strain out the grain and rinse it slowly, collecting about 5.5–6 quarts (5.2–5.7 L) of wort.",
+        "Boil for 60 minutes and watch for boil-overs. Use one hop variety: add 0.5 oz (14 g) at the start, 0.25 oz (7 g) with 15 minutes left, and another 0.25 oz (7 g) when the boil ends.",
+        "Chill in an ice bath to the chosen yeast's recommended pitching temperature. Transfer to a clean, sanitized fermenter. Sanitize everything that touches the cooled wort.",
+        "The source recommends 2.2 g dry yeast, one-fifth of an 11 g packet, for this one-gallon batch. Add the yeast, close the vessel and shake on and off for about 45 seconds to aerate. Fit a blow-off tube leading into sanitizer so gas can escape.",
+        "The source describes bubbling within 12–24 hours and quieter activity after three or four days, when an airlock can replace the blow-off tube. It describes packaging two weeks later. Use the separate general gravity check below to establish completion; quiet bubbling and a date alone do not prove fermentation has finished."
+      ],
+      "gaps":"The malt, hop and yeast varieties are choices in this recipe. No numeric pitching or fermentation target or priming-sugar dose is specified; consult the chosen yeast's guidance rather than guessing.",
+      "followups":[
+        ["Should I use the entire 11 g yeast packet for Your First SMaSH Ale?","The source recommends 2.2 g dry yeast for its 1 US gallon (3.8 L) batch: one-fifth of an 11 g packet. It does not require a particular yeast variety. Do not silently substitute the packet's typical five-gallon context for this one-gallon recipe."],
+        ["For Your First SMaSH Ale, is 160°F the mash-rest temperature?","No. Heat the strike water to 160°F (71°C), then add the malt and mash at 147–150°F (64–66°C) for 60 minutes. Later, mash out at 170°F (77°C) for ten minutes. These temperatures belong to different stages."]
+      ],
+      "questions":[["How many grams of dry yeast does the one-gallon SMaSH source recommend?","Does Your First SMaSH Ale call for a whole packet or a fraction of one?"],["Separate strike-water, mash-rest and mash-out temperatures in Your First SMaSH Ale.","Should I hold the SMaSH mash at the same temperature used to heat its initial water?"]]
+    }
+  ]
+}

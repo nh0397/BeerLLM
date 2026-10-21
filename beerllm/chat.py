@@ -22,12 +22,13 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--adapter',type=Path,default=ROOT/'outputs/instruction-lora-v1/adapter')
     parser.add_argument('--base',action='store_true',help='Use the original model without the adapter')
+    parser.add_argument('--model-id',default=MODEL_ID,help='Starting model for --base; adapters identify their own base')
     parser.add_argument('--recipe-id',type=int,help='Explicitly include this local recipe as context')
     parser.add_argument('--prompt',help='Ask once; otherwise start a terminal chat')
     parser.add_argument('--max-new-tokens',type=int,default=800)
     args=parser.parse_args()
     if args.max_new_tokens<1: parser.error('--max-new-tokens must be positive')
-    model_id=MODEL_ID
+    model_id=args.model_id
     if not args.base:
         if not args.adapter.exists(): parser.error('Adapter not found. Train first or use --base.')
         from peft import PeftConfig
