@@ -37,7 +37,13 @@ One of eight development cases passes the frozen factual rubric on assistant ins
 
 Two of eight answers hit their output-token limits. Peak base process RSS is 8.86 GiB. Raw answers and the inspection are preserved under `outputs/instruction-v3/`.
 
-**Status:** small fitting gate and baseline complete; full 855-step training in progress; after/final evaluation pending. No full adapter has been promoted.
+## Epoch-one observation
+
+The first 285 optimizer steps are complete. Validation loss is 0.188804 across the four supplied-recipe references. All three periodic probes still fail the strict factual check. The Helles answer now retrieves both correct temperature/duration pairs, but incorrectly places primary fermentation after kegging and invents a clarification temperature. Volume questions still mix recipe quantities with unrelated CO2/priming statements. This is partial value learning, not a passing brewing instruction.
+
+Full checkpoint answers and inspection notes are preserved under `outputs/qwen-instruction-v3/probes/` and `outputs/instruction-v3/probe-review.json`. Training continues with the fixed data, replay weights and three-epoch plan.
+
+**Status:** small fitting gate and baseline complete; epoch one of three complete; after/final evaluation pending. No full adapter has been promoted.
 
 ## Reproduction
 
