@@ -49,4 +49,4 @@ Full checkpoint answers and inspection notes are preserved under `outputs/qwen-i
 
 See [the exact commands](../docs/REFINEMENT.md). Local generated data, weights, complete answers and logs are ignored by Git. The trainer saves the system prompt with the adapter so chat can use the same instruction. Run only one training process at a time; resume an interrupted run with matching inputs/configuration.
 
-All 59 unit tests pass, including masking, source/context integrity, held-out-family guards, neutral decoding, varied-fit selection, replay weights, prompt metadata and chat history checks. Python compilation and diff checks pass. Actual generated-answer inspection remains necessary; loss, perplexity and replay counts do not establish brewing accuracy.
+All 60 unit tests pass, including masking, source/context integrity, held-out-family guards, neutral decoding, varied-fit selection, replay weights, prompt metadata and chat history checks. Python compilation and diff checks pass. Actual generated-answer inspection remains necessary; loss, perplexity and replay counts do not establish brewing accuracy.

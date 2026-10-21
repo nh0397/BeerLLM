@@ -18,6 +18,17 @@ def adapter_system_prompt(adapter):
     return prompt
 
 
+def chat_profile(adapter,base,model_id=None):
+    if model_id is not None and not base:
+        raise ValueError('--model-id selects a base model; combine it with --base')
+    if not adapter.exists():
+        if not base: raise ValueError('Adapter not found. Train first or use --base.')
+        return model_id or MODEL_ID,SYSTEM
+    from peft import PeftConfig
+    config=PeftConfig.from_pretrained(str(adapter))
+    return model_id or config.base_model_name_or_path,adapter_system_prompt(adapter)
+
+
 def curated_context(path,title):
     matches=[r for r in read_jsonl(path) if r['title'].casefold()==title.casefold()]
     if len(matches)!=1: raise ValueError(f'Expected one exact recipe title; found {len(matches)}')
@@ -41,8 +52,8 @@ def fit_history(messages,tokenizer,context_limit,max_new_tokens):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--adapter',type=Path,default=ROOT/'outputs/instruction-lora-v1/adapter')
-    parser.add_argument('--base',action='store_true',help='Use the original model without the adapter')
-    parser.add_argument('--model-id',default=MODEL_ID,help='Starting model for --base; adapters identify their own base')
+    parser.add_argument('--base',action='store_true',help='Use the selected adapter base and prompt without adapter weights')
+    parser.add_argument('--model-id',help='Explicit starting-model override for --base')
     context_group=parser.add_mutually_exclusive_group()
     context_group.add_argument('--recipe-id',type=int,help='Explicitly include this local PunkAPI recipe as context')
     context_group.add_argument('--recipe-title',help='Explicitly include an exact title from the curated instruction candidates')
@@ -52,14 +63,8 @@ def main():
     args=parser.parse_args()
     if args.max_new_tokens<1: parser.error('--max-new-tokens must be positive')
     if args.context_limit<=args.max_new_tokens: parser.error('--context-limit must exceed --max-new-tokens')
-    model_id=args.model_id
-    system_prompt=SYSTEM
-    if not args.base:
-        if not args.adapter.exists(): parser.error('Adapter not found. Train first or use --base.')
-        from peft import PeftConfig
-        model_id=PeftConfig.from_pretrained(str(args.adapter)).base_model_name_or_path
-        try: system_prompt=adapter_system_prompt(args.adapter)
-        except ValueError as error: parser.error(str(error))
+    try: model_id,system_prompt=chat_profile(args.adapter,args.base,args.model_id)
+    except ValueError as error: parser.error(str(error))
     context=''
     if args.recipe_id is not None:
         recipes=json.loads((ROOT/'data/punkapi/raw.json').read_text())

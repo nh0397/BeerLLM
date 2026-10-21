@@ -2,8 +2,10 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 from beerllm.common import read_jsonl,write_json,write_jsonl
-from beerllm.chat import adapter_system_prompt
+from beerllm.chat import adapter_system_prompt,chat_profile
 from beerllm.curate import SYSTEM
 from beerllm.instruction_dataset import row
 from beerllm.instruction_v2 import case,sha
@@ -36,6 +38,18 @@ def fixture(root,leak=False):
 
 
 class RefinementTests(unittest.TestCase):
+    def test_base_chat_infers_the_same_model_and_prompt_as_the_adapter(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);write_json(root/'beerllm.json',{'format_version':1,'system_prompt':'Matched instructions.'})
+            config=SimpleNamespace(base_model_name_or_path='Qwen/Qwen2.5-1.5B-Instruct')
+            peft=SimpleNamespace(PeftConfig=SimpleNamespace(from_pretrained=lambda path:config))
+            with patch.dict('sys.modules',{'peft':peft}):
+                self.assertEqual(chat_profile(root,True),chat_profile(root,False))
+                self.assertEqual(chat_profile(root,True)[0],'Qwen/Qwen2.5-1.5B-Instruct')
+                self.assertEqual(chat_profile(root,True)[1],'Matched instructions.')
+                with self.assertRaisesRegex(ValueError,'combine it with --base'):
+                    chat_profile(root,False,'another/model')
+
     def test_refinement_preserves_upstream_and_freezes_changed_answers_and_scope(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);source,config=fixture(root);out=root/'refined'

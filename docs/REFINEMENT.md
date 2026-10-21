@@ -67,3 +67,5 @@ HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat \
 ```
 
 Omit the recipe-title option to test recall from weights. Supplying the exact saved title tests interpretation with source facts available. Neither mode establishes expert brewing accuracy, and source procedure gaps remain explicit.
+
+For a chat comparison after the adapter exists, add `--base` to that same command. Chat reads the selected adapter's model identity and saved system prompt, then loads that base without adapter weights. This keeps the model family and instructions matched. The benchmark commands remain the formal comparison with frozen questions and references.
