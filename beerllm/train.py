@@ -8,6 +8,17 @@ import sys
 import time
 from .common import ROOT, MODEL_ID, MODEL_REVISION, generate, load_model, load_tokenizer, model_revision, read_jsonl, write_json
 
+SHORT_FACT_TASKS = ['direct_fact','followup','followup_variant']
+
+
+def replay_short_facts(rows,repeat):
+    """Weight existing short facts without pretending they are independent examples."""
+    if not isinstance(repeat,int) or isinstance(repeat,bool) or repeat<1:
+        raise ValueError('short_fact_repeat must be a positive integer')
+    if any(r.get('split','train')!='train' for r in rows):
+        raise ValueError('Training rows must not contain held-out split labels')
+    return list(rows)+[r for r in rows if r.get('task') in SHORT_FACT_TASKS for _ in range(repeat-1)]
+
 
 def encode_example(tokenizer, example, max_length):
     messages = example['messages']
@@ -81,6 +92,9 @@ def main():
     signature={'model_revision': revision, 'config':config,'train_sha256':hashlib.sha256(train_path.read_bytes()).hexdigest(),
                'validation_sha256':hashlib.sha256(validation_path.read_bytes()).hexdigest(),
                'limit':args.limit,'eval_limit':args.eval_limit,'max_steps':args.max_steps}
+    fact_repeat=config.get('short_fact_repeat',1)
+    if fact_repeat!=1:
+        signature['sampling']={'version':1,'short_fact_repeat':fact_repeat,'tasks':SHORT_FACT_TASKS}
     if args.probe_suite:
         signature['probe_suite_sha256']=hashlib.sha256(args.probe_suite.read_bytes()).hexdigest()
     if checkpoint:
@@ -91,8 +105,13 @@ def main():
         tokenizer=load_tokenizer(config['model_id'],revision)
         report={}
         for name,path in [('train',train_path),('validation',validation_path)]:
-            dataset=RecipeDataset(read_jsonl(path),tokenizer,config['max_length'])
+            rows=read_jsonl(path)
+            if name=='train' and args.limit: rows=rows[:args.limit]
+            unique_count=len(rows)
+            if name=='train': rows=replay_short_facts(rows,fact_repeat)
+            dataset=RecipeDataset(rows,tokenizer,config['max_length'])
             report[name]={'examples_used':len(dataset),'examples_over_context':dataset.skipped,
+                          'source_examples':unique_count,
                           'longest_tokens':max(len(item['input_ids']) for item in dataset.items),
                           'answer_tokens_supervised':sum(sum(t!=-100 for t in item['labels']) for item in dataset.items)}
         print(json.dumps(report,indent=2))
@@ -106,10 +125,13 @@ def main():
     model.print_trainable_parameters()
     rows=read_jsonl(train_path)
     if args.limit: rows=rows[:args.limit]
+    source_train_count=len(rows)
+    rows=replay_short_facts(rows,fact_repeat)
     train=RecipeDataset(rows,tokenizer,config['max_length'])
     validation=RecipeDataset(read_jsonl(validation_path)[:args.eval_limit],tokenizer,config['max_length'])
     write_json(output/'run_config.json',signature)
     write_json(output/'tokenization.json',{'train_used':len(train),'train_skipped_overlength':train.skipped,
+                                          'source_train_examples':source_train_count,'short_fact_repeat':fact_repeat,
                                           'validation_used':len(validation),'validation_skipped_overlength':validation.skipped})
     training_args=TrainingArguments(output_dir=str(output),use_cpu=True,num_train_epochs=config['epochs'],
         max_steps=args.max_steps,per_device_train_batch_size=1,per_device_eval_batch_size=1,
@@ -150,6 +172,7 @@ def main():
                    'train_sha256':signature['train_sha256']})
     trainer.save_state()
     metrics=result.metrics | {'wall_seconds':time.monotonic()-started,'train_examples':len(train),
+                              'source_train_examples':source_train_count,'short_fact_repeat':fact_repeat,
                               'skipped_overlength':train.skipped,
                               'peak_process_rss_bytes':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*(1 if sys.platform=='darwin' else 1024)}
     write_json(output/'train_metrics.json',metrics)

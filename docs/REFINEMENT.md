@@ -26,7 +26,9 @@ That dataset has twelve examples around two existing training facts. Its validat
 
 ## Candidate full run
 
-Run the larger experiment only after inspecting the small check's generated quantities and stage relationships. The candidate config adapts attention and feed-forward projections, uses learning rate 0.001 with zero LoRA dropout, and makes three passes over the refined examples. These are empirical choices under evaluation, not a general prescription.
+Run the larger experiment only after inspecting the small check's generated quantities and stage relationships. The twelve-example check passed both exact prompts and both fixed rewordings on assistant inspection. This covers two trained facts only. The full config adapts attention and feed-forward projections, uses learning rate 0.001 with zero LoRA dropout, and makes three passes over the refined examples. These are empirical choices under evaluation, not a general prescription.
+
+The trainer replays the 88 short factual rows once more per epoch (`short_fact_repeat: 2`). The dataset remains 197 distinct conversations and eleven recipes; training samples 285 rows per epoch, for 855 optimizer steps across three epochs. This matches the approximate per-fact exposure used in the passing fitting check while retaining full guides and source-context tasks. Replays are explicit sampling weights, not additional independent examples.
 
 ```bash
 HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \

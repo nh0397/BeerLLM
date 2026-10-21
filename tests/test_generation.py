@@ -34,6 +34,8 @@ class GenerationTests(unittest.TestCase):
             result=generate(model,Tokenizer(),[{'role':'user','content':'Repeat these quantities.'}],2,True)
         self.assertEqual(calls[0]['repetition_penalty'],1.0)
         self.assertFalse(calls[0]['do_sample'])
+        self.assertEqual(calls[0]['num_beams'],1)
+        self.assertEqual(calls[0]['no_repeat_ngram_size'],0)
         self.assertTrue(calls[0]['use_cache'])
         self.assertEqual(result['text'],'3 gallons')
         self.assertFalse(result['hit_token_limit'])

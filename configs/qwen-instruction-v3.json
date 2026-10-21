@@ -19,7 +19,8 @@
     "up_proj",
     "down_proj"
   ],
-  "save_steps": 66,
+  "save_steps": 95,
   "output_dir": "outputs/qwen-instruction-v3",
-  "save_total_limit": 9
+  "save_total_limit": 9,
+  "short_fact_repeat": 2
 }
