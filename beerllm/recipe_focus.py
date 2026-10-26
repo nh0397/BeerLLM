@@ -149,6 +149,10 @@ def refine_followups(source,lesson_path,config_path,output):
             r['messages'][1:1]=[{'role':'user','content':'Please teach me the complete Helicious Helles recipe.'},
                                 {'role':'assistant','content':guide_row['messages'][-1]['content']}]
             train.append(r)
+    for item in config.get('extra_pairs',[]):
+        r=copy.deepcopy(direct['missing']);r['task']='status_contrast'
+        r['messages'][-2]['content']=item['question'];r['messages'][-1]['content']=item['answer']
+        train.append(r)
     frozen=['validation.jsonl','development.jsonl','final.jsonl','recipe.jsonl','dialogue.json']
     heldout={r['messages'][1]['content'] for name in ['development.jsonl','final.jsonl','validation.jsonl'] for r in read_jsonl(source/name)}
     heldout.update(x['question'] for x in json.loads((source/'dialogue.json').read_text())['turns'])

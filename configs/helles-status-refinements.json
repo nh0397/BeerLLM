@@ -1,0 +1,115 @@
+{
+  "answers": {
+    "mash": "The grain-rest and rinsing stages are:\n1. First rest: 130°F (54°C) for 10 minutes.\n2. Main mash rest: raise to 148°F (64°C) for 60 minutes.\n3. Mash-out: raise to 168°F (76°C). The source gives no separate hold duration.\n4. Fly sparge: rinse the grain at 170°F (77°C) while collecting wort. These are successive stages; do not omit the mash-out or sparge.",
+    "cold": "After the boil, follow these stages:\n1. Cool the wort promptly and use clean, sanitized equipment.\n2. Pitch the listed yeast, meaning add it to cooled wort. Confirm its pitching guidance; the source gives no separate exact pitching temperature.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. Keg and add gelatin to clarify; its dose is not specified.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks. The primary stage comes before kegging and later lagering.",
+    "missing": "Given by the source:\n- Primary fermentation: 50°F (10°C) for two to three weeks.\n- Later lagering: 40°F (4°C) for three to six weeks after kegging and gelatin clarification.\nNot specified: a separate exact pitching temperature, mash/sparge water quantities or numeric water treatment, gelatin dose, carbonation target, and bottling or priming-sugar instructions. The known temperature schedules are not erased by those omissions."
+  },
+  "variants": {
+    "ingredients": [
+      "For this Helles, give just the shopping list and intended batch volume."
+    ],
+    "mash": [
+      "Spell out the two grain rests, the mash-out, and the sparge for Helicious Helles, in order.",
+      "Give me every grain-rest and rinsing temperature in this Helles, including how long the rests last.",
+      "What is the full sequence from the first mash rest through fly sparging for Helicious Helles?",
+      "I need all of the Helles mash and sparge settings, not just the first rest."
+    ],
+    "cold": [
+      "What is the whole Helicious Helles process once boiling has finished, up to the end of lagering?",
+      "Walk me through cooling, adding yeast, primary fermentation, kegging, clarification and conditioning for this Helles.",
+      "For Helicious Helles, what are all the steps from hot wort to the end of cold conditioning?",
+      "How do I move from the end of the boil through the warmer yeast stage and then the colder stage?"
+    ],
+    "hops": [
+      "How do I translate the two Helles addition times into minutes since boiling began?",
+      "Which addition belongs with sixty minutes left, and which belongs with ten left in this Helles boil?"
+    ],
+    "missing": [
+      "What does the Helles source actually tell us about temperatures, and what equipment-dependent quantities are absent?",
+      "Please distinguish known Helles fermentation settings from unknown water, gelatin and carbonation amounts."
+    ],
+    "primary": [
+      "Before I keg this Helles, what temperature and time does its yeast stage use?"
+    ],
+    "lager": [
+      "What are the temperature and length of the Helles cold-conditioning stage after kegging?"
+    ],
+    "wrong_cold": [
+      "Is forty degrees Fahrenheit the right setting for the first fermentation of this Helles?"
+    ],
+    "gravity": [
+      "My Helles is no longer bubbling. What should I check before transferring it out of primary?"
+    ],
+    "yeast": [
+      "Name the Helles yeast options and the starter size actually given in the source."
+    ],
+    "water": [
+      "Is the seven-gallon Helles batch size enough to determine my mash and sparge water?"
+    ],
+    "gelatin": [
+      "At what point does gelatin enter the Helles process, and is its amount specified?"
+    ]
+  },
+  "conversation_keys": [
+    "mash",
+    "cold"
+  ],
+  "extra_pairs": [
+    {
+      "question": "Are both the Helles fermentation schedule and bottle-priming dose absent from the source?",
+      "answer": "No. Primary fermentation is given: 50°F (10°C) for two to three weeks. Later lagering is given: 40°F (4°C) for three to six weeks after kegging and gelatin. A bottle-priming sugar dose is not given. These are different fields, not all missing."
+    },
+    {
+      "question": "The Helles source omits an exact pitching temperature. Does it also omit fermentation and lagering temperatures?",
+      "answer": "No. Primary fermentation is explicitly 50°F (10°C) for two to three weeks; later lagering is 40°F (4°C) for three to six weeks after kegging and gelatin. Only the separate exact pitching temperature is absent here. Pitching and primary fermentation are different settings."
+    },
+    {
+      "question": "Tell me which are given: primary temperature, lagering temperature and priming-sugar amount.",
+      "answer": "Primary temperature: given, 50°F (10°C), for two to three weeks. Lagering temperature: given, 40°F (4°C), for three to six weeks after kegging and gelatin. Priming-sugar amount: not given; the source describes kegging and does not supply bottle-priming instructions."
+    },
+    {
+      "question": "Does Helicious Helles specify a bottle sugar dose as well as fermentation settings?",
+      "answer": "The fermentation settings are specified: primary at 50°F (10°C) for two to three weeks and later lagering at 40°F (4°C) for three to six weeks. The source does not specify a bottle-sugar dose. So the temperature settings are known while that quantity is missing."
+    },
+    {
+      "question": "Is it correct to say the Helles recipe has no primary temperature?",
+      "answer": "No. Its primary fermentation temperature is explicitly 50°F (10°C), for two to three weeks. Do not confuse that given setting with a separate pitching temperature, which the source does not state."
+    },
+    {
+      "question": "Are the Helles lagering temperature and duration missing?",
+      "answer": "No. The source explicitly gives 40°F (4°C) for three to six weeks of lagering, after primary fermentation, kegging and gelatin clarification."
+    },
+    {
+      "question": "Which exact priming-sugar mass is given for the Helles keg recipe?",
+      "answer": "No priming-sugar mass is given. This source describes kegging, gelatin clarification and later lagering, without bottle-priming instructions. Confirm a packaging plan instead of inventing a sugar dose."
+    },
+    {
+      "question": "How much priming sugar should I weigh if the source only gives primary and lagering settings?",
+      "answer": "The source provides no priming-sugar dose to weigh. Primary fermentation at 50°F (10°C) and later lagering at 40°F (4°C) are temperature settings, not sugar quantities. Confirm the intended packaging method and a suitable priming calculation instead of guessing a mass."
+    },
+    {
+      "question": "Is the seven-gallon batch volume the exact water amount for the mash?",
+      "answer": "No. Seven gallons (26.5 L) is the source batch size. The source does not give exact mash or sparge water quantities. Starting water depends on the equipment and process losses; confirm that plan rather than treating batch size as mash-water volume."
+    },
+    {
+      "question": "Which is unknown in Helles: the later cold temperature or the gelatin amount?",
+      "answer": "The gelatin amount is unknown. The later lagering temperature is given: 40°F (4°C) for three to six weeks after kegging and gelatin clarification. A missing gelatin dose does not make that temperature missing."
+    },
+    {
+      "question": "Are fermentation and yeast pitching the same setting in this Helles source?",
+      "answer": "They are separate. Pitching means adding yeast, and the source gives no separate exact pitching temperature. Primary fermentation is explicitly at 50°F (10°C) for two to three weeks. Use the chosen yeast guidance for pitching without denying the stated primary setting."
+    },
+    {
+      "question": "Does not having bottling instructions mean the Helles source gives no fermentation method?",
+      "answer": "No. It specifies primary fermentation at 50°F (10°C) for two to three weeks, then kegging and gelatin clarification, followed by lagering at 40°F (4°C) for three to six weeks. Bottling and priming-sugar instructions are absent; fermentation instructions are present."
+    },
+    {
+      "question": "Give just the two Helles temperature-and-time schedules that are explicitly stated.",
+      "answer": "Primary fermentation: 50°F (10°C) for two to three weeks. Later lagering: 40°F (4°C) for three to six weeks after kegging and gelatin clarification."
+    },
+    {
+      "question": "The Helles directions give a cooling step but no separate pitching temperature. What primary temperature should I use?",
+      "answer": "Use the stated primary fermentation setting of 50°F (10°C), for two to three weeks. The lack of a separate pitching temperature does not remove this given primary setting; confirm the chosen yeast guidance for pitching."
+    }
+  ]
+}
