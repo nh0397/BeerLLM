@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import patch
 from beerllm.common import ROOT,read_jsonl,write_json,write_jsonl
 from beerllm.recipe_focus import build,run_dialogue,refine_followups
+from beerllm.train import replay_short_facts
 
 
 def fixture(root):
@@ -20,6 +21,29 @@ def fixture(root):
 
 
 class RecipeFocusTests(unittest.TestCase):
+    def test_concept_followups_replay_without_leaking_reserved_questions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);recipes,lesson=fixture(root);source=root/'v1';out=root/'teacher'
+            build(recipes,lesson,source,False)
+            config=ROOT/'configs/helles-teacher-refinements.json'
+            report=refine_followups(source,lesson,config,out)
+            rows=read_jsonl(out/'train.jsonl');replayed=replay_short_facts(rows,3)
+            self.assertEqual(report['train_examples'],132)
+            self.assertEqual(len(replayed),332)
+            concept=json.loads(config.read_text())['extra_pairs'][-3]
+            self.assertEqual(sum(r['messages'][-2]['content']==concept['question'] for r in replayed),3)
+            conversation=next(r for r in rows if r['messages'][-2]['content']==
+                              json.loads(config.read_text())['extra_pairs'][-1]['question'])
+            guide_row=next(r for r in rows if r['task']=='complete_guide')
+            self.assertEqual(conversation['messages'][2]['content'],guide_row['messages'][-1]['content'])
+            self.assertEqual(conversation['task'],'conversation_variant')
+            questions={m['content'] for r in rows for m in r['messages'] if m['role']=='user'}
+            reserved={r['messages'][1]['content'] for r in read_jsonl(ROOT/'configs/helles-explanation-dev.jsonl')}
+            reserved.update(x['question'] for x in json.loads((ROOT/'configs/helles-natural-dialogue.json').read_text())['turns'])
+            self.assertFalse(questions&reserved)
+            for name in ['development.jsonl','final.jsonl','dialogue.json','validation.jsonl']:
+                self.assertEqual((source/name).read_bytes(),(out/name).read_bytes())
+
     def test_balanced_curriculum_preserves_source_answers_and_reserves_new_confirmation(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);recipes,lesson=fixture(root);source=root/'v1';out=root/'balanced'

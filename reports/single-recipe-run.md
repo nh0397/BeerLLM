@@ -1,6 +1,6 @@
 # One-recipe brewing tutor: measured progress
 
-**Not accepted yet.** A Helicious Helles adapter passes all five development questions but only one of four reserved phrasings. The balanced first epoch also fails development (1/5); its planned second epoch is resuming from the saved checkpoint. No scaling or general brewing-accuracy claim follows from these results.
+**Not accepted yet.** The known/unknown candidate passes development but fails reserved wording. The larger balanced continuation finishes at 3/5 original development questions and 0/2 beginner explanations. A focused short-answer teaching run is underway. Scaling remains paused.
 
 The goal is one complete explanation plus direct, accurate follow-ups in ordinary language. The model must supply facts from its trained weights: no recipe lookup, source notes or recipe quantities in its system prompt. All answers are inspected against the saved source and [fixed factual rubric](../configs/helles-rubric.json). References and inspection are assistant-authored, not expert brewer-reviewed.
 
@@ -19,7 +19,8 @@ The source omits exact mash/sparge water quantities, numeric water treatment, a 
 | Stage-list continuation, steps 69 and 138 | 4 each | Not run | Falsely denies a provided temperature |
 | Known/unknown continuation, step 120 | 5 | 1 | Rejected on reserved wording |
 | Balanced first epoch, step 150 | 1 | Not run | Resume planned second epoch |
-| Balanced second epoch | Pending | Now a regression suite | In progress |
+| Balanced second epoch, step 300 | 3 | Not run | Reject; beginner explanations also 0/2 |
+| Short-answer teacher | Pending | Now a regression suite | In progress |
 
 The first adapter's complete guide is correct under development wording. A generic development-only instruction to enumerate every requested stage does not repair its two incomplete follow-ups; that diagnostic prompt is not adopted.
 
@@ -44,7 +45,8 @@ All runs use pinned `Qwen/Qwen2.5-1.5B-Instruct` revision `989aa7980e4cf806f80c7
 | Complete guide | 24 | 144 | 41.4 min | 13.80 GiB | Pinned base |
 | Complete follow-ups | 46 | 138 | 37.3 min | 14.64 GiB | Complete-guide adapter |
 | Known versus missing | 60 | 120 | 18.7 min | 14.93 GiB | Follow-up adapter |
-| Balanced questions | 150 | Up to 300 planned | Pending | Pending | Complete-guide adapter |
+| Balanced questions | 150 | 300 | ~88.6 min across both active phases | 16.02 GiB during resume | Complete-guide adapter |
+| Short-answer teacher | 132 / 332 replayed | 332 planned | Pending | Pending | Known/unknown adapter |
 
 The first three runs total 97.3 training minutes. Mean losses are respectively 0.398605, 0.107404 and 0.411845; changed curricula make them unsuitable as a ranking of answer quality. No examples were silently truncated or skipped. All previous datasets, adapters, checkpoints, raw answers and logs remain preserved.
 
@@ -60,4 +62,15 @@ The original final set is consumed and now becomes an additional regression gate
 
 The six-turn natural dialogue retains the original four questions in order, then asks for plain meanings of wort/pitching and the reason for cleaning and sanitizing. It was frozen before checkpoint selection. The dialogue feeds each model its own generated replies. Reference answers are saved for review and never inserted into history. Both confirmation and dialogue concern the one trained recipe, not unseen recipe families. Greedy decoding, model pin, system prompt, loader/evaluator and suite hashes must match between before/after runs.
 
-All 66 software tests pass, including frozen inputs, question separation, source restrictions, continuation signatures and interrupted dialogue resumption without reference leakage. Data and weights remain local and ignored by Git. See [the reproduction commands](../docs/SINGLE-RECIPE.md). A successful bounded demonstration would still need broader testing and expert review before expansion.
+All 67 software tests pass, including frozen inputs, question separation, source restrictions, continuation signatures and interrupted dialogue resumption without reference leakage. Data and weights remain local and ignored by Git. See [the reproduction commands](../docs/SINGLE-RECIPE.md). A successful bounded demonstration would still need broader testing and expert review before expansion.
+
+
+## Completed balanced run and focused correction
+
+The balanced run completes step 300. It preserves the complete guide and repairs the ingredient and mash answers, scoring 3/5 development. The post-boil question still receives only kegging/gelatin/lagering. The known/unknown answer invents a four-gallon batch and packaging instructions and treats the provided batch size as absent. Both explanation questions are off-topic: wort/pitching gets a boil answer, and cleaning/sanitizing gets a lagering answer. This model is rejected before any fresh confirmation or natural-dialogue answers are generated.
+
+The first phase reports 44:24 of progress time. The resumed phase records 2,654.6 project-monotonic seconds (44.2 minutes) but 60,523.3 Trainer elapsed seconds (16.8 hours), with a long overnight progress gap. Do not describe the latter as continuous compute. Resume-phase mean loss 0.066783 is not a whole uninterrupted-run comparison. Recorded peak RSS during resume is 16.02 GiB. All 150 rows fit.
+
+The next run returns to the known/unknown adapter, which already passed the original five development questions, rather than inheriting the rejected balanced weights. Its 132 examples include ten full guides, twelve canonical follow-ups, 76 recipe follow-up variants, twelve plain-language concept variants, fourteen known/unknown contrasts and eight conversations. One hundred short examples are replayed three times: 332 optimizer steps, not 332 distinct recipes or questions. Cold-stage and completion answers start with the requested action; known settings and real gaps are separated clearly. General explanations define wort/pitching and distinguish cleaning from sanitizing, including two follow-ups after a complete guide.
+
+This is standard assistant-only LoRA training with the existing replay sampler, learning rate 0.0001 and one pass over the weighted dataset. No custom loss, factual system prompt or lookup is introduced. All full-guide source facts remain intact; evaluation files are copied unchanged. All 132 examples / 332 replayed rows fit, with 32,047 supervised answer tokens and maximum 880 tokens. The original five development questions, two explanation-development questions and consumed four-case regression set must pass before selecting the model. The four confirmation questions and six-turn actual-history conversation are still unopened.

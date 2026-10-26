@@ -1,0 +1,256 @@
+{
+  "answers": {
+    "mash": "The grain-rest and rinsing stages are:\n1. First rest: 130°F (54°C) for 10 minutes.\n2. Main mash rest: raise to 148°F (64°C) for 60 minutes.\n3. Mash-out: raise to 168°F (76°C). The source gives no separate hold duration.\n4. Fly sparge: rinse the grain at 170°F (77°C) while collecting wort. These are successive stages; do not omit the mash-out or sparge.",
+    "cold": "Once boiling finishes, work through these stages:\n1. Cool the wort promptly and use clean, sanitized equipment.\n2. Pitch the listed yeast: add it to the cooled wort. Confirm the chosen yeast guidance because a separate exact pitching temperature is not supplied.\n3. Ferment at 50°F (10°C) for two to three weeks. This is primary fermentation.\n4. After primary, keg and add gelatin to clarify. Confirm the gelatin dose; it is not supplied.\n5. Lager at 40°F (4°C) for three to six weeks. This later cold conditioning follows primary fermentation and kegging.",
+    "missing": "Here are the known settings:\n- Primary fermentation: 50°F (10°C) for two to three weeks.\n- Later lagering: 40°F (4°C) for three to six weeks after kegging and gelatin clarification.\nStill to confirm: mash and sparge water quantities, a numeric mineral profile, a separate exact pitching temperature, gelatin dose and carbonation setup. The source gives no bottling or priming-sugar instructions. Its batch size is given: seven gallons (26.5 L).",
+    "gravity": "Check repeated gravity readings over a few days before transferring the beer. Consistent readings help establish that primary fermentation has finished. A quiet airlock or a calendar date alone is not proof. This is a general brewing check; the recipe itself schedules primary at 50°F (10°C) for two to three weeks and does not give a universal final-gravity number."
+  },
+  "variants": {
+    "ingredients": [
+      "What do I need to buy?",
+      "Give me the shopping list with amounts.",
+      "List the grain bill, hops, yeast, water and clearing agent.",
+      "What are all eight ingredient entries and the intended yield?",
+      "What quantities do I weigh for this beer?",
+      "Before we start, what ingredients do I need for the batch?"
+    ],
+    "mash": [
+      "How do I handle the grain before the kettle boil?",
+      "Explain all the hot-water rests and grain rinsing, with settings.",
+      "What happens at the mash stage from beginning to end?",
+      "Tell me the mash schedule and how to rinse the grain afterward.",
+      "What are the first four grain temperature settings, in sequence?",
+      "Walk me through grain heating, mash-out and sparging."
+    ],
+    "hops": [
+      "I started the ninety-minute boil half an hour ago. Is it time for an addition?",
+      "Which ingredients go into the kettle during boiling, and when?",
+      "When do the Tettnanger and the clearing tablet go in?",
+      "Explain sixty and ten minutes remaining versus time elapsed.",
+      "Do I add the hops at the beginning of the ninety-minute boil?",
+      "The kettle has sixty minutes remaining. What goes in now and later?",
+      "At minute 30 of the boil, which ingredient is due?",
+      "When should I use the Whirlfloc tablet?"
+    ],
+    "cold": [
+      "Boiling is over. What are all the remaining stages?",
+      "What do I do with the hot wort until this lager is conditioned?",
+      "Take me from finishing the kettle boil to finishing the cold rest.",
+      "How do cooling, yeast addition, fermentation and kegging fit together?",
+      "Give all the post-boil operations and temperature schedules.",
+      "How does the beer get from boiled wort to lagered beer?"
+    ],
+    "primary": [
+      "How warm should I keep the fermenter, and for how long?",
+      "What temperature should the yeast ferment at?",
+      "What is the first fermentation schedule?",
+      "Before transferring to the keg, how long and at what temperature?",
+      "Tell me the primary temperature and time only.",
+      "How many weeks is the main yeast fermentation, and at which temperature?"
+    ],
+    "lager": [
+      "Once primary finishes, what comes next?",
+      "After fermentation ends, what happens with temperatures and times?",
+      "Explain the storage period after kegging.",
+      "What do I do after the warmer fermentation?",
+      "How long does the later cold rest last and how cold is it?",
+      "When do I condition the beer, and at which setting?"
+    ],
+    "missing": [
+      "Which settings can you state and which do we still need to decide?",
+      "What important details are missing from the published method?",
+      "Separate known temperature schedules from unknown quantities.",
+      "What do I need to confirm before brew day?",
+      "Does the recipe leave everything about fermentation unspecified?",
+      "What has the source left undecided, and which stage settings are provided?"
+    ],
+    "wrong_cold": [
+      "Can I skip primary and go straight to the cold conditioning temperature?",
+      "Would four degrees Celsius work for the whole yeast stage?",
+      "Could I use the lagering temperature for primary as well?",
+      "Is the first yeast fermentation at forty Fahrenheit?",
+      "Can I ignore the warmer fermentation and use the cold rest instead?",
+      "Are the first fermentation and cold conditioning the same temperature?"
+    ],
+    "gravity": [
+      "The airlock has gone quiet after a few days. Can I transfer now?",
+      "What proves the yeast has actually finished fermenting?",
+      "Can I move straight to kegging because the bubbles disappeared?",
+      "How can I tell whether primary is complete rather than just quiet?",
+      "Does reaching the end of the calendar schedule guarantee completion?",
+      "Before cold storage, how should I check fermentation completion?",
+      "My beer stopped bubbling early. Does that mean it is finished?",
+      "Can I just wait two weeks instead of measuring gravity?"
+    ],
+    "yeast": [
+      "What yeast should I pitch?",
+      "Which yeast strain is listed and what starter size?",
+      "What are the yeast choices for this beer?",
+      "Does the recipe give a starter for its main yeast?",
+      "Which European Lager yeast does the source call for?",
+      "Tell me the listed yeast and alternatives without making up doses."
+    ],
+    "water": [
+      "How many liters of mash water should I heat?",
+      "What is the exact sparge water volume?",
+      "Can I just use seven gallons of starting water?",
+      "Do we know how much water to measure before mashing?",
+      "What mineral profile should I set exactly?",
+      "Which water details does the recipe give and omit?"
+    ],
+    "gelatin": [
+      "How much gelatin should I add?",
+      "When does the clarifying agent go in, and is its dose given?",
+      "Should gelatin be added before primary fermentation?",
+      "What happens with gelatin after the yeast fermentation?",
+      "Do I have a specified gelatin amount to weigh?",
+      "At which step do I clarify this lager?"
+    ]
+  },
+  "conversation_keys": [],
+  "extra_pairs": [
+    {
+      "question": "Are both the Helles fermentation schedule and bottle-priming dose absent from the source?",
+      "answer": "No. Primary fermentation is given: 50°F (10°C) for two to three weeks. Later lagering is given: 40°F (4°C) for three to six weeks after kegging and gelatin. A bottle-priming sugar dose is not given. These are different fields, not all missing."
+    },
+    {
+      "question": "The Helles source omits an exact pitching temperature. Does it also omit fermentation and lagering temperatures?",
+      "answer": "No. Primary fermentation is explicitly 50°F (10°C) for two to three weeks; later lagering is 40°F (4°C) for three to six weeks after kegging and gelatin. Only the separate exact pitching temperature is absent here. Pitching and primary fermentation are different settings."
+    },
+    {
+      "question": "Tell me which are given: primary temperature, lagering temperature and priming-sugar amount.",
+      "answer": "Primary temperature: given, 50°F (10°C), for two to three weeks. Lagering temperature: given, 40°F (4°C), for three to six weeks after kegging and gelatin. Priming-sugar amount: not given; the source describes kegging and does not supply bottle-priming instructions."
+    },
+    {
+      "question": "Does Helicious Helles specify a bottle sugar dose as well as fermentation settings?",
+      "answer": "The fermentation settings are specified: primary at 50°F (10°C) for two to three weeks and later lagering at 40°F (4°C) for three to six weeks. The source does not specify a bottle-sugar dose. So the temperature settings are known while that quantity is missing."
+    },
+    {
+      "question": "Is it correct to say the Helles recipe has no primary temperature?",
+      "answer": "No. Its primary fermentation temperature is explicitly 50°F (10°C), for two to three weeks. Do not confuse that given setting with a separate pitching temperature, which the source does not state."
+    },
+    {
+      "question": "Are the Helles lagering temperature and duration missing?",
+      "answer": "No. The source explicitly gives 40°F (4°C) for three to six weeks of lagering, after primary fermentation, kegging and gelatin clarification."
+    },
+    {
+      "question": "Which exact priming-sugar mass is given for the Helles keg recipe?",
+      "answer": "No priming-sugar mass is given. This source describes kegging, gelatin clarification and later lagering, without bottle-priming instructions. Confirm a packaging plan instead of inventing a sugar dose."
+    },
+    {
+      "question": "How much priming sugar should I weigh if the source only gives primary and lagering settings?",
+      "answer": "The source provides no priming-sugar dose to weigh. Primary fermentation at 50°F (10°C) and later lagering at 40°F (4°C) are temperature settings, not sugar quantities. Confirm the intended packaging method and a suitable priming calculation instead of guessing a mass."
+    },
+    {
+      "question": "Is the seven-gallon batch volume the exact water amount for the mash?",
+      "answer": "No. Seven gallons (26.5 L) is the source batch size. The source does not give exact mash or sparge water quantities. Starting water depends on the equipment and process losses; confirm that plan rather than treating batch size as mash-water volume."
+    },
+    {
+      "question": "Which is unknown in Helles: the later cold temperature or the gelatin amount?",
+      "answer": "The gelatin amount is unknown. The later lagering temperature is given: 40°F (4°C) for three to six weeks after kegging and gelatin clarification. A missing gelatin dose does not make that temperature missing."
+    },
+    {
+      "question": "Are fermentation and yeast pitching the same setting in this Helles source?",
+      "answer": "They are separate. Pitching means adding yeast, and the source gives no separate exact pitching temperature. Primary fermentation is explicitly at 50°F (10°C) for two to three weeks. Use the chosen yeast guidance for pitching without denying the stated primary setting."
+    },
+    {
+      "question": "Does not having bottling instructions mean the Helles source gives no fermentation method?",
+      "answer": "No. It specifies primary fermentation at 50°F (10°C) for two to three weeks, then kegging and gelatin clarification, followed by lagering at 40°F (4°C) for three to six weeks. Bottling and priming-sugar instructions are absent; fermentation instructions are present."
+    },
+    {
+      "question": "Give just the two Helles temperature-and-time schedules that are explicitly stated.",
+      "answer": "Primary fermentation: 50°F (10°C) for two to three weeks. Later lagering: 40°F (4°C) for three to six weeks after kegging and gelatin clarification."
+    },
+    {
+      "question": "The Helles directions give a cooling step but no separate pitching temperature. What primary temperature should I use?",
+      "answer": "Use the stated primary fermentation setting of 50°F (10°C), for two to three weeks. The lack of a separate pitching temperature does not remove this given primary setting; confirm the chosen yeast guidance for pitching."
+    },
+    {
+      "question": "In this recipe, what is the sweet liquid before fermentation called?",
+      "answer": "Wort is the sweet liquid collected from the grain before fermentation. The yeast will ferment its sugars into beer. Think of wort as the liquid you prepare for the yeast.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Explain wort as if I have never brewed before.",
+      "answer": "Wort is the sweet liquid you make from grain and water. It becomes beer when yeast ferments it. It is the liquid, not the grain itself.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What do brewers mean by pitching yeast?",
+      "answer": "Pitching simply means adding yeast to the cooled wort so fermentation can begin. It does not mean throwing anything. For Helicious Helles, the separate exact pitching temperature is not given; confirm the chosen yeast guidance.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What is the meaning of wort, and what does it mean to pitch?",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "I do not understand the words wort or pitching. Please translate them into everyday language.",
+      "answer": "Wort is the sweet liquid made from grain before it becomes beer. To pitch yeast is simply to add yeast to the cooled wort. Those are names for the liquid and the action, not extra ingredients.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Is pitching yeast just adding it, and is wort the liquid it ferments?",
+      "answer": "Yes. Wort is the sweet liquid collected from the grain, and pitching means adding yeast to cooled wort. The yeast then ferments the sugars in that liquid.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Why do I clean equipment and then sanitize it?",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. This is general brewing guidance; follow the sanitizer product instructions for its dose and contact time.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What is the point of sanitizing the things that touch cooled wort?",
+      "answer": "Sanitizing reduces unwanted microbes so they are less likely to contaminate the cooled wort. First clean away dirt and residue, then sanitize the clean equipment. Cleaning and sanitizing do different jobs.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Is washing the fermenter the same thing as sanitizing it?",
+      "answer": "They are different steps. Washing cleans away dirt and residue. Sanitizing afterward reduces unwanted microbes on the clean fermenter. Use the sanitizer product instructions instead of guessing its concentration or contact time.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Explain cleaning versus sanitizing without technical language.",
+      "answer": "First wash away dirt and sticky leftovers: that is cleaning. Then use a suitable sanitizer as directed to reduce unwanted microbes on the clean equipment. That is sanitizing. Both help protect the cooled wort from contamination.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Why not put cooled wort into equipment that still has residue on it?",
+      "answer": "Residue can harbor unwanted microbes, and these may contaminate the cooled wort. Clean the equipment first and sanitize it afterward. Sanitizing is not a substitute for removing the dirt.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What does sanitation achieve, and why do I wash things first?",
+      "answer": "Washing removes dirt and residue. Sanitizing then reduces unwanted microbes on the clean surface, helping prevent contamination of the cooled wort. Follow the product instructions for the sanitizer rather than assuming a universal dose.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Can you explain what the wort is and what adding the yeast is called?",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "conversation_variant",
+      "prior_question": "Teach me this Helles from the beginning.",
+      "prior_answer": "guide"
+    },
+    {
+      "question": "Before we continue, why should the fermenter be clean and sanitized?",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. This is general brewing guidance; follow the sanitizer product instructions for its dose and contact time.",
+      "task": "conversation_variant",
+      "prior_question": "Teach me this Helles from the beginning.",
+      "prior_answer": "guide"
+    }
+  ],
+  "guide_questions": [
+    "Give me the full recipe.",
+    "Write the whole Helicious Helles brew sheet in plain English.",
+    "Explain the complete brewing method and all ingredients.",
+    "I need a beginner brewing plan with every quantity and stage."
+  ],
+  "conversation_pairs": [],
+  "confirmation_questions": {
+    "final-guide": "I would like a complete lesson on brewing Helicious Helles. Start with the entire shopping list and batch size, then explain every stage in order, define unfamiliar words, and point out information we still need.",
+    "final-timer": "For this Helles, half an hour of kettle boiling has passed. Which measured addition is due, and when is the clearing tablet due?",
+    "final-wrong-temperature": "I plan to run primary at the later lagering setting instead. Is that the method for this beer, or should I use two separate schedules?",
+    "final-completion": "The fermenter got quiet ahead of schedule. What evidence should I collect before declaring primary finished and transferring the beer?"
+  }
+}

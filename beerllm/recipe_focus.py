@@ -161,8 +161,17 @@ def refine_followups(source,lesson_path,config_path,output):
                                 {'role':'assistant','content':guide_row['messages'][-1]['content']}]
             train.append(r)
     for item in config.get('extra_pairs',[]):
-        r=copy.deepcopy(direct['missing']);r['task']='status_contrast'
+        task=item.get('task','status_contrast')
+        if task not in ['status_contrast','followup_variant','conversation_variant']:
+            raise ValueError('Extra pairs must be training contrasts or follow-up variants')
+        r=copy.deepcopy(direct['missing']);r['task']=task
         r['messages'][-2]['content']=item['question'];r['messages'][-1]['content']=item['answer']
+        if ('prior_answer' in item)!=('prior_question' in item):
+            raise ValueError('Conversation pairs need both a prior question and answer')
+        if 'prior_answer' in item:
+            prior=guide_row if item['prior_answer']=='guide' else direct[item['prior_answer']]
+            r['messages'][1:1]=[{'role':'user','content':item['prior_question']},
+                                {'role':'assistant','content':prior['messages'][-1]['content']}]
         train.append(r)
     frozen=['validation.jsonl','development.jsonl','final.jsonl','recipe.jsonl','dialogue.json']
     heldout={r['messages'][1]['content'] for name in ['development.jsonl','final.jsonl','validation.jsonl'] for r in read_jsonl(source/name)}

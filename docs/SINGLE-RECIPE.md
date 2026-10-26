@@ -142,3 +142,20 @@ The original `final.jsonl` is now a regression suite used during selection. `con
 
 
 For the selected balanced checkpoint, use `--protocol configs/helles-natural-dialogue.json` for both the base and adapter dialogue runs. It retains the original four turns, then adds two beginner explanation questions. Freeze selection before generating either reserved confirmation or natural-dialogue answers. The test must use each model's own preceding replies.
+
+
+## Teach direct answers and beginner concepts
+
+The balanced model ends at 3/5 original development and 0/2 explanation cases. This correction returns to the earlier five-case development winner, adds explicit beginner explanations and increases short-answer rehearsal. Ten full-guide rows retain the recipe. All old outputs stay preserved.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups \
+  --config configs/helles-teacher-refinements.json --output data/helles_focus_v7
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \
+  --config configs/qwen-helles-teacher.json --data-dir data/helles_focus_v7 --check-data
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-teacher.json --data-dir data/helles_focus_v7 --eval-limit 1 \
+  > outputs-helles-teacher-train.log 2>&1
+```
+
+There are 132 distinct teaching conversations about one source recipe. Replaying the 100 short follow-ups three times produces 332 training rows. `--resume` uses the identical config/data/parent hashes after an interruption. Evaluate with the unchanged development and consumed regression suites plus `configs/helles-explanation-dev.jsonl`; only after selecting a passing candidate open `confirmation.jsonl` and `configs/helles-natural-dialogue.json`.
