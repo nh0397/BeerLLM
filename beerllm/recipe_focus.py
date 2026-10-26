@@ -120,6 +120,58 @@ def run_dialogue(protocol,output,model_id,adapter=None,revision=None):
     return report
 
 
+def refine_followups(source,lesson_path,config_path,output):
+    """Expand question coverage while keeping the original evaluation bytes frozen."""
+    original=json.loads((source/'manifest.json').read_text())
+    for name,digest in original['files_sha256'].items():
+        if sha(source/name)!=digest: raise ValueError('Upstream focus file changed')
+    if sha(lesson_path)!=original['lesson_sha256']: raise ValueError('Original lesson changed')
+    lesson=json.loads(lesson_path.read_text());config=json.loads(config_path.read_text())
+    canonical={x['key']:x['question'] for x in lesson['followups']}
+    train=read_jsonl(source/'train.jsonl')
+    direct={k:next(r for r in train if r['task']=='followup' and r['messages'][-2]['content']==q)
+            for k,q in canonical.items()}
+    replacements={direct[k]['messages'][-1]['content']:answer for k,answer in config['answers'].items()}
+    import copy
+    train=copy.deepcopy(train)
+    for r in train:
+        for m in r['messages']:
+            if m['role']=='assistant' and m['content'] in replacements: m['content']=replacements[m['content']]
+    direct={k:next(r for r in train if r['task']=='followup' and r['messages'][-2]['content']==q)
+            for k,q in canonical.items()}
+    guide_row=next(r for r in train if r['task']=='complete_guide')
+    for key,questions in config['variants'].items():
+        for q in questions:
+            r=copy.deepcopy(direct[key]);r['task']='followup_variant';r['messages'][-2]['content']=q
+            train.append(r)
+        if key in config['conversation_keys']:
+            r=copy.deepcopy(direct[key]);r['task']='conversation_variant';r['messages'][-2]['content']=questions[-1]
+            r['messages'][1:1]=[{'role':'user','content':'Please teach me the complete Helicious Helles recipe.'},
+                                {'role':'assistant','content':guide_row['messages'][-1]['content']}]
+            train.append(r)
+    frozen=['validation.jsonl','development.jsonl','final.jsonl','recipe.jsonl','dialogue.json']
+    heldout={r['messages'][1]['content'] for name in ['development.jsonl','final.jsonl','validation.jsonl'] for r in read_jsonl(source/name)}
+    heldout.update(x['question'] for x in json.loads((source/'dialogue.json').read_text())['turns'])
+    if any(m['content'] in heldout for r in train for m in r['messages'] if m['role']=='user'):
+        raise ValueError('Evaluation question copied into refinement')
+    probes=[{'case_id':'exact-complete-guide','category':'training_fit','messages':guide_row['messages'],'max_new_tokens':1100}]
+    probes.extend({'case_id':'exact-'+k,'category':'training_fit','messages':direct[k]['messages'],'max_new_tokens':240} for k in ['mash','cold'])
+    manifest={'source_manifest_sha256':sha(source/'manifest.json'),'config_sha256':sha(config_path),
+              'builder_sha256':sha(Path(__file__)),'scope':original['scope'],'expert_reviewed':False,
+              'train_examples':len(train),'tasks':dict(Counter(r['task'] for r in train))}
+    if (output/'manifest.json').exists():
+        old=json.loads((output/'manifest.json').read_text());hashes=old.pop('files_sha256')
+        if old!=manifest or any(sha(output/name)!=digest for name,digest in hashes.items()):
+            raise ValueError('Frozen follow-up refinement changed')
+        return dict(manifest,files_sha256=hashes)
+    if output.exists() and any(output.iterdir()): raise ValueError('Preserve existing refinement output')
+    write_jsonl(output/'train.jsonl',train);write_jsonl(output/'probes.jsonl',probes)
+    for name in frozen: (output/name).write_bytes((source/name).read_bytes())
+    manifest['files_sha256']={name:sha(output/name) for name in ['train.jsonl','probes.jsonl',*frozen]}
+    write_json(output/'manifest.json',manifest)
+    return manifest
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     sub=parser.add_subparsers(dest='command',required=True)
@@ -127,6 +179,11 @@ def main():
     prep.add_argument('--recipes',type=Path,default=ROOT/'data/curated_v1/recipes.jsonl')
     prep.add_argument('--lesson',type=Path,default=ROOT/'configs/helles-lesson.json')
     prep.add_argument('--output',type=Path,default=ROOT/'data/helles_focus_v1')
+    refine=sub.add_parser('refine-followups')
+    refine.add_argument('--source',type=Path,default=ROOT/'data/helles_focus_v1')
+    refine.add_argument('--lesson',type=Path,default=ROOT/'configs/helles-lesson.json')
+    refine.add_argument('--config',type=Path,default=ROOT/'configs/helles-followup-refinements.json')
+    refine.add_argument('--output',type=Path,default=ROOT/'data/helles_focus_v2')
     chat=sub.add_parser('dialogue')
     chat.add_argument('--protocol',type=Path,default=ROOT/'data/helles_focus_v1/dialogue.json')
     chat.add_argument('--output',type=Path,required=True)
@@ -134,6 +191,7 @@ def main():
     chat.add_argument('--adapter',type=Path)
     args=parser.parse_args()
     if args.command=='prepare':print(json.dumps(build(args.recipes,args.lesson,args.output),indent=2))
+    elif args.command=='refine-followups':print(json.dumps(refine_followups(args.source,args.lesson,args.config,args.output),indent=2))
     else:run_dialogue(args.protocol,args.output,args.model_id,args.adapter)
 
 

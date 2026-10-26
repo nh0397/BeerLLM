@@ -11,6 +11,21 @@ from .common import ROOT, MODEL_ID, MODEL_REVISION, generate, load_model, load_t
 SHORT_FACT_TASKS = ['direct_fact','followup','followup_variant']
 
 
+def initial_adapter_signature(path,config):
+    """Pin the parent weights and reject incompatible continued-training settings."""
+    saved=json.loads((path/'adapter_config.json').read_text())
+    expected={'base_model_name_or_path':config['model_id'],'peft_type':'LORA','task_type':'CAUSAL_LM',
+              'r':config['lora_rank'],'lora_alpha':config['lora_alpha'],'lora_dropout':config['lora_dropout']}
+    if any(saved.get(k)!=v for k,v in expected.items()):
+        raise ValueError('Initial adapter model or LoRA settings differ from config')
+    if set(saved.get('target_modules',[]))!=set(config.get('target_modules',['q_proj','v_proj'])):
+        raise ValueError('Initial adapter target modules differ from config')
+    revision=model_revision(config['model_id'],config.get('model_revision'))
+    if saved.get('revision')!=revision: raise ValueError('Initial adapter revision differs')
+    return {name:hashlib.sha256((path/name).read_bytes()).hexdigest()
+            for name in ['adapter_config.json','adapter_model.safetensors','beerllm.json']}
+
+
 def replay_short_facts(rows,repeat):
     """Weight existing short facts without pretending they are independent examples."""
     if not isinstance(repeat,int) or isinstance(repeat,bool) or repeat<1:
@@ -97,6 +112,9 @@ def main():
         signature['sampling']={'version':1,'short_fact_repeat':fact_repeat,'tasks':SHORT_FACT_TASKS}
     if args.probe_suite:
         signature['probe_suite_sha256']=hashlib.sha256(args.probe_suite.read_bytes()).hexdigest()
+    initial=ROOT/config['initial_adapter'] if config.get('initial_adapter') else None
+    if initial:
+        signature['initial_adapter_sha256']=initial_adapter_signature(initial,config)
     if checkpoint:
         prior=json.loads((output/'run_config.json').read_text())
         if prior != signature:
@@ -119,9 +137,14 @@ def main():
     set_seed(config['seed'])
     model,tokenizer=load_model(config['model_id'],threads=config['threads'],revision=revision)
     model.config.use_cache=False
-    model=get_peft_model(model,LoraConfig(task_type=TaskType.CAUSAL_LM,r=config['lora_rank'],
-                        lora_alpha=config['lora_alpha'],lora_dropout=config['lora_dropout'],
-                        target_modules=config.get('target_modules',['q_proj','v_proj']),bias='none',revision=revision))
+    if initial:
+        from peft import PeftModel
+        model=PeftModel.from_pretrained(model,str(initial),is_trainable=True)
+    else:
+        model=get_peft_model(model,LoraConfig(task_type=TaskType.CAUSAL_LM,r=config['lora_rank'],
+                            lora_alpha=config['lora_alpha'],lora_dropout=config['lora_dropout'],
+                            target_modules=config.get('target_modules',['q_proj','v_proj']),bias='none',revision=revision))
+    if not any(p.requires_grad for p in model.parameters()): raise ValueError('Adapter has no trainable parameters')
     model.print_trainable_parameters()
     rows=read_jsonl(train_path)
     if args.limit: rows=rows[:args.limit]

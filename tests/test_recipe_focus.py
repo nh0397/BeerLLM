@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from beerllm.common import ROOT,read_jsonl,write_json,write_jsonl
-from beerllm.recipe_focus import build,run_dialogue
+from beerllm.recipe_focus import build,run_dialogue,refine_followups
 
 
 def fixture(root):
@@ -20,6 +20,27 @@ def fixture(root):
 
 
 class RecipeFocusTests(unittest.TestCase):
+    def test_followup_refinement_keeps_guides_and_evaluation_bytes_unchanged(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);recipes,lesson=fixture(root);source=root/'v1';out=root/'v2'
+            build(recipes,lesson,source,False)
+            config=root/'refinements.json';write_json(config,json.loads((ROOT/'configs/helles-followup-refinements.json').read_text()))
+            report=refine_followups(source,lesson,config,out)
+            self.assertEqual(report['train_examples'],46)
+            self.assertEqual(refine_followups(source,lesson,config,out),report)
+            for name in ['development.jsonl','final.jsonl','dialogue.json','validation.jsonl']:
+                self.assertEqual((source/name).read_bytes(),(out/name).read_bytes())
+            def guides(path):return [r['messages'][-1]['content'] for r in read_jsonl(path/'train.jsonl') if r['task']=='complete_guide']
+            self.assertEqual(guides(source),guides(out))
+            lesson_data=json.loads(config.read_text())
+            target=next(r for r in read_jsonl(out/'train.jsonl') if r['task']=='followup' and 'grain-rest' in r['messages'][-2]['content'])
+            self.assertEqual(target['messages'][-1]['content'],lesson_data['answers']['mash'])
+            lesson_data['variants']['mash'].append(read_jsonl(source/'final.jsonl')[0]['messages'][1]['content'])
+            write_json(config,lesson_data)
+            with self.assertRaisesRegex(ValueError,'Evaluation question'):refine_followups(source,lesson,config,root/'leaked')
+            (source/'train.jsonl').write_text('{}\n')
+            with self.assertRaisesRegex(ValueError,'Upstream focus file changed'):refine_followups(source,lesson,config,root/'changed')
+
     def test_focus_has_complete_guides_one_family_and_separate_question_wordings(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);recipes,config=fixture(root);out=root/'data'

@@ -42,19 +42,49 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \
   --output outputs/helles-focus-eval-v1/development-comparison.json
 ```
 
+## Repair incomplete follow-ups without restarting the recipe
+
+The first adapter learns the complete guide but scores 3/5 on development because two multi-part questions receive partial answers. The continuation adds varied questions and complete stage lists while preserving the guide and all evaluation bytes. It starts from the original adapter with a fresh optimizer at a lower learning rate. Parent adapter hashes and compatible LoRA settings are checked before training/resume.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups
+
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \
+  --config configs/qwen-helles-followups.json --data-dir data/helles_focus_v2 --check-data
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-followups.json --data-dir data/helles_focus_v2 \
+  --eval-limit 1 --probe-suite data/helles_focus_v2/probes.jsonl \
+  > outputs-helles-followups-train.log 2>&1
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \
+  --model-id Qwen/Qwen2.5-1.5B-Instruct --suite data/helles_focus_v2/development.jsonl \
+  --mode adapter --adapter outputs/helles-followups-v1/adapter \
+  --output outputs/helles-followup-eval-v1/development-after.json
+
+.venv/bin/python -m beerllm.benchmark compare --suite data/helles_focus_v2/development.jsonl \
+  --before outputs/helles-focus-eval-v1/development-before.json \
+  --after outputs/helles-followup-eval-v1/development-after.json \
+  --output outputs/helles-followup-eval-v1/development-comparison.json
+```
+
+The continuation contains 46 conversations and runs 138 steps. Generated probes check the full guide and both multi-stage follow-ups. The first run, source snapshots and evaluation files are preserved.
+
 ## Fresh wording and actual conversation
 
-Only after development choices finish, repeat the benchmark pair and comparison with `final.jsonl` and `final-{before,after,comparison}.json`. These are different questions about the same trained recipe, not new recipe families.
+Only after development choices finish, repeat the benchmark pair and comparison with `data/helles_focus_v2/final.jsonl`, the selected continuation adapter and `outputs/helles-followup-eval-v1/final-{before,after,comparison}.json`. These are different questions about the same trained recipe, not new recipe families.
 
 The dialogue test feeds each model its own generated answer before asking the next question. Reference answers are saved for review, never inserted into the live history. It can resume an interrupted evaluation with the same output signature.
 
 ```bash
 HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.recipe_focus dialogue \
-  --output outputs/helles-focus-eval-v1/dialogue-before.json
+  --protocol data/helles_focus_v2/dialogue.json \
+  --output outputs/helles-followup-eval-v1/dialogue-before.json
 
 HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.recipe_focus dialogue \
-  --adapter outputs/helles-focus-v1/adapter \
-  --output outputs/helles-focus-eval-v1/dialogue-after.json
+  --protocol data/helles_focus_v2/dialogue.json \
+  --adapter outputs/helles-followups-v1/adapter \
+  --output outputs/helles-followup-eval-v1/dialogue-after.json
 ```
 
 Success requires all five development cases, four final wording cases and four dialogue turns to pass source-based full-answer inspection. It establishes a bounded one-recipe demonstration only. References and inspection remain assistant-authored, not independent expert validation. Results belong in [the run report](../reports/single-recipe-run.md).
@@ -62,7 +92,7 @@ Success requires all five development cases, four final wording cases and four d
 After an adapter exists, test normally without supplying recipe notes:
 
 ```bash
-HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat --adapter outputs/helles-focus-v1/adapter
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat --adapter outputs/helles-followups-v1/adapter
 ```
 
 Ask for the complete Helicious Helles recipe, then ask follow-ups. Use `exit` to stop. The adapter saves its focused system prompt for chat. Old adapters and all collected recipes remain preserved.
