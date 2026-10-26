@@ -1,6 +1,6 @@
 # Helicious Helles: complete-guide fitting experiment
 
-**Status: setup and source checks complete; before-training evaluation running. No new model success is claimed yet.**
+**Status: source checks and baseline complete; focused training is running. No new model success is claimed yet.**
 
 The [previous experiment](refinement-run.md) improved short factual answers but failed complete guides. This experiment makes the full guide the central gate and limits scope to one recipe before any further scaling.
 
@@ -13,3 +13,9 @@ The proposed run starts from pinned Qwen2.5-1.5B-Instruct with rank-16 LoRA on a
 Before generation, [the factual rubric](../configs/helles-rubric.json) fixes the required ingredient quantities, all temperature/time relationships, hop countdown, genuine gaps, plain explanations and scope control. Success requires five development cases, four reserved wording cases and four actual-history dialogue turns to pass complete-answer inspection. The dialogue uses the model's own preceding answer, not a reference guide placed into history. All evaluations concern the same trained recipe.
 
 All 63 software tests pass, including new checks for source/family restrictions, frozen outputs, question separation and interrupted dialogue resumption without reference-answer leakage. The [commands](../docs/SINGLE-RECIPE.md) reproduce the setup. Data, weights, full generated answers and logs stay local and ignored by Git. Previous models, recipe data and checkpoints are preserved.
+
+## Before-training result
+
+All five development cases fail full-answer source inspection. The complete-guide answer substitutes a generic extract recipe and wrong fermentation settings; the ingredient answer invents flavorings and a 750 ml batch. Mash settings are wrong and truncated. The cold-stage answer misses the source's exact primary/lagering settings and gelatin order. The final question falsely denies the source's stated fermentation temperatures. Two of five outputs hit their length limits.
+
+This baseline uses the same focused system prompt and questions planned for the after run, with neutral greedy decoding and no supplied recipe notes. Full output and inspection are local in `outputs/helles-focus-eval-v1/development-before.json` and `review.json`. Training has started from the base weights; the previous multi-recipe adapter is not reused.
