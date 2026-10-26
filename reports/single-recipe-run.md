@@ -1,6 +1,6 @@
 # Helicious Helles: complete-guide fitting experiment
 
-**Status: first training run and development review complete (3/5 after versus 0/5 before). The complete guide works under fresh wording; two follow-ups omit requested stages. The focused continuation is running and passes all three halfway training probes; final wording and actual-history tests remain unopened.**
+**Status: first training run and development review complete (3/5 after versus 0/5 before). The complete guide works under fresh wording; two follow-ups omit requested stages. The continuation has finished; its final checkpoint scores 4/5 on development. An earlier checkpoint is being evaluated before selection. Final wording and actual-history tests remain unopened.**
 
 The [previous experiment](refinement-run.md) improved short factual answers but failed complete guides. This experiment makes the full guide the central gate and limits scope to one recipe before any further scaling.
 
@@ -58,3 +58,11 @@ All 65 software tests pass. The original base comparison can be reused because p
 ### Continuation halfway check
 
 At step 69 / epoch 1.5, the complete guide, four-part mash answer and five-part after-boil answer all exactly match their source-checked references. The complete guide has not been lost while learning the new follow-up format. These are training-prompt checks; the previously failing fresh questions must still be generated and reviewed after the run. Parent adapter files were verified unchanged after loading.
+
+### Completed continuation and remaining development error
+
+The continuation finished 138 steps in 2,236.2 seconds (37.3 minutes), with 14.64 GiB peak RSS and no overlength skips. Its final full guide and both canonical multi-stage probes exactly match the source-checked references.
+
+Under fresh development wording, the final checkpoint passes 4/5. The full guide and ingredients remain correct; both previously incomplete mash/cold-stage answers now include every requested stage with correct settings. However, the known-versus-missing answer regresses: it confuses priming quantity with temperature and falsely denies provided fermentation details. That case remains a failure.
+
+Checkpoint 69 is being evaluated against the same complete development suite before considering another training run. The eventual selection must pass all five cases as a single model; outputs from different checkpoints will not be combined. All earlier failures and complete raw answers are preserved. No reserved final or dialogue answers have been generated yet.
