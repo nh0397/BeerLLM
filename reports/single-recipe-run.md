@@ -1,91 +1,62 @@
-# Helicious Helles: complete-guide fitting experiment
+# One-recipe brewing tutor: measured progress
 
-**Status: not accepted yet. The known/unknown continuation passes all five development cases but only one of four reserved wording cases. It hallucinates parts of a new full-guide answer and answers two follow-ups with the wrong topic. Low reference loss did not predict successful free generation. A balanced question-and-conversation continuation is running; scaling remains paused.**
+**Not accepted yet.** A Helicious Helles adapter passes all five development questions but only one of four reserved phrasings. A balanced continuation is running. No scaling or general brewing-accuracy claim follows from these results.
 
-The [previous experiment](refinement-run.md) improved short factual answers but failed complete guides. This experiment makes the full guide the central gate and limits scope to one recipe before any further scaling.
+The goal is one complete explanation plus direct, accurate follow-ups in ordinary language. The model must supply facts from its trained weights: no recipe lookup, source notes or recipe quantities in its system prompt. All answers are inspected against the saved source and [fixed factual rubric](../configs/helles-rubric.json). References and inspection are assistant-authored, not expert brewer-reviewed.
 
-The selected source is [AHA's Helicious Helles](https://homebrewersassociation.org/homebrew-recipe/helicious-helles/), from the saved snapshot with HTML SHA-256 `de8d17364a4aeb1f88fa7d504e024ce05ac3a9774958ef5655237c3fe3ebd84e`. Re-extraction matches the saved ingredient list and directions. This verifies provenance, not expert brewing correctness. Actual omissions are preserved rather than filled with invented settings.
+## Source and practical limits
 
-The authored lesson has 24 conversations: six complete-guide requests, twelve direct follow-ups and six conversations. Every row uses the same trained recipe. The system prompt names the recipe and sets response expectations, but contains no recipe quantities. Training references supervise 5,410 answer tokens; the longest complete conversation is 880 tokens. No examples exceed the 2,048-token budget or are truncated.
+[AHA's Helicious Helles](https://homebrewersassociation.org/homebrew-recipe/helicious-helles/) provides a seven-gallon / 26.5 L batch, eight ingredient entries, grain rests, mash-out, sparging, a 90-minute boil with timed additions, primary fermentation, kegging/gelatin and later lagering. Re-extraction matches saved ingredients and directions. Snapshot SHA-256: `de8d17364a4aeb1f88fa7d504e024ce05ac3a9774958ef5655237c3fe3ebd84e`.
 
-The proposed run starts from pinned Qwen2.5-1.5B-Instruct with rank-16 LoRA on attention/feed-forward projections, learning rate 0.0003, zero dropout and six epochs (144 steps). That provides 36 supervised complete-guide presentations. Validation repeats the trained facts under a different question; it is not an unfamiliar-recipe estimate. Multiple curriculum/training changes occur together, so this experiment cannot isolate one cause of improvement.
+The source omits exact mash/sparge water quantities, numeric water treatment, a separate pitching temperature, gelatin dose and carbonation/bottling instructions. A complete explanation must acknowledge those gaps, while retaining the provided primary and lagering schedules. It is not a fully specified, expert-approved brewing plan. Stable gravity readings over several days are labeled separately as a general completion check.
 
-Before generation, [the factual rubric](../configs/helles-rubric.json) fixes the required ingredient quantities, all temperature/time relationships, hop countdown, genuine gaps, plain explanations and scope control. Success requires five development cases, four reserved wording cases and four actual-history dialogue turns to pass complete-answer inspection. The dialogue uses the model's own preceding answer, not a reference guide placed into history. All evaluations concern the same trained recipe.
+## Actual generated-answer results
 
-All 63 software tests pass, including new checks for source/family restrictions, frozen outputs, question separation and interrupted dialogue resumption without reference-answer leakage. The [commands](../docs/SINGLE-RECIPE.md) reproduce the setup. Data, weights, full generated answers and logs stay local and ignored by Git. Previous models, recipe data and checkpoints are preserved.
+| Model | Development, out of 5 | Original reserved wording, out of 4 | Decision |
+|---|---:|---:|---|
+| Matched Qwen base | 0 | 0 | Fails recipe facts |
+| Complete-guide adapter, step 144 | 3 | Not run | Mash and post-boil follow-ups incomplete |
+| Stage-list continuation, steps 69 and 138 | 4 each | Not run | Falsely denies a provided temperature |
+| Known/unknown continuation, step 120 | 5 | 1 | Rejected on reserved wording |
+| Balanced continuation | Pending | Now a regression suite | In progress |
 
-## Before-training result
+The first adapter's complete guide is correct under development wording. A generic development-only instruction to enumerate every requested stage does not repair its two incomplete follow-ups; that diagnostic prompt is not adopted.
 
-All five development cases fail full-answer source inspection. The complete-guide answer substitutes a generic extract recipe and wrong fermentation settings; the ingredient answer invents flavorings and a 750 ml batch. Mash settings are wrong and truncated. The cold-stage answer misses the source's exact primary/lagering settings and gelatin order. The final question falsely denies the source's stated fermentation temperatures. Two of five outputs hit their length limits.
+The stage-list continuation repairs both incomplete answers but regresses on known versus absent settings. Its two checkpoints fail the same case. Answers from different checkpoints are never combined to manufacture a pass.
 
-This baseline uses the same focused system prompt and questions planned for the after run, with neutral greedy decoding and no supplied recipe notes. Full output and inspection are local in `outputs/helles-focus-eval-v1/development-before.json` and `review.json`. Training has started from the base weights; the previous multi-recipe adapter is not reused.
+The known/unknown continuation passes development, then fails three reserved cases. Its new full-guide answer omits most ingredients, puts hops into a mash, invents water quantity, mislabels kettle additions as dry hopping and contradicts its own lagering statement. The timer question gets an unrelated post-boil answer. The completion question omits the stable-gravity check. Only the correction of the wrong primary temperature passes.
 
-## Halfway generated-answer check
+Selection of that failed adapter was frozen before final generation. Weight SHA-256: `02497e8be7e54e8243ebdfaa958d5a0366875f97ba84711347933d753397d502`. Complete failures and per-case reasons are preserved locally in `outputs/helles-status-eval-v1/`.
 
-At step 72 / epoch three, the exact training guide passes all full-guide rubric criteria on assistant source inspection. It preserves every source ingredient entry, the seven-gallon batch, successive grain rests, the 90-minute boil and 30/80-minute elapsed additions, cooling/pitching distinction, primary fermentation, kegging/gelatin and later lagering. It acknowledges actual missing settings without denying the provided temperatures, and explains the main brewing terms plainly. The hop-timer follow-up also passes. Neither answer is truncated or loops.
+## What the numeric metrics do and do not show
 
-Both generated texts exactly match their authored references. That establishes deliberate fitting on these training prompts; it does not establish success on the reserved wording or on a real conversation. The fixed six-epoch run continues. Complete answers are preserved in `outputs/helles-focus-v1/probes/step-72.json`.
+The known/unknown adapter lowers development guide reference loss from 2.44468 to 0.00211 and conditional perplexity from 11.52685 to 1.00212. Four follow-ups have token-weighted loss 2.57311 → 0.09392 and perplexity 13.10657 → 1.09847.
 
-## Completed training
+Yet its reserved guide has conditional reference perplexity **1.00383 and an incorrect generated answer**. Teacher forcing supplies preceding reference tokens when scoring the next token. It does not establish that the model independently selects and sustains that answer. Empty lexical checks have a null pass rate; they are never presented as factual accuracy. Full-answer inspection determines acceptance.
 
-All 144 optimizer steps / six epochs finished in 2,481.4 seconds (41.4 minutes). Mean training loss is 0.398605; peak process RSS is 13.80 GiB. All 24 examples fit without truncation or overlength skips. The final guide and timer probes again exactly match the source-checked references. Both checkpoints (72 and 144), the final adapter and previous experiments are preserved. The final step-144 adapter is the candidate for development evaluation.
+## Training and preservation
 
-| Epoch | Full-guide reference loss, different wording |
-|---|---:|
-| 1 | 0.667612 |
-| 2 | 0.024986 |
-| 3 | 0.012722 |
-| 4 | 0.002817 |
-| 5 | 0.003171 |
-| 6 | 0.002074 |
+All runs use pinned `Qwen/Qwen2.5-1.5B-Instruct` revision `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`, float32 CPU training with four threads, rank-16 LoRA / alpha 32 / zero dropout on attention and feed-forward projections. There are 18,464,768 trainable parameters, approximately 1.182% of the combined model. This is LoRA, not QLoRA.
 
-The adapter's saved system prompt and training-data hash match the frozen lesson. Validation still repeats this one recipe's facts; low loss and exact training-prompt output do not replace the upcoming fresh-question and conversation reviews.
+| Run | Conversations | Steps | Training time | Peak process RSS | Parent |
+|---|---:|---:|---:|---:|---|
+| Complete guide | 24 | 144 | 41.4 min | 13.80 GiB | Pinned base |
+| Complete follow-ups | 46 | 138 | 37.3 min | 14.64 GiB | Complete-guide adapter |
+| Known versus missing | 60 | 120 | 18.7 min | 14.93 GiB | Follow-up adapter |
+| Balanced questions | 150 | Up to 300 planned | Pending | Pending | Complete-guide adapter |
 
-## Fresh development wording: correct guide, incomplete follow-ups
+The first three runs total 97.3 training minutes. Mean losses are respectively 0.398605, 0.107404 and 0.411845; changed curricula make them unsuitable as a ranking of answer quality. No examples were silently truncated or skipped. All previous datasets, adapters, checkpoints, raw answers and logs remain preserved.
 
-The first adapter passes three of five development cases, versus zero of five for the matched base. Its complete guide and ingredient list exactly match the source-checked references under new questions. The known-versus-missing answer correctly preserves both temperature stages and acknowledges absent quantities.
+Continuation loads existing LoRA weights with `is_trainable=True`, checked against the installed PEFT implementation and [official API](https://huggingface.co/docs/peft/v0.13.0/en/package_reference/peft_model#peft.PeftModel.from_pretrained). Parent model identity, revision, LoRA settings and weight/config/prompt hashes enter the run signature. Each continuation has a fresh optimizer; interrupted runs resume their own saved optimizer.
 
-Two cases fail completeness: the mash question returns only the two rests, omitting the explicitly requested mash-out and sparging settings; the after-boil question returns only kegging/lagering, omitting cooling, yeast and primary fermentation. A development-only generic instruction to enumerate all requested stages does not repair either answer. Its outputs remain in `scope-diagnostic.json`; it is not adopted or presented as a matched control.
+## Balanced question coverage and remaining gates
 
-## Follow-up continuation plan
+The balanced curriculum has 18 full-guide requests, 12 canonical follow-ups, 76 direct variants, 30 conversational examples and 14 known/unknown contrasts. It covers every stage, short questions without the recipe name and follow-ups after a full guide. All complete-guide targets retain the original source facts. There are 22,741 supervised answer tokens per pass; the longest conversation is 971 tokens. All 150 examples fit.
 
-The refinement preserves all six complete-guide training rows and copies validation, development, final and dialogue files byte for byte. It changes the mash and after-boil teaching answers into complete labeled stage lists, adds twenty question variants across the existing topics and adds two guide-to-follow-up contexts. There are 46 conversations about the same recipe, not additional recipes. No reserved question is copied into training.
+This run starts from the first complete-guide adapter at learning rate 0.00005, saving each epoch. The first fully saved epoch will be inspected before spending a second epoch. It can resume from that checkpoint with the original command plus `--resume`.
 
-A separate three-epoch / 138-step run initializes from the first adapter with a fresh optimizer and learning rate 0.0001. Parent weight/config/prompt hashes enter the run signature, and model identity, revision, rank/alpha/dropout and target modules must match. The original adapter and checkpoints remain untouched. Continued LoRA training explicitly enables trainable adapter weights, as required by the [PEFT API](https://huggingface.co/docs/peft/v0.13.0/en/package_reference/peft_model#peft.PeftModel.from_pretrained); this was also verified in the installed 0.13.2 implementation.
+The original final set is consumed and now becomes an additional regression gate. Four new confirmation phrasings were frozen before balanced training; the original four-turn actual-history dialogue remains reserved. No evaluation question is copied verbatim into training. Acceptance requires all five development questions, all four regression questions, all four fresh confirmation questions and all four dialogue turns to pass as one model. This tightens coverage without relaxing any factual requirement.
 
-All 65 software tests pass. The original base comparison can be reused because prompts, references, decoding, loader/evaluator and answer-masking code are unchanged. Final wording and actual-history tests are still reserved until development choices finish.
+The dialogue feeds each model its own generated replies. Reference answers are saved for review and never inserted into history. Both confirmation and dialogue concern the one trained recipe, not unseen recipe families. Greedy decoding, model pin, system prompt, loader/evaluator and suite hashes must match between before/after runs.
 
-### Continuation halfway check
-
-At step 69 / epoch 1.5, the complete guide, four-part mash answer and five-part after-boil answer all exactly match their source-checked references. The complete guide has not been lost while learning the new follow-up format. These are training-prompt checks; the previously failing fresh questions must still be generated and reviewed after the run. Parent adapter files were verified unchanged after loading.
-
-### Completed continuation and remaining development error
-
-The continuation finished 138 steps in 2,236.2 seconds (37.3 minutes), with 14.64 GiB peak RSS and no overlength skips. Its final full guide and both canonical multi-stage probes exactly match the source-checked references.
-
-Under fresh development wording, the final checkpoint passes 4/5. The full guide and ingredients remain correct; both previously incomplete mash/cold-stage answers now include every requested stage with correct settings. However, the known-versus-missing answer regresses: it confuses priming quantity with temperature and falsely denies provided fermentation details. That case remains a failure.
-
-Checkpoint 69 is being evaluated against the same complete development suite before considering another training run. The eventual selection must pass all five cases as a single model; outputs from different checkpoints will not be combined. All earlier failures and complete raw answers are preserved. No reserved final or dialogue answers have been generated yet.
-
-## Known settings versus omissions
-
-The earlier continuation checkpoint also passes 4/5 and fails the known-versus-missing case, so it is not selected. One model must pass the whole gate; source-accurate answers from different versions are not combined.
-
-The next refinement keeps the working guide and stage-list examples, but separates known schedules from absent quantities explicitly. Fourteen short contrast examples distinguish primary fermentation from yeast pitching, temperature from sugar mass, and a missing packaging detail from the given fermentation method. The missing-settings answer becomes a clear given/not-specified list. The resulting 60 conversations still concern only Helicious Helles. Every validation/development/final/dialogue byte remains unchanged.
-
-This separate two-epoch / 120-step run continues from the step-138 adapter at learning rate 0.00005, rehearsing the existing correct answers alongside the new contrasts. It saves two checkpoints. No repeated training-prompt generation is scheduled; the next generated-answer check is the full, unchanged development suite. Final wording and actual-history tests are still unopened.
-
-
-## Reserved wording rejected the development winner
-
-The 120-step known/unknown continuation finished in 1,120.3 seconds (18.7 minutes), with 14.93 GiB peak RSS. It passed 5/5 development questions versus 0/5 for the base. Selection was frozen at step 120 before opening the final suite; weight SHA-256 was `02497e8be7e54e8243ebdfaa958d5a0366875f97ba84711347933d753397d502`.
-
-On the reserved four questions, the base passes 0/4 and the selected adapter passes only 1/4. The adapter's guide omits most ingredients, puts hops in a mash, invents water quantity and incorrectly labels kettle additions as dry hopping. The timer question gets an unrelated post-boil answer. The completion question omits the stable-gravity check. Only the wrong-primary-temperature correction passes. This model is rejected; it is not the chat recommendation.
-
-The guide's conditional reference perplexity is only 1.00383 despite its incorrect generated guide. Teacher forcing measures next-token fit when preceding reference tokens are supplied; it does not show that the model selects or sustains that answer on its own. Full-answer inspection is the acceptance test.
-
-## Balanced question coverage
-
-The next curriculum has 150 conversations: 18 full-guide prompts, 12 canonical follow-ups, 76 follow-up variants, 30 conversation examples and 14 known/unknown contrasts. Topics are balanced across ingredients, grain stages, boiling, cooling, primary, lagering, completion, yeast and actual omissions. It includes short questions without the recipe name and follow-ups after a complete guide. All full-guide targets and source facts are retained.
-
-This run starts from the first complete-guide adapter, rather than continuing the rejected status adapter. It uses learning rate 0.00005 for two epochs / 300 steps, saving each epoch. All 150 rows fit, with 22,741 supervised answer tokens per pass and a maximum 971-token conversation. The original final suite is now a consumed regression suite; it will never be described as untouched again. Four new confirmation questions are frozen in the curriculum config before training; the original actual-history dialogue remains reserved. No failed question is copied verbatim into training. The factual acceptance criteria remain unchanged. All 66 software tests pass.
+All 66 software tests pass, including frozen inputs, question separation, source restrictions, continuation signatures and interrupted dialogue resumption without reference leakage. Data and weights remain local and ignored by Git. See [the reproduction commands](../docs/SINGLE-RECIPE.md). A successful bounded demonstration would still need broader testing and expert review before expansion.
