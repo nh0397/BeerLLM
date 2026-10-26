@@ -115,9 +115,9 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.recipe_focus dialo
   --output outputs/helles-status-eval-v1/dialogue-after.json
 ```
 
-Success requires all five development cases, four final wording cases and four dialogue turns to pass source-based full-answer inspection. It establishes a bounded one-recipe demonstration only. References and inspection remain assistant-authored, not independent expert validation. Results belong in [the run report](../reports/single-recipe-run.md).
+The original gate required all five development cases, four final wording cases and four dialogue turns. After the final-wording failure, those four consumed cases become regression tests and four fresh confirmation cases are added; all must pass source-based full-answer inspection. It establishes a bounded one-recipe demonstration only. References and inspection remain assistant-authored, not independent expert validation. Results belong in [the run report](../reports/single-recipe-run.md).
 
-After an adapter exists, test normally without supplying recipe notes:
+The following command reproduces the rejected status candidate for diagnosis; it is not the accepted chat model. A passing replacement has not been selected yet:
 
 ```bash
 HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat --adapter outputs/helles-status-v1/adapter
@@ -139,3 +139,6 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
 ```
 
 The original `final.jsonl` is now a regression suite used during selection. `confirmation.jsonl` contains four newly reserved phrasings, frozen before this training run. The original actual-history `dialogue.json` remains reserved. Do not use either reserved set to select a checkpoint. Existing local datasets are frozen; skip preparation when the recorded dataset is already present, and use a new output directory for changed builder/config inputs.
+
+
+For the selected balanced checkpoint, use `--protocol configs/helles-natural-dialogue.json` for both the base and adapter dialogue runs. It retains the original four turns, then adds two beginner explanation questions. Freeze selection before generating either reserved confirmation or natural-dialogue answers. The test must use each model's own preceding replies.
