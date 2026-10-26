@@ -1,0 +1,16 @@
+{
+  "scope": "One trained recipe, new question wording and actual generated chat history. Assistant source inspection; not expert brewing review or general accuracy.",
+  "pass_rule": "Read the complete answer. All requested facts and relationships must be correct, with adequate completeness and plain language. No invented recipe settings, contradictions, false claims that provided facts are missing, or looping/truncation. Lexical matches and low loss cannot pass a case.",
+  "complete_guide": [
+    "Source batch 7 gallons / 26.5 L; never silently substitute five gallons.",
+    "All eight source ingredient entries: 9.5 lb / 4.31 kg Pilsner; 1 lb / 0.45 kg torrified wheat; 5 oz / 142 g melanoidin; 7 oz / 198 g acidulated malt; one Whirlfloc tablet; 1.9 oz / 54 g Tettnanger at 4% AA; listed Wyeast 2247 with 4 L starter and source White Labs alternatives; medium carbonate water. Do not invent a water volume or alternative yeast dose.",
+    "130°F / 54°C for 10 minutes, then 148°F / 64°C for 60 minutes; mash-out 168°F / 76°C; fly sparge 170°F / 77°C.",
+    "90-minute total boil. Hops with 60 minutes remaining (30 elapsed), Whirlfloc with 10 remaining (80 elapsed). No invented dry hop or other additions.",
+    "Cool promptly, clean/sanitize cooled-wort equipment, pitch listed yeast. No invented separate exact pitching temperature.",
+    "Primary 50°F / 10°C for two to three weeks, then keg and gelatin clarification, then later lagering 40°F / 4°C for three to six weeks. Preserve order and distinguish the two temperature stages.",
+    "Genuine source gaps: water amounts/profile, separate pitching conditions, gelatin dose and carbonation/bottling details. Do not deny the stated fermentation/lagering temperatures or durations.",
+    "Explain unfamiliar actions simply. Label repeated stable gravity readings as a general completion check, not a recipe-specific numeric gravity target. Calendar and quiet airlock alone do not prove completion."
+  ],
+  "followups": "Answer the requested part directly with the same source facts. Correct a mistaken premise, acknowledge actual omissions, and preserve stage relationships. A complete recipe dump in place of a short follow-up does not demonstrate conversational scope control.",
+  "success_gate": "All five development cases, all four final wording cases and all four actual-history dialogue turns must pass full-answer review before calling this one-recipe experiment successful. Final wording/dialogue generation occurs after development choices finish. Success does not establish competence on another recipe."
+}
