@@ -1,6 +1,6 @@
 # Helicious Helles: complete-guide fitting experiment
 
-**Status: source checks and baseline complete; focused training is running. No new model success is claimed yet.**
+**Status: focused training is running. The halfway checkpoint passes its complete-guide and hop-timer training probes; fresh-wording and actual-history evaluation remain pending.**
 
 The [previous experiment](refinement-run.md) improved short factual answers but failed complete guides. This experiment makes the full guide the central gate and limits scope to one recipe before any further scaling.
 
@@ -19,3 +19,9 @@ All 63 software tests pass, including new checks for source/family restrictions,
 All five development cases fail full-answer source inspection. The complete-guide answer substitutes a generic extract recipe and wrong fermentation settings; the ingredient answer invents flavorings and a 750 ml batch. Mash settings are wrong and truncated. The cold-stage answer misses the source's exact primary/lagering settings and gelatin order. The final question falsely denies the source's stated fermentation temperatures. Two of five outputs hit their length limits.
 
 This baseline uses the same focused system prompt and questions planned for the after run, with neutral greedy decoding and no supplied recipe notes. Full output and inspection are local in `outputs/helles-focus-eval-v1/development-before.json` and `review.json`. Training has started from the base weights; the previous multi-recipe adapter is not reused.
+
+## Halfway generated-answer check
+
+At step 72 / epoch three, the exact training guide passes all full-guide rubric criteria on assistant source inspection. It preserves every source ingredient entry, the seven-gallon batch, successive grain rests, the 90-minute boil and 30/80-minute elapsed additions, cooling/pitching distinction, primary fermentation, kegging/gelatin and later lagering. It acknowledges actual missing settings without denying the provided temperatures, and explains the main brewing terms plainly. The hop-timer follow-up also passes. Neither answer is truncated or loops.
+
+Both generated texts exactly match their authored references. That establishes deliberate fitting on these training prompts; it does not establish success on the reserved wording or on a real conversation. The fixed six-epoch run continues. Complete answers are preserved in `outputs/helles-focus-v1/probes/step-72.json`.
