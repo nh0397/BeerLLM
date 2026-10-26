@@ -1,6 +1,6 @@
 # One-recipe brewing tutor: measured progress
 
-**Not accepted yet.** A Helicious Helles adapter passes all five development questions but only one of four reserved phrasings. A balanced continuation is running. No scaling or general brewing-accuracy claim follows from these results.
+**Not accepted yet.** A Helicious Helles adapter passes all five development questions but only one of four reserved phrasings. The balanced first epoch also fails development (1/5); its planned second epoch is resuming from the saved checkpoint. No scaling or general brewing-accuracy claim follows from these results.
 
 The goal is one complete explanation plus direct, accurate follow-ups in ordinary language. The model must supply facts from its trained weights: no recipe lookup, source notes or recipe quantities in its system prompt. All answers are inspected against the saved source and [fixed factual rubric](../configs/helles-rubric.json). References and inspection are assistant-authored, not expert brewer-reviewed.
 
@@ -18,7 +18,8 @@ The source omits exact mash/sparge water quantities, numeric water treatment, a 
 | Complete-guide adapter, step 144 | 3 | Not run | Mash and post-boil follow-ups incomplete |
 | Stage-list continuation, steps 69 and 138 | 4 each | Not run | Falsely denies a provided temperature |
 | Known/unknown continuation, step 120 | 5 | 1 | Rejected on reserved wording |
-| Balanced continuation | Pending | Now a regression suite | In progress |
+| Balanced first epoch, step 150 | 1 | Not run | Resume planned second epoch |
+| Balanced second epoch | Pending | Now a regression suite | In progress |
 
 The first adapter's complete guide is correct under development wording. A generic development-only instruction to enumerate every requested stage does not repair its two incomplete follow-ups; that diagnostic prompt is not adopted.
 
@@ -53,7 +54,7 @@ Continuation loads existing LoRA weights with `is_trainable=True`, checked again
 
 The balanced curriculum has 18 full-guide requests, 12 canonical follow-ups, 76 direct variants, 30 conversational examples and 14 known/unknown contrasts. It covers every stage, short questions without the recipe name and follow-ups after a full guide. All complete-guide targets retain the original source facts. There are 22,741 supervised answer tokens per pass; the longest conversation is 971 tokens. All 150 examples fit.
 
-This run starts from the first complete-guide adapter at learning rate 0.00005, saving each epoch. The first fully saved epoch will be inspected before spending a second epoch. It can resume from that checkpoint with the original command plus `--resume`.
+This run starts from the first complete-guide adapter at learning rate 0.00005, saving each epoch. The first epoch saved at step 150 after approximately 44.4 minutes and was deliberately stopped before epoch-end validation. No final training metrics or validation loss are claimed for that interrupted phase. The generated complete guide passes, but four development follow-ups fail: ingredients and mash receive unrelated water/settings answers, cold stages omit cooling/pitching/primary, and known/unknown settings falsely deny the primary schedule. The planned second epoch resumes the same run, data, optimizer and scheduler from checkpoint 150 using `--resume`. The first checkpoint and its failed answers remain preserved.
 
 The original final set is consumed and now becomes an additional regression gate. Four new confirmation phrasings were frozen before balanced training; the original four-turn actual-history dialogue remains reserved. No evaluation question is copied verbatim into training. Acceptance also includes two direct explanation-development questions under different wording, so the model must demonstrate basic understanding before reserved chat generation. Acceptance requires all five original development questions, both explanation-development questions, all four regression questions, all four fresh confirmation questions and all four original dialogue turns plus two fresh beginner-explanation turns to pass as one model. This tightens coverage without relaxing any factual requirement.
 
