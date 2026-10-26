@@ -1,6 +1,6 @@
 # Helicious Helles: complete-guide fitting experiment
 
-**Status: first training run and development review complete (3/5 after versus 0/5 before). The complete guide works under fresh wording; two follow-ups omit requested stages. A focused continuation is prepared; final wording and actual-history tests remain unopened.**
+**Status: first training run and development review complete (3/5 after versus 0/5 before). The complete guide works under fresh wording; two follow-ups omit requested stages. The focused continuation is running and passes all three halfway training probes; final wording and actual-history tests remain unopened.**
 
 The [previous experiment](refinement-run.md) improved short factual answers but failed complete guides. This experiment makes the full guide the central gate and limits scope to one recipe before any further scaling.
 
@@ -54,3 +54,7 @@ The refinement preserves all six complete-guide training rows and copies validat
 A separate three-epoch / 138-step run initializes from the first adapter with a fresh optimizer and learning rate 0.0001. Parent weight/config/prompt hashes enter the run signature, and model identity, revision, rank/alpha/dropout and target modules must match. The original adapter and checkpoints remain untouched. Continued LoRA training explicitly enables trainable adapter weights, as required by the [PEFT API](https://huggingface.co/docs/peft/v0.13.0/en/package_reference/peft_model#peft.PeftModel.from_pretrained); this was also verified in the installed 0.13.2 implementation.
 
 All 65 software tests pass. The original base comparison can be reused because prompts, references, decoding, loader/evaluator and answer-masking code are unchanged. Final wording and actual-history tests are still reserved until development choices finish.
+
+### Continuation halfway check
+
+At step 69 / epoch 1.5, the complete guide, four-part mash answer and five-part after-boil answer all exactly match their source-checked references. The complete guide has not been lost while learning the new follow-up format. These are training-prompt checks; the previously failing fresh questions must still be generated and reviewed after the run. Parent adapter files were verified unchanged after loading.
