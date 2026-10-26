@@ -124,3 +124,18 @@ HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat --adapter outputs/helles-statu
 ```
 
 Ask for the complete Helicious Helles recipe, then ask follow-ups. Use `exit` to stop. The adapter saves its focused system prompt for chat. Old adapters and all collected recipes remain preserved.
+
+
+## Balanced coverage after a failed reserved test
+
+The status continuation was rejected: development 5/5, reserved wording 1/4. The new run broadens all topics and conversation contexts rather than treating that score as success. It initializes from the first complete-guide adapter and preserves every earlier experiment.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups \
+  --config configs/helles-balanced-refinements.json --output data/helles_focus_v5
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-balanced.json --data-dir data/helles_focus_v5 --eval-limit 1 \
+  > outputs-helles-balanced-train.log 2>&1
+```
+
+The original `final.jsonl` is now a regression suite used during selection. `confirmation.jsonl` contains four newly reserved phrasings, frozen before this training run. The original actual-history `dialogue.json` remains reserved. Do not use either reserved set to select a checkpoint. Existing local datasets are frozen; skip preparation when the recorded dataset is already present, and use a new output directory for changed builder/config inputs.

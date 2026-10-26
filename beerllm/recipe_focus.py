@@ -140,6 +140,17 @@ def refine_followups(source,lesson_path,config_path,output):
     direct={k:next(r for r in train if r['task']=='followup' and r['messages'][-2]['content']==q)
             for k,q in canonical.items()}
     guide_row=next(r for r in train if r['task']=='complete_guide')
+    for question in config.get('guide_questions',[]):
+        r=copy.deepcopy(guide_row);r['messages'][-2]['content']=question
+        train.append(r)
+    for item in config.get('conversation_pairs',[]):
+        target=guide_row if item['answer']=='guide' else direct[item['answer']]
+        prior=guide_row if item['prior_answer']=='guide' else direct[item['prior_answer']]
+        r=copy.deepcopy(target);r['task']='conversation_variant'
+        r['messages'][-2]['content']=item['question']
+        r['messages'][1:1]=[{'role':'user','content':item['prior_question']},
+                            {'role':'assistant','content':prior['messages'][-1]['content']}]
+        train.append(r)
     for key,questions in config['variants'].items():
         for q in questions:
             r=copy.deepcopy(direct[key]);r['task']='followup_variant';r['messages'][-2]['content']=q
@@ -171,6 +182,16 @@ def refine_followups(source,lesson_path,config_path,output):
     if output.exists() and any(output.iterdir()): raise ValueError('Preserve existing refinement output')
     write_jsonl(output/'train.jsonl',train);write_jsonl(output/'probes.jsonl',probes)
     for name in frozen: (output/name).write_bytes((source/name).read_bytes())
+    if config.get('confirmation_questions'):
+        rows=copy.deepcopy(read_jsonl(source/'final.jsonl'))
+        questions=config['confirmation_questions']
+        if set(questions)!={r['case_id'] for r in rows}:
+            raise ValueError('Confirmation questions must cover each final case')
+        training_questions={m['content'] for r in train for m in r['messages'] if m['role']=='user'}
+        if len(set(questions.values()))!=len(rows) or set(questions.values())&(heldout|training_questions):
+            raise ValueError('Confirmation question duplicated or already used')
+        for r in rows: r['messages'][1]['content']=questions[r['case_id']]
+        write_jsonl(output/'confirmation.jsonl',rows);frozen.append('confirmation.jsonl')
     manifest['files_sha256']={name:sha(output/name) for name in ['train.jsonl','probes.jsonl',*frozen]}
     write_json(output/'manifest.json',manifest)
     return manifest

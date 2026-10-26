@@ -20,6 +20,30 @@ def fixture(root):
 
 
 class RecipeFocusTests(unittest.TestCase):
+    def test_balanced_curriculum_preserves_source_answers_and_reserves_new_confirmation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);recipes,lesson=fixture(root);source=root/'v1';out=root/'balanced'
+            build(recipes,lesson,source,False)
+            config=root/'balanced.json'
+            refinement=json.loads((ROOT/'configs/helles-balanced-refinements.json').read_text())
+            write_json(config,refinement)
+            report=refine_followups(source,lesson,config,out)
+            self.assertEqual(report['train_examples'],150)
+            rows=read_jsonl(out/'train.jsonl')
+            guides=[r for r in rows if r['task']=='complete_guide']
+            self.assertEqual(len(guides),18)
+            self.assertEqual(len({r['messages'][-1]['content'] for r in guides}),1)
+            conversation=next(r for r in rows if r['task']=='conversation_variant')
+            self.assertEqual(conversation['messages'][2]['content'],guides[0]['messages'][-1]['content'])
+            old=read_jsonl(source/'final.jsonl');new=read_jsonl(out/'confirmation.jsonl')
+            self.assertEqual([r['messages'][-1] for r in old],[r['messages'][-1] for r in new])
+            self.assertTrue(all(a['messages'][1]!=b['messages'][1] for a,b in zip(old,new)))
+            self.assertIn('confirmation.jsonl',report['files_sha256'])
+            refinement['confirmation_questions']['final-guide']=guides[0]['messages'][1]['content']
+            write_json(config,refinement)
+            with self.assertRaisesRegex(ValueError,'Confirmation question duplicated'):
+                refine_followups(source,lesson,config,root/'leaked')
+
     def test_followup_refinement_keeps_guides_and_evaluation_bytes_unchanged(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);recipes,lesson=fixture(root);source=root/'v1';out=root/'v2'

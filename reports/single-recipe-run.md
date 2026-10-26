@@ -1,6 +1,6 @@
 # Helicious Helles: complete-guide fitting experiment
 
-**Status: first training run and development review complete (3/5 after versus 0/5 before). The complete guide works under fresh wording; two follow-ups omit requested stages. The continuation has finished; its final checkpoint scores 4/5 on development. The earlier checkpoint also scores 4/5. A targeted known/unknown-setting refinement is prepared. Final wording and actual-history tests remain unopened.**
+**Status: not accepted yet. The known/unknown continuation passes all five development cases but only one of four reserved wording cases. It hallucinates parts of a new full-guide answer and answers two follow-ups with the wrong topic. Low reference loss did not predict successful free generation. A balanced question-and-conversation continuation is running; scaling remains paused.**
 
 The [previous experiment](refinement-run.md) improved short factual answers but failed complete guides. This experiment makes the full guide the central gate and limits scope to one recipe before any further scaling.
 
@@ -74,3 +74,18 @@ The earlier continuation checkpoint also passes 4/5 and fails the known-versus-m
 The next refinement keeps the working guide and stage-list examples, but separates known schedules from absent quantities explicitly. Fourteen short contrast examples distinguish primary fermentation from yeast pitching, temperature from sugar mass, and a missing packaging detail from the given fermentation method. The missing-settings answer becomes a clear given/not-specified list. The resulting 60 conversations still concern only Helicious Helles. Every validation/development/final/dialogue byte remains unchanged.
 
 This separate two-epoch / 120-step run continues from the step-138 adapter at learning rate 0.00005, rehearsing the existing correct answers alongside the new contrasts. It saves two checkpoints. No repeated training-prompt generation is scheduled; the next generated-answer check is the full, unchanged development suite. Final wording and actual-history tests are still unopened.
+
+
+## Reserved wording rejected the development winner
+
+The 120-step known/unknown continuation finished in 1,120.3 seconds (18.7 minutes), with 14.93 GiB peak RSS. It passed 5/5 development questions versus 0/5 for the base. Selection was frozen at step 120 before opening the final suite; weight SHA-256 was `02497e8be7e54e8243ebdfaa958d5a0366875f97ba84711347933d753397d502`.
+
+On the reserved four questions, the base passes 0/4 and the selected adapter passes only 1/4. The adapter's guide omits most ingredients, puts hops in a mash, invents water quantity and incorrectly labels kettle additions as dry hopping. The timer question gets an unrelated post-boil answer. The completion question omits the stable-gravity check. Only the wrong-primary-temperature correction passes. This model is rejected; it is not the chat recommendation.
+
+The guide's conditional reference perplexity is only 1.00383 despite its incorrect generated guide. Teacher forcing measures next-token fit when preceding reference tokens are supplied; it does not show that the model selects or sustains that answer on its own. Full-answer inspection is the acceptance test.
+
+## Balanced question coverage
+
+The next curriculum has 150 conversations: 18 full-guide prompts, 12 canonical follow-ups, 76 follow-up variants, 30 conversation examples and 14 known/unknown contrasts. Topics are balanced across ingredients, grain stages, boiling, cooling, primary, lagering, completion, yeast and actual omissions. It includes short questions without the recipe name and follow-ups after a complete guide. All full-guide targets and source facts are retained.
+
+This run starts from the first complete-guide adapter, rather than continuing the rejected status adapter. It uses learning rate 0.00005 for two epochs / 300 steps, saving each epoch. All 150 rows fit, with 22,741 supervised answer tokens per pass and a maximum 971-token conversation. The original final suite is now a consumed regression suite; it will never be described as untouched again. Four new confirmation questions are frozen in the curriculum config before training; the original actual-history dialogue remains reserved. No failed question is copied verbatim into training. The factual acceptance criteria remain unchanged. All 66 software tests pass.
