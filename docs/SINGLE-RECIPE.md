@@ -239,3 +239,16 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
 ```
 
 The 53 rows all fit, no short-fact replay is applied, and the learning rate is 0.00003. The prior fifteen non-conversational questions and first six-turn chat become regression checks. A second four-question confirmation file and `configs/helles-confirmation-dialogue.json` are frozen before training and remain unopened until selection. Neither references nor recipe facts are inserted into inference history.
+
+## Verify that the new answer actually fits
+
+One low-rate compound pass still answers water only, even for an exact training question. A second fitting pass keeps the same data, saves each epoch and generates an exact training answer at each save.
+
+```bash
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-compound-fit.json --data-dir data/helles_focus_v10 \
+  --eval-limit 1 --probe-suite outputs/helles-compound-eval-v1/training-probe.jsonl \
+  > outputs-helles-compound-fit-train.log 2>&1
+```
+
+The local probe is the `What are the exact mash-water volume and gelatin quantity?` training row, exported in benchmark form with category `training_fit`, no lexical checks and a 180-token response budget. Its reference remains outside the generation prompt. The first saved checkpoint, step 53, generates the full combined answer and then passes the original failed question with its saved conversation history. The run is intentionally interrupted after that checkpoint for development checks; its optimizer remains resumable with the identical arguments plus `--resume`. This is not a completed two-epoch run. Do not use `--max-steps 53` as a substitute: that changes the learning-rate schedule. Earlier questions and the full original conversation still need to pass before final selection.
