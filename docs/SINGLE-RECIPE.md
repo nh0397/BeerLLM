@@ -201,3 +201,22 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
 ```
 
 Use `configs/helles-greedy-decoding.json` for both base/adapter benchmark and dialogue runs if this candidate qualifies. A final current-version base control is still required. The old beam package and greedy/beam outputs remain preserved; none is promoted as the chat default until all factual and conversation gates pass.
+
+## Separate kettle timing from post-boil instructions
+
+The scope run passes 9/11 selection checks. Checkpoint 75 still fails the timer, so neither checkpoint is accepted. The next pass keeps the six original guides, twelve canonical follow-ups and six original conversations, adds kettle-timing and plain-definition variants, and continues from the final scope adapter. There are 54 examples with no replay; one epoch uses learning rate 0.00005.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups \
+  --source data/helles_focus_v1 --config configs/helles-kettle-refinements.json \
+  --output data/helles_focus_v9
+
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \
+  --config configs/qwen-helles-kettle.json --data-dir data/helles_focus_v9 --check-data
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-kettle.json --data-dir data/helles_focus_v9 --eval-limit 1 \
+  > outputs-helles-kettle-train.log 2>&1
+```
+
+Use the already-frozen local datasets when present. Do not rerun earlier failed experiments simply to use a saved adapter. All original checkpoints and results remain available; a different run needs a new output directory.
