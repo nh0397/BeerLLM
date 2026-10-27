@@ -1,4 +1,5 @@
 import json
+import math
 import os
 from pathlib import Path
 
@@ -72,7 +73,23 @@ def load_model(model_id=MODEL_ID, adapter=None, threads=4, revision=None):
     return model, tokenizer
 
 
-def generate(model, tokenizer, messages, max_new_tokens=600, return_details=False):
+def decoding_policy(overrides=None):
+    """Keep old greedy runs intact; allow explicit deterministic beam settings."""
+    if overrides is not None and not isinstance(overrides,dict):
+        raise ValueError('Decoding overrides must be an object')
+    overrides=overrides or {}
+    if set(overrides)-{'num_beams','length_penalty'}:
+        raise ValueError('Only num_beams and length_penalty may override neutral decoding')
+    beams=overrides.get('num_beams',1)
+    penalty=overrides.get('length_penalty',1.0)
+    if isinstance(beams,bool) or not isinstance(beams,int) or beams<1:
+        raise ValueError('num_beams must be a positive integer')
+    if isinstance(penalty,bool) or not isinstance(penalty,(int,float)) or not math.isfinite(penalty) or penalty<=0:
+        raise ValueError('length_penalty must be positive and finite')
+    return dict(GREEDY_DEFAULTS,**overrides)
+
+
+def generate(model, tokenizer, messages, max_new_tokens=600, return_details=False, decoding=None):
     import torch
     text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     batch = tokenizer(text, return_tensors='pt')
@@ -81,7 +98,7 @@ def generate(model, tokenizer, messages, max_new_tokens=600, return_details=Fals
         raise ValueError('Prompt plus requested response exceeds the model context window')
     model.eval()
     with torch.inference_mode():
-        result = model.generate(**batch, max_new_tokens=max_new_tokens, **GREEDY_DEFAULTS,
+        result = model.generate(**batch, max_new_tokens=max_new_tokens, **decoding_policy(decoding),
                                 pad_token_id=tokenizer.pad_token_id,
                                 eos_token_id=tokenizer.eos_token_id)
     generated = result[0, batch.input_ids.shape[1]:]

@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 import time
 import unicodedata
-from .common import ROOT, MODEL_ID, MODEL_REVISION, GREEDY_DEFAULTS, generate, load_model, model_revision, read_jsonl, write_json, write_jsonl
+from .common import ROOT, MODEL_ID, MODEL_REVISION, decoding_policy, generate, load_model, model_revision, read_jsonl, write_json, write_jsonl
 from .curate import SYSTEM
 from .instruction_dataset import guide, source_notes
 from .train import encode_example
@@ -105,9 +105,9 @@ def summarize(results):
     return summary
 
 
-def run(suite,mode,adapter,output,model_id=MODEL_ID,revision=None):
+def run(suite,mode,adapter,output,model_id=MODEL_ID,revision=None,decoding=None):
     signature={'suite_sha256':sha(suite),'mode':mode,'model_id':model_id,'model_revision':model_revision(model_id,revision),
-               'evaluator_sha256':sha(Path(__file__)),'decoding':dict(GREEDY_DEFAULTS),
+               'evaluator_sha256':sha(Path(__file__)),'decoding':decoding_policy(decoding),
                'loader_sha256':sha(Path(__file__).with_name('common.py')),
                'adapter_sha256':sha(adapter/'adapter_model.safetensors') if mode=='adapter' else None,
                'adapter_config_sha256':sha(adapter/'adapter_config.json') if mode=='adapter' else None}
@@ -129,7 +129,7 @@ def run(suite,mode,adapter,output,model_id=MODEL_ID,revision=None):
         if row['case_id'] in done: continue
         stats=loss_stats(model,tokenizer,row)
         started=time.monotonic()
-        generated=generate(model,tokenizer,row['messages'][:-1],row['max_new_tokens'],return_details=True)
+        generated=generate(model,tokenizer,row['messages'][:-1],row['max_new_tokens'],return_details=True,decoding=decoding)
         elapsed=time.monotonic()-started
         results.append({'case_id':row['case_id'],'category':row['category'],'source_url':row['source_url'],
                         'prompt':row['messages'][:-1],'reference':row['messages'][-1]['content'],
@@ -198,6 +198,7 @@ def main():
     evaluate.add_argument('--output',type=Path,required=True)
     evaluate.add_argument('--model-id',default=MODEL_ID)
     evaluate.add_argument('--revision',help='Immutable model commit; registered models are pinned automatically')
+    evaluate.add_argument('--decoding-config',type=Path,help='Explicit deterministic beam overrides; use the same file before and after')
     comparison=commands.add_parser('compare')
     comparison.add_argument('--before',type=Path,required=True)
     comparison.add_argument('--after',type=Path,required=True)
@@ -205,7 +206,8 @@ def main():
     comparison.add_argument('--suite',type=Path,default=ROOT/'data/instruction_v1/benchmark.jsonl')
     args=p.parse_args()
     if args.command=='prepare': report=prepare(args.config,args.data_dir,args.recipes)
-    elif args.command=='run': report=run(args.suite,args.mode,args.adapter,args.output,args.model_id,args.revision)
+    elif args.command=='run': report=run(args.suite,args.mode,args.adapter,args.output,args.model_id,args.revision,
+                                       json.loads(args.decoding_config.read_text()) if args.decoding_config else None)
     else: report=compare(args.before,args.after,args.output,args.suite)
     print(json.dumps(report.get('summary',report if args.command!='run' else report['status']),indent=2))
 

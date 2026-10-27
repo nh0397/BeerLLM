@@ -1,0 +1,67 @@
+{
+  "title": "Helicious Helles",
+  "source_html_sha256": "de8d17364a4aeb1f88fa7d504e024ce05ac3a9774958ef5655237c3fe3ebd84e",
+  "system_prompt": "You teach Helicious Helles to an adult beginner in clear, friendly language. Explain brewing terms simply. For a complete recipe request, give all listed ingredients and the whole ordered procedure. For a follow-up, answer the requested part directly. Preserve the recipe's quantities, units, timings and stage relationships. State genuine source omissions without inventing settings or denying facts that are present. Keep general brewing checks separate from recipe facts. This experiment covers one recipe only.",
+  "steps": [
+    "Mash in at 130°F (54°C) for a 10-minute protein rest. Raise to 148°F (64°C) and hold for 60 minutes. Mashing means holding the grain in warm water to make the sweet liquid called wort; these are two successive rests, not alternative temperatures.",
+    "Mash out at 168°F (76°C), then fly sparge at 170°F (77°C). Sparging means rinsing the grain while collecting wort. The source does not give the mash or sparge water volumes.",
+    "Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes left: that is 30 minutes after boiling starts. Add one Whirlfloc tablet with 10 minutes left: 80 minutes after the start. The ingredient times count down to the end, not up from the start.",
+    "Cool the wort promptly. Use a clean, sanitized fermenter and sanitize anything touching cooled wort. Pitch the listed yeast; pitching means adding yeast. The source gives no separate exact pitching temperature, so confirm the chosen yeast's pitching guidance rather than borrowing a mash temperature.",
+    "Ferment at 50°F (10°C) for two to three weeks. This is primary fermentation, before kegging. Use the separate general gravity check below to establish completion rather than relying on the calendar alone.",
+    "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. Lagering is this later cold-conditioning stage; do not use its temperature as the primary fermentation setting. The source gives no gelatin dose or carbonation target."
+  ],
+  "gaps": "Confirm water volumes and exact water treatment, the chosen yeast's pitching conditions, the gelatin dose and the carbonation setup before brewing. The source says medium carbonate water but gives no numeric water profile. It gives no bottling or priming-sugar instructions. The primary and lagering temperatures and durations ARE specified; those are not missing.",
+  "guide_questions": [
+    "Teach me to brew Helicious Helles from start to finish.",
+    "I want to make Helicious Helles. Give me the ingredients and the whole brewing process.",
+    "Walk me through the complete Helicious Helles recipe in simple language.",
+    "Please explain all the ingredients, brewing stages and checks for Helicious Helles.",
+    "Give me a beginner's step-by-step guide to Helicious Helles, including the amounts.",
+    "How do I brew a seven-gallon batch of Helicious Helles?"
+  ],
+  "followups": [
+    {"key": "ingredients", "question": "What ingredients and batch size does Helicious Helles use?", "answer": "ingredients"},
+    {"key": "mash", "question": "What are the grain-rest, mash-out and sparging temperatures for Helicious Helles?", "answer": "Start with 130°F (54°C) for 10 minutes, then raise to 148°F (64°C) for 60 minutes. Mash out at 168°F (76°C), then fly sparge at 170°F (77°C). These settings belong to successive stages, not alternatives."},
+    {"key": "hops", "question": "Explain the Helicious Helles boil timer and both additions.", "answer": "Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes remaining, which is 30 minutes after the boil starts. Add one Whirlfloc tablet with 10 minutes remaining, or 80 minutes after the start. The source does not call for a dry-hop addition."},
+    {"key": "cold", "question": "Explain Helicious Helles cooling, yeast, fermentation and later cold conditioning.", "answer": "Cool promptly, transfer to clean, sanitized equipment and pitch the listed yeast. Pitching means adding yeast; the source gives no separate exact pitching temperature. Primary fermentation is at 50°F (10°C) for two to three weeks. Then keg and add gelatin to clarify, followed by lagering at 40°F (4°C) for three to six weeks. Lagering is later cold conditioning, not the primary yeast stage."},
+    {"key": "primary", "question": "Give only the Helicious Helles primary fermentation temperature and duration.", "answer": "Primary fermentation is at 50°F (10°C) for two to three weeks, before kegging and the later lagering stage."},
+    {"key": "lager", "question": "Give only the Helicious Helles lagering temperature and duration.", "answer": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage."},
+    {"key": "missing", "question": "Which Helicious Helles settings are given, and which should I confirm?", "answer": "Primary fermentation is specified: 50°F (10°C) for two to three weeks. Later lagering is also specified: 40°F (4°C) for three to six weeks after kegging and gelatin clarification. Missing details include water volumes and numeric water treatment, a separate exact pitching temperature, gelatin quantity and carbonation settings. The source gives no bottling or priming-sugar instructions. Do not deny the temperature settings that are present."},
+    {"key": "wrong_cold", "question": "Should I ferment Helicious Helles at 40°F from the beginning?", "answer": "No. Primary fermentation is at 50°F (10°C) for two to three weeks. After that, keg and add gelatin, then lager at 40°F (4°C) for three to six weeks. Keep the warmer primary stage and later colder conditioning separate."},
+    {"key": "gravity", "question": "Is a quiet airlock proof that Helicious Helles is ready to keg?", "answer": "No. General brewing check: take repeated gravity readings over a few days and confirm that they stay consistent before deciding primary fermentation has finished. Quiet bubbling and a calendar date alone are not proof. The source's primary schedule is two to three weeks at 50°F (10°C); do not invent a universal final-gravity number."},
+    {"key": "yeast", "question": "Which yeast and starter does the Helicious Helles source list?", "answer": "The source lists Wyeast Private Collection 2247 European Lager with a 4 L starter. It also lists White Labs 830 & 833 as alternatives. It does not provide a separate dose or starter procedure for those alternatives, so confirm the chosen yeast's instructions instead of inventing them."},
+    {"key": "water", "question": "How much water should I use for Helicious Helles?", "answer": "The source lists medium carbonate water and a 7-gallon (26.5 L) batch, but no exact mash or sparge water amounts or numeric mineral profile. Batch size is not the same as the required starting water volume. Confirm a water plan for your equipment; do not invent one from the batch size."},
+    {"key": "gelatin", "question": "When should I add gelatin, and how much does Helicious Helles need?", "answer": "After primary fermentation at 50°F (10°C) for two to three weeks, the source says to keg and add gelatin to clarify, then lager at 40°F (4°C) for three to six weeks. It does not give a gelatin dose; confirm that quantity rather than inventing it."}
+  ],
+  "conversations": [
+    {"prior_question": "Let's make Helicious Helles. Please give me the recipe.", "prior_answer": "guide", "question": "Which temperature belongs to the yeast stage and which one comes later?", "answer": "wrong_cold"},
+    {"prior_question": "Explain the grain-rest stages of Helicious Helles.", "prior_answer": "mash", "question": "Now tell me how the boil timer works.", "answer": "hops"},
+    {"prior_question": "List the ingredients for Helicious Helles.", "prior_answer": "ingredients", "question": "Do those hops go in the instant boiling starts?", "answer": "hops"},
+    {"prior_question": "What is primary fermentation for this Helles?", "prior_answer": "primary", "question": "What happens after that, and where does gelatin fit?", "answer": "gelatin"},
+    {"prior_question": "How do I know this beer has finished primary fermentation?", "prior_answer": "gravity", "question": "Then what are the cold-storage settings?", "answer": "lager"},
+    {"prior_question": "What water does this recipe require?", "prior_answer": "water", "question": "Are the fermentation temperatures missing too?", "answer": "missing"}
+  ],
+  "validation_question": "Explain Helicious Helles completely: ingredients, sequence, and details I must confirm.",
+  "development": [
+    {"id": "complete-guide", "category": "seen_recipe_guide", "question": "I've never brewed Helicious Helles. What do I need, and what do I do from grain to finished lager?", "answer": "guide", "max_new_tokens": 1100},
+    {"id": "ingredients", "question": "List every ingredient for Helicious Helles and tell me the batch size.", "answer": "ingredients", "max_new_tokens": 400},
+    {"id": "mash-stages", "question": "For Helicious Helles, separate the two mash rests, mash-out and grain-rinsing settings.", "answer": "mash", "max_new_tokens": 180},
+    {"id": "cold-stages", "question": "Describe what happens after the boil through primary fermentation, kegging and cold storage.", "answer": "cold", "max_new_tokens": 220},
+    {"id": "present-vs-missing", "question": "Does the Helicious source specify fermentation temperatures and a priming-sugar amount, or are both missing?", "answer": "missing", "max_new_tokens": 220}
+  ],
+  "final": [
+    {"id": "final-guide", "category": "seen_recipe_guide", "question": "Make a complete beginner brew sheet for Helicious Helles: all ingredients, the ordered process, simple meanings, and anything the source leaves undecided.", "answer": "guide", "max_new_tokens": 1100},
+    {"id": "final-timer", "question": "My kettle has been boiling for thirty minutes. What should I add now, and what goes in near the end?", "answer": "hops", "max_new_tokens": 180},
+    {"id": "final-wrong-temperature", "question": "Can I keep the yeast stage at 40°F and skip the warmer stage?", "answer": "wrong_cold", "max_new_tokens": 180},
+    {"id": "final-completion", "question": "If bubbling stops early, should I keg immediately and begin the cold stage?", "answer": "gravity", "max_new_tokens": 180}
+  ],
+  "dialogue": [
+    {"question": "Let's brew Helicious Helles. Please explain the whole recipe to me as a beginner.", "answer": "guide", "max_new_tokens": 1100},
+    {"question": "Should all the hops go in as soon as boiling starts?", "answer": "hops", "max_new_tokens": 180},
+    {"question": "After the yeast stage, what happens next, with temperatures and times?", "answer": "lager", "max_new_tokens": 180},
+    {"question": "Which exact water amount and gelatin dose should I measure?", "answer": "water_and_gelatin", "max_new_tokens": 180}
+  ],
+  "extra_answers": {
+    "water_and_gelatin": "The source does not specify the mash/sparge water volumes or the gelatin dose. It lists medium carbonate water and says to keg and add gelatin after primary fermentation, before lagering. Confirm the water plan for your equipment and the gelatin instructions instead of inventing quantities."
+  }
+}

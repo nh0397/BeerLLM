@@ -1,0 +1,534 @@
+{
+  "scope": "Same trained recipe, fresh wording; not unseen-recipe accuracy",
+  "reviewer": "Assistant full-answer source inspection; not expert reviewed",
+  "source_url": "https://homebrewersassociation.org/homebrew-recipe/helicious-helles/",
+  "expert_reviewed": false,
+  "selection": {
+    "selected_at": "2026-10-27T11:29:37.900726+00:00",
+    "source_review": "Assistant full-answer inspection, not expert brewing review",
+    "fit_inputs": {
+      "passed": 17,
+      "total": 17,
+      "training_fit": true
+    },
+    "consumed_actual_history": {
+      "passed": 6,
+      "total": 6,
+      "supervised_wordings": true
+    },
+    "fresh_generation_started": false,
+    "files_sha256": {
+      "outputs/helles-demo-v2/adapter/adapter_model.safetensors": "3909cf83dbd5182dd5d6a686b6c86af1b66ca6f4ec06d8d41fe2e753b55d6860",
+      "outputs/helles-demo-v2/adapter/adapter_config.json": "56f5035ea78b153e60af26383136f20c3e3fb97104d772e1e8c3e661ea35c56a",
+      "outputs/helles-demo-v2/adapter/beerllm.json": "2c86d9836da79d7f5700921c5e9ea3234c56689810fe2771fc253ea8d9789926",
+      "outputs/helles-joint-v1/probes/step-112.json": "23145b602e88e64179e1c3145532b2befe199a97880c433a1ca003e433a0b36e",
+      "outputs/helles-demo-eval-v2/rehearsal-dialogue-after.json": "8e61d123a1760819acf1d6e6ba2e917880cb22a4d65f7a2d869f8e8614d33f68",
+      "configs/helles-greedy-decoding.json": "8cc7a4b676f3a66b775af0406c021d540ef31f69b5bc519dd455f7ebb728a962",
+      "configs/helles-rubric.json": "a176912bb28eb074b5596f72b0fa3a07123c3e77990e4e4aa67e8529a751eb48",
+      "configs/helles-fresh-confirmation.jsonl": "f68e3cc9e59ff9b0cd925718a13a5e9972b00aa40b96eacf14c7d1cc6b971c69",
+      "configs/helles-fresh-dialogue.json": "612a434cd086089bce144bbd4ee7556923ef6f7c6bec556c9695f83f53db57f9",
+      "beerllm/common.py": "1836a364c99a5f22b841681a1dfaef5c125605d364e53b2236e0d2307764f2c3",
+      "beerllm/benchmark.py": "0a9e5d36b314a1020ba26d04ebe72c51aa002c8329ee921f15d7fd3118e05948",
+      "beerllm/recipe_focus.py": "e0eaaeafc5d57916362ff339ffce9580d5ecefe7996275f3429a2d04df4b1d7d"
+    }
+  },
+  "review": {
+    "reviewed_at": "2026-10-27T11:43:59.528052+00:00",
+    "reviewer": "Assistant full-answer source inspection; not expert reviewed",
+    "scope": "Same trained recipe, fresh wording; not unseen-recipe accuracy",
+    "adapter_sha256": "3909cf83dbd5182dd5d6a686b6c86af1b66ca6f4ec06d8d41fe2e753b55d6860",
+    "after": {
+      "independent": {
+        "passed": 6,
+        "total": 6
+      },
+      "actual_history": {
+        "passed": 6,
+        "total": 6
+      }
+    },
+    "before": {
+      "independent": {
+        "passed": 0,
+        "total": 6
+      },
+      "actual_history": {
+        "passed": 0,
+        "total": 6
+      }
+    },
+    "inputs_sha256": {
+      "helles-fresh-confirmation.jsonl": "f68e3cc9e59ff9b0cd925718a13a5e9972b00aa40b96eacf14c7d1cc6b971c69",
+      "helles-fresh-dialogue.json": "612a434cd086089bce144bbd4ee7556923ef6f7c6bec556c9695f83f53db57f9"
+    },
+    "after_case_notes": [
+      "All eight ingredients, complete ordered source procedure, real gaps and labeled general checks.",
+      "90-minute boil; measured hops at 30 elapsed and tablet at 80.",
+      "50°F primary then keg/gelatin and 40°F later conditioning, with both ranges.",
+      "Stable gravity check; quiet airlock alone insufficient; no invented final-gravity value.",
+      "Seven-gallon /26.5 L batch and all eight entries only.",
+      "Cooling, pitching, primary, keg/gelatin and later conditioning, correctly ordered."
+    ],
+    "after_dialogue_notes": [
+      "Complete guide identical to source-checked full target.",
+      "Corrects adding all hops at the start and states both measured additions.",
+      "Keg and gelatin after primary, then 40°F for three to six weeks.",
+      "Explicitly answers both absent gelatin dose and absent water quantities.",
+      "Plain definitions of wort and pitching.",
+      "Distinguishes cleaning and sanitizing, with product instructions for dose/contact time."
+    ],
+    "comparison_note": "Before means untuned pinned base weights. Controls were generated after the adapter was frozen, using the same evaluator, prompt and greedy policy. Results apply to these wordings and budgets on one trained recipe.",
+    "before_case_notes": [
+      "Invents a 500 ml extract recipe and loops through equipment; no source guide.",
+      "Invents generic early/dry-hop additions and a five-gallon batch; omits the source schedule.",
+      "Affirms starting at the cold setting and gives wrong primary temperature; incomplete.",
+      "Suggests measuring pH with a hydrometer instead of establishing stable gravity; incomplete.",
+      "Invents kilogram quantities and repeated dry hops; omits the real batch and ingredients.",
+      "Returns invented ingredients and equipment instead of the requested post-boil stages."
+    ],
+    "before_dialogue_notes": [
+      "Invents a five-litre extract/coriander recipe and advises adding yeast after cooling only to 60–65°C.",
+      "Affirms adding all hops at the beginning and calls boiling dry hopping.",
+      "Gives bottling/secondary instructions and omits the source keg/gelatin/lagering schedule.",
+      "Invents five litres and ten grams gelatin, with gelatin before fermentation.",
+      "Core definitions partly correct, but incorrectly calls boiling the malt mashing; truncated.",
+      "Overstates sanitizing as killing all microorganisms and a higher chemical concentration; truncated."
+    ],
+    "review_updated_at": "2026-10-27T12:08:35.367392+00:00"
+  },
+  "independent": [
+    {
+      "id": "final-guide",
+      "question": "Teach the entire Helicious Helles recipe in everyday language: its batch, complete ingredient list, all successive stages, checks and remaining source gaps.",
+      "before": {
+        "pass": false,
+        "note": "Invents a 500 ml extract recipe and loops through equipment; no source guide.",
+        "answer": "Sure, I'd be happy to teach you how to make Helicious Helles in a simple, everyday language. This recipe is a classic German lager beer, and it's a great way to start learning about brewing. Let's go through the entire process step by step.\n\n### Ingredients:\n- **Water**: 500 ml\n- **Malt Extract**: 200 g\n- **Hops**: 100 g (for bitterness)\n- **Yeast**: 100 g\n- **Flavoring**: 50 g (optional, for extra flavor)\n- **Miscellaneous**: 50 g (optional, for extra flavor)\n\n### Equipment:\n- Large pot\n- Thermometer\n- Stirring spoon\n- Bottling bucket\n- Bottles (220 ml)\n- Bottling wand\n- Bottle capper\n- Bottle filler\n- Pitching bucket\n- Airlock\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling bucket\n- Bottling hose\n- Bottling",
+        "generated_tokens": 1100,
+        "hit_token_limit": true,
+        "generation_seconds": 349.99604734010063,
+        "answer_nll": 2.4530069828033447,
+        "answer_tokens": 677
+      },
+      "after": {
+        "pass": true,
+        "note": "All eight ingredients, complete ordered source procedure, real gaps and labeled general checks.",
+        "answer": "Let's make Helicious Helles. The source batch is 7 gallon batch (26.5 L).\n\nIngredients\n- 9.5 lb (4.31 kg) Pilsner malt\n- 1.0 lb (0.45 kg) torrified wheat\n- 5.0 oz (142 g) melanoidin malt\n- 7.0 oz (198 g) acidulated malt\n- 1 tablet whirlfloc @ 10 min\n- 1.9 oz (54 g) Tettnanger pellet hops, 4% AA (60 min)\n- Wyeast Private Collection 2247 European Lager (4 L starter) (or White Labs 830 & 833)\n- Medium carbonate water\n\nWhat to do\n1. Mash in at 130°F (54°C) for a 10-minute protein rest. Raise to 148°F (64°C) and hold for 60 minutes. Mashing means holding the grain in warm water to make the sweet liquid called wort; these are two successive rests, not alternative temperatures.\n\n2. Mash out at 168°F (76°C), then fly sparge at 170°F (77°C). Sparging means rinsing the grain while collecting wort. The source does not give the mash or sparge water volumes.\n\n3. Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes left: that is 30 minutes after boiling starts. Add one Whirlfloc tablet with 10 minutes left: 80 minutes after the start. The ingredient times count down to the end, not up from the start.\n\n4. Cool the wort promptly. Use a clean, sanitized fermenter and sanitize anything touching cooled wort. Pitch the listed yeast; pitching means adding yeast. The source gives no separate exact pitching temperature, so confirm the chosen yeast's pitching guidance rather than borrowing a mash temperature.\n\n5. Ferment at 50°F (10°C) for two to three weeks. This is primary fermentation, before kegging. Use the separate general gravity check below to establish completion rather than relying on the calendar alone.\n\n6. After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. Lagering is this later cold-conditioning stage; do not use its temperature as the primary fermentation setting. The source gives no gelatin dose or carbonation target.\n\nBefore you brew: Confirm water volumes and exact water treatment, the chosen yeast's pitching conditions, the gelatin dose and the carbonation setup before brewing. The source says medium carbonate water but gives no numeric water profile. It gives no bottling or priming-sugar instructions. The primary and lagering temperatures and durations ARE specified; those are not missing.\n\nGeneral brewing checks, separate from the recipe: clean equipment first, then sanitize anything touching the cooled wort. Check fermentation with gravity readings that stay consistent over a few days; a quiet airlock or a calendar date alone is not proof it is finished.",
+        "generated_tokens": 676,
+        "hit_token_limit": false,
+        "generation_seconds": 217.66119089804124,
+        "answer_nll": 0.00026193997473455966,
+        "answer_tokens": 677
+      },
+      "max_new_tokens": 1100
+    },
+    {
+      "id": "final-timer",
+      "question": "Thirty minutes into the Helles kettle boil, what measured ingredients go in now and at the later addition time?",
+      "before": {
+        "pass": false,
+        "note": "Invents generic early/dry-hop additions and a five-gallon batch; omits the source schedule.",
+        "answer": "In the Helles kettle boil, you typically add ingredients at specific stages to ensure the best flavor and clarity. Here’s a general breakdown of what you might add at different times:\n\n1. **Initial Addition (Start of Boil):**\n   - **Water:** Start with the water you need for the boil. This is usually measured in liters or gallons depending on the recipe and the size of your kettle.\n   - **Hops (if using):** If you're using hops, you might add a small amount of dry hops or a small bag of fresh hops at the start of the boil. This is usually around 1-2 ounces (28-56 grams) for a typical 5-gallon batch.\n\n2. **Later Addition (Mid-Boil):**\n   - **Hops (if using):** You might add more hops, usually around 1-",
+        "generated_tokens": 180,
+        "hit_token_limit": true,
+        "generation_seconds": 57.15866547799669,
+        "answer_nll": 2.361095428466797,
+        "answer_tokens": 77
+      },
+      "after": {
+        "pass": true,
+        "note": "90-minute boil; measured hops at 30 elapsed and tablet at 80.",
+        "answer": "Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes remaining, which is 30 minutes after the boil starts. Add one Whirlfloc tablet with 10 minutes remaining, or 80 minutes after the start. The source does not call for a dry-hop addition.",
+        "generated_tokens": 76,
+        "hit_token_limit": false,
+        "generation_seconds": 24.312950261984952,
+        "answer_nll": 7.441123307216913e-05,
+        "answer_tokens": 77
+      },
+      "max_new_tokens": 180
+    },
+    {
+      "id": "final-wrong-temperature",
+      "question": "Would starting yeast fermentation at the cold lagering temperature follow this Helles method? Explain the two intended stages.",
+      "before": {
+        "pass": false,
+        "note": "Affirms starting at the cold setting and gives wrong primary temperature; incomplete.",
+        "answer": "Starting yeast fermentation at the cold lagering temperature is a common practice in brewing, especially for lagers. The two intended stages of fermentation are:\n\n1. **Primary Fermentation**: This is the initial stage where the yeast converts the sugars in the wort into alcohol and carbon dioxide. The temperature during this stage is typically around 15-20°C (59-68°F). This stage is crucial for the yeast to develop properly and for the beer to ferment to a certain level.\n\n2. **Cold Lagering**: After primary fermentation, the beer is transferred to a cooler environment, usually around 4-8°C (39-46°F), to allow the yeast to settle and the beer to clear. This stage is important for the beer to reach its final clarity and to allow the yeast to settle out of the beer. The temperature during this stage is",
+        "generated_tokens": 180,
+        "hit_token_limit": true,
+        "generation_seconds": 57.61291300307494,
+        "answer_nll": 2.354218006134033,
+        "answer_tokens": 62
+      },
+      "after": {
+        "pass": true,
+        "note": "50°F primary then keg/gelatin and 40°F later conditioning, with both ranges.",
+        "answer": "No. Primary fermentation is at 50°F (10°C) for two to three weeks. After that, keg and add gelatin, then lager at 40°F (4°C) for three to six weeks. Keep the warmer primary stage and later colder conditioning separate.",
+        "generated_tokens": 61,
+        "hit_token_limit": false,
+        "generation_seconds": 19.2241006110562,
+        "answer_nll": 0.0014802705263718963,
+        "answer_tokens": 62
+      },
+      "max_new_tokens": 180
+    },
+    {
+      "id": "final-completion",
+      "question": "The airlock became quiet sooner than expected. How should I establish that the beer is ready to leave primary instead of relying on bubbling?",
+      "before": {
+        "pass": false,
+        "note": "Suggests measuring pH with a hydrometer instead of establishing stable gravity; incomplete.",
+        "answer": "When the airlock on your fermenter becomes quiet sooner than expected, it can be a sign that the fermentation process is nearing completion. However, relying solely on the airlock to indicate readiness can be risky because it doesn't always provide a definitive signal. Here are some additional steps you can take to ensure your beer is ready to transfer to secondary fermentation:\n\n1. **Check the Temperature**: Ensure the temperature of the beer is within the recommended range for the yeast strain you are using. Yeast can be sensitive to temperature changes, and an unexpected drop in temperature could affect the fermentation process.\n\n2. **Check the pH**: Use a hydrometer to check the pH of the beer. A pH of around 4.5 to 4.8 is typical for most beer styles. If the pH is too high or too low, it might indicate that the yeast is not fermenting properly or",
+        "generated_tokens": 180,
+        "hit_token_limit": true,
+        "generation_seconds": 57.78217295394279,
+        "answer_nll": 3.8614425659179688,
+        "answer_tokens": 71
+      },
+      "after": {
+        "pass": true,
+        "note": "Stable gravity check; quiet airlock alone insufficient; no invented final-gravity value.",
+        "answer": "Check repeated gravity readings over a few days before transferring the beer. Consistent readings help establish that primary fermentation has finished. A quiet airlock or a calendar date alone is not proof. This is a general brewing check; the recipe itself schedules primary at 50°F (10°C) for two to three weeks and does not give a universal final-gravity number.",
+        "generated_tokens": 76,
+        "hit_token_limit": false,
+        "generation_seconds": 24.155036885058507,
+        "answer_nll": 0.2603578269481659,
+        "answer_tokens": 71
+      },
+      "max_new_tokens": 180
+    },
+    {
+      "id": "fresh-ingredients-only",
+      "question": "Before we talk about the method, could you give just the shopping list and batch yield for this beer?",
+      "before": {
+        "pass": false,
+        "note": "Invents kilogram quantities and repeated dry hops; omits the real batch and ingredients.",
+        "answer": "Certainly! Here's the shopping list and batch yield for the Helicious Helles beer:\n\n### Shopping List:\n- 5 kg (11 lbs) of malted barley\n- 1 kg (2.2 lbs) of wheat\n- 1 kg (2.2 lbs) of hops (60 minutes)\n- 1 kg (2.2 lbs) of hops (15 minutes)\n- 1 kg (2.2 lbs) of hops (boil)\n- 1 kg (2.2 lbs) of yeast\n- 1 kg (2.2 lbs) of water\n- 1 kg (2.2 lbs) of sugar\n- 1 kg (2.2 lbs) of yeast nutrient\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2 lbs) of hops (dry hops)\n- 1 kg (2.2",
+        "generated_tokens": 400,
+        "hit_token_limit": true,
+        "generation_seconds": 129.11907299188897,
+        "answer_nll": 2.360597610473633,
+        "answer_tokens": 161
+      },
+      "after": {
+        "pass": true,
+        "note": "Seven-gallon /26.5 L batch and all eight entries only.",
+        "answer": "The source batch is 7 gallon batch (26.5 L).\n- 9.5 lb (4.31 kg) Pilsner malt\n- 1.0 lb (0.45 kg) torrified wheat\n- 5.0 oz (142 g) melanoidin malt\n- 7.0 oz (198 g) acidulated malt\n- 1 tablet whirlfloc @ 10 min\n- 1.9 oz (54 g) Tettnanger pellet hops, 4% AA (60 min)\n- Wyeast Private Collection 2247 European Lager (4 L starter) (or White Labs 830 & 833)\n- Medium carbonate water",
+        "generated_tokens": 160,
+        "hit_token_limit": false,
+        "generation_seconds": 49.50226127507631,
+        "answer_nll": 0.00010010373080149293,
+        "answer_tokens": 161
+      },
+      "max_new_tokens": 400
+    },
+    {
+      "id": "fresh-complete-post-boil",
+      "question": "Start after the kettle is switched off and take me through yeast fermentation, kegging and the cold rest, with times and temperatures.",
+      "before": {
+        "pass": false,
+        "note": "Returns invented ingredients and equipment instead of the requested post-boil stages.",
+        "answer": "Sure, let's break down the process of making Helicious Helles, focusing on yeast fermentation, kegging, and the cold rest. This will help you understand each step clearly.\n\n### Ingredients:\n- **Water**: 550 ml\n- **Hops**: 100 g (100% alpha acid)\n- **Yeast**: 100 g (Wyeast 1056 Ale)\n- **Yeast nutrient**: 10 g\n- **Flavoring**: 10 g (optional, for a unique flavor)\n- **Hops for flavoring**: 10 g (100% alpha acid)\n- **Yeast starter**: 100 g (100% alpha acid)\n- **Yeast nutrient starter**: 10 g\n- **Flavoring starter**: 10 g (optional, for a unique flavor)\n\n### Equipment:\n- Kettle\n- Fermentation vessel (like a carboy or a large glass jar)\n- Airlock\n- Hydrometer\n",
+        "generated_tokens": 220,
+        "hit_token_limit": true,
+        "generation_seconds": 70.07997081999201,
+        "answer_nll": 2.9031877517700195,
+        "answer_tokens": 94
+      },
+      "after": {
+        "pass": true,
+        "note": "Cooling, pitching, primary, keg/gelatin and later conditioning, correctly ordered.",
+        "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+        "generated_tokens": 101,
+        "hit_token_limit": false,
+        "generation_seconds": 32.03355769405607,
+        "answer_nll": 0.34896567463874817,
+        "answer_tokens": 94
+      },
+      "max_new_tokens": 220
+    }
+  ],
+  "actual_history": [
+    {
+      "turn": 1,
+      "question": "Help me make a batch of Helicious Helles. Give the whole ingredient list and talk me through every brewing stage in plain language, including gaps.",
+      "before": {
+        "pass": false,
+        "note": "Invents a five-litre extract/coriander recipe and advises adding yeast after cooling only to 60–65°C.",
+        "text": "Sure, I'd be happy to help you make Helicious Helles! Let's start with the ingredients:\n\n### Ingredients:\n1. **Water**: 5 liters\n2. **Hops**: 100 grams of Saaz hops\n3. **Malt Extract**: 200 grams\n4. **Yeast**: 10 grams\n5. **Flavoring**: 5 grams of coriander seeds\n6. **Sweetener**: 10 grams of sugar\n\n### Brewing Procedure:\n\n#### Step 1: Boil Water\n- **Ingredients**: 5 liters of water\n- **Instructions**: Heat the water to a rolling boil. This is the start of the brewing process.\n\n#### Step 2: Add Hops\n- **Ingredients**: 100 grams of Saaz hops\n- **Instructions**: Once the water is boiling, add the hops. Saaz hops are a popular choice for helles lagers. Add the hops in a way that they float on top of the boiling water. This is called a \"dry hop.\" Let the hops steep for about 30 minutes.\n\n#### Step 3: Add Malt Extract\n- **Ingredients**: 200 grams of malt extract\n- **Instructions**: After the hops have steeped, remove them from the water. Add the malt extract to the boiling water. Stir well to combine.\n\n#### Step 4: Add Flavoring\n- **Ingredients**: 5 grams of coriander seeds\n- **Instructions**: Add the coriander seeds to the mixture. This will give the beer a unique flavor. Stir well to combine.\n\n#### Step 5: Cool the Wort\n- **Ingredients**: The mixture from Step 4\n- **Instructions**: Place the mixture in a large pot and cool it down to around 60-65°C (140-150°F). This is called \"cooling the wort.\" You can use a chiller or a large ice bath to cool it faster.\n\n#### Step 6: Add Yeast\n- **Ingredients**: 10 grams of yeast\n- **Instructions**: Once the wort is cooled, add the yeast. Stir well to combine.\n\n#### Step 7: Fermentation\n- **Instructions**: Cover the pot with a lid and let the yeast do its work. This will take about 7-10 days, depending on the temperature. The yeast will convert the sugars in the wort into alcohol and carbon dioxide.\n\n#### Step 8: Bottle or Ferment\n- **Instructions**: After fermentation is complete, you can bottle the beer. If you want to bottle, use a bottle conditioning method. If you want to ferment, you can leave it in the primary fermenter for a few more days.\n\n#### Step 9: Carbonation\n- **Instructions**: Once the beer is bottled or fermented, let it sit for a few weeks to carbonate. This is when the carbon dioxide from the fermentation will be trapped in the beer.\n\n#### Step 10: Serve\n- **Instructions**: Once the beer is carbonated, it's ready to be served. Enjoy your Helicious Helles!\n\n### General Brewing Checks:\n- **Temperature**: Keep the wort at a consistent temperature during fermentation. This is crucial for the yeast to work properly.\n- **Yeast Health**: Make sure the yeast is healthy and active before adding it to the wort. You can check this by looking at the yeast's appearance and activity.\n- **Hops**: Make sure the hops are fresh and properly steeped. Over-steeping can lead to bitter flavors.\n\n### Recipe Facts:\n- **Batch Size**: 5 liters\n- **Ingredients**: 5 liters of water, 100 grams of Saaz hops, 200 grams of malt extract, 10 grams of yeast, 5 grams of coriander seeds, 10 grams of sugar\n- **Instructions**: Follow the steps above, and you should have a delicious Helicious Helles.\n\nEnjoy your brewing adventure!",
+        "generated_tokens": 833,
+        "hit_token_limit": false,
+        "generation_seconds": 254.25140180299059,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "a987ed388c1d29e8742565d176a0bbef50cafd06955a5d42dbb7f653bc387a71"
+      },
+      "after": {
+        "pass": true,
+        "note": "Complete guide identical to source-checked full target.",
+        "text": "Let's make Helicious Helles. The source batch is 7 gallon batch (26.5 L).\n\nIngredients\n- 9.5 lb (4.31 kg) Pilsner malt\n- 1.0 lb (0.45 kg) torrified wheat\n- 5.0 oz (142 g) melanoidin malt\n- 7.0 oz (198 g) acidulated malt\n- 1 tablet whirlfloc @ 10 min\n- 1.9 oz (54 g) Tettnanger pellet hops, 4% AA (60 min)\n- Wyeast Private Collection 2247 European Lager (4 L starter) (or White Labs 830 & 833)\n- Medium carbonate water\n\nWhat to do\n1. Mash in at 130°F (54°C) for a 10-minute protein rest. Raise to 148°F (64°C) and hold for 60 minutes. Mashing means holding the grain in warm water to make the sweet liquid called wort; these are two successive rests, not alternative temperatures.\n\n2. Mash out at 168°F (76°C), then fly sparge at 170°F (77°C). Sparging means rinsing the grain while collecting wort. The source does not give the mash or sparge water volumes.\n\n3. Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes left: that is 30 minutes after boiling starts. Add one Whirlfloc tablet with 10 minutes left: 80 minutes after the start. The ingredient times count down to the end, not up from the start.\n\n4. Cool the wort promptly. Use a clean, sanitized fermenter and sanitize anything touching cooled wort. Pitch the listed yeast; pitching means adding yeast. The source gives no separate exact pitching temperature, so confirm the chosen yeast's pitching guidance rather than borrowing a mash temperature.\n\n5. Ferment at 50°F (10°C) for two to three weeks. This is primary fermentation, before kegging. Use the separate general gravity check below to establish completion rather than relying on the calendar alone.\n\n6. After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. Lagering is this later cold-conditioning stage; do not use its temperature as the primary fermentation setting. The source gives no gelatin dose or carbonation target.\n\nBefore you brew: Confirm water volumes and exact water treatment, the chosen yeast's pitching conditions, the gelatin dose and the carbonation setup before brewing. The source says medium carbonate water but gives no numeric water profile. It gives no bottling or priming-sugar instructions. The primary and lagering temperatures and durations ARE specified; those are not missing.\n\nGeneral brewing checks, separate from the recipe: clean equipment first, then sanitize anything touching the cooled wort. Check fermentation with gravity readings that stay consistent over a few days; a quiet airlock or a calendar date alone is not proof it is finished.",
+        "generated_tokens": 676,
+        "hit_token_limit": false,
+        "generation_seconds": 205.09133925498463,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "a987ed388c1d29e8742565d176a0bbef50cafd06955a5d42dbb7f653bc387a71"
+      },
+      "max_new_tokens": 1100
+    },
+    {
+      "turn": 2,
+      "question": "I will toss the Tettnanger in at the beginning of the kettle boil. Does that match this recipe?",
+      "before": {
+        "pass": false,
+        "note": "Affirms adding all hops at the beginning and calls boiling dry hopping.",
+        "text": "Yes, that does match the recipe you provided. Adding Tettnanger hops at the beginning of the kettle boil is a common practice in brewing, especially for helles lagers. This technique is known as a \"dry hopping\" and it helps to impart a unique aroma and flavor to the beer. \n\nHere’s how you can incorporate Tettnanger hops into your brewing process:\n\n### Ingredients:\n1. **Water**: 5 liters\n2. **Hops**: 100 grams of Tettnanger hops\n3. **Malt Extract**: 200 grams\n4. **Yeast**: 10 grams\n5. **Flavoring**: 5 grams of coriander seeds\n6. **Sweetener**: 10 grams of sugar\n\n### Brewing Procedure:\n\n#### Step 1: Boil Water\n- **Ingredients**: 5 liters of water",
+        "generated_tokens": 180,
+        "hit_token_limit": true,
+        "generation_seconds": 73.3956498579355,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "3b8e0f25a0e7285bc5a255322a1dba17cf2c3571d780674507536d4ae45ed3dd"
+      },
+      "after": {
+        "pass": true,
+        "note": "Corrects adding all hops at the start and states both measured additions.",
+        "text": "No. Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes remaining, which is 30 minutes after the boil starts. Add one Whirlfloc tablet with 10 minutes remaining, or 80 minutes after the start. The source does not call for a dry-hop addition.",
+        "generated_tokens": 78,
+        "hit_token_limit": false,
+        "generation_seconds": 33.96561865299009,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "1fc050bd8b287ab6b52beff5e1353d37e004fe6c6f85905226358788126d53c5"
+      },
+      "max_new_tokens": 180
+    },
+    {
+      "turn": 3,
+      "question": "Once the main fermentation is done, what is the next sequence, how cold and how long?",
+      "before": {
+        "pass": false,
+        "note": "Gives bottling/secondary instructions and omits the source keg/gelatin/lagering schedule.",
+        "text": "Once the main fermentation is complete, the next steps are typically bottle conditioning or secondary fermentation. Here’s a general outline of what you can do:\n\n### Bottle Conditioning:\n1. **Instructions**: After fermentation is complete, you can bottle the beer. If you want to bottle, use a bottle conditioning method. If you want to ferment, you can leave it in the primary fermenter for a few more days.\n\n2. **Instructions for Bottle Conditioning**:\n   - **Instructions**: Once the beer is bottled, let it sit for a few weeks to carbonate. This is when the carbon dioxide from the fermentation will be trapped in the beer.\n   - **Instructions for Secondary Fermentation**:\n     - **Instructions**: If you prefer to ferment in the primary fermenter, you can leave it for a few more days to allow the yeast to continue fermenting. This can help to clarify the beer and",
+        "generated_tokens": 180,
+        "hit_token_limit": true,
+        "generation_seconds": 80.18672588304617,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "4de8a88e3c5176a12d7be7747b6934bfc6ac70e047eddd85b00a38e2084a5702"
+      },
+      "after": {
+        "pass": true,
+        "note": "Keg and gelatin after primary, then 40°F for three to six weeks.",
+        "text": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.",
+        "generated_tokens": 41,
+        "hit_token_limit": false,
+        "generation_seconds": 23.77544608002063,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "c82d26b519cd8a6517581b9ce9007b26affff2de088de676d876f114f16d8409"
+      },
+      "max_new_tokens": 180
+    },
+    {
+      "turn": 4,
+      "question": "Before I get started, what are the precise mash-water and gelatin measurements?",
+      "before": {
+        "pass": false,
+        "note": "Invents five litres and ten grams gelatin, with gelatin before fermentation.",
+        "text": "The precise measurements for the mash-water and gelatin can vary depending on the specific recipe and the equipment you have. However, I can provide you with a general guideline based on common practices in brewing.\n\n### Malt Extract:\n- **Ingredients**: 200 grams of malt extract\n\n### Water:\n- **Ingredients**: 5 liters of water\n\n### Gelatin:\n- **Ingredients**: 10 grams of gelatin\n\n### Instructions:\n1. **Mash Water**: Heat the water to a rolling boil.\n2. **Add Malt Extract**: Once the water is boiling, add the malt extract to the boiling water. Stir well to combine.\n3. **Add Gelatin**: After the malt extract has been added, remove it from the heat. Add the gelatin to the mixture. Stir well to combine.\n4. **Cool the Wort**: Place the mixture in a large",
+        "generated_tokens": 180,
+        "hit_token_limit": true,
+        "generation_seconds": 78.80343612807337,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "cbf22e6fd64891316a4a8cab8e34037b6771013607e63926eb65b8a486492b13"
+      },
+      "after": {
+        "pass": true,
+        "note": "Explicitly answers both absent gelatin dose and absent water quantities.",
+        "text": "- Gelatin: the source gives no dose. Add gelatin when kegging after primary fermentation, before later lagering.\n- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\nConfirm both the gelatin instructions and a water plan for your equipment before brewing.",
+        "generated_tokens": 79,
+        "hit_token_limit": false,
+        "generation_seconds": 40.08202767896,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "4567c68047a39661fbc08335deace568e04ab221489b691a96b1f697ea218d71"
+      },
+      "max_new_tokens": 180
+    },
+    {
+      "turn": 5,
+      "question": "Can you explain wort and pitching without jargon?",
+      "before": {
+        "pass": false,
+        "note": "Core definitions partly correct, but incorrectly calls boiling the malt mashing; truncated.",
+        "text": "Certainly! Let's break down the terms \"wort\" and \"pitching\" in simple terms:\n\n### Wort:\n- **Definition**: Wort is the liquid that results from boiling and steeping malt in water. It's the liquid that contains the sugars that the yeast will consume during fermentation.\n- **Process**: When you add the malt to the water, it starts to steep. The malt releases its sugars, which are then boiled with the water. This process is called mashing. After boiling, the mixture is cooled to the right temperature for fermentation.\n\n### Pitching:\n- **Definition**: Pitching refers to the process of adding yeast to the wort. Yeast is the microorganism that ferments the sugars in the wort, turning them into alcohol and carbon dioxide.\n- **Process**: After the wort has been cooled, you add the yeast to the cooled wort.",
+        "generated_tokens": 180,
+        "hit_token_limit": true,
+        "generation_seconds": 83.86073968093842,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "678b4e4643d32519c6ad4b36b8bff7a60d4add0450bbea1250ffbd070a1a93eb"
+      },
+      "after": {
+        "pass": true,
+        "note": "Plain definitions of wort and pitching.",
+        "text": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+        "generated_tokens": 31,
+        "hit_token_limit": false,
+        "generation_seconds": 23.43261972698383,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "4c70c75f63e7340b7f0cf9f5274c9c5935897da475e1b7c4b246a145cc44befa"
+      },
+      "max_new_tokens": 180
+    },
+    {
+      "turn": 6,
+      "question": "What is the difference between cleaning gear and sanitizing it?",
+      "before": {
+        "pass": false,
+        "note": "Overstates sanitizing as killing all microorganisms and a higher chemical concentration; truncated.",
+        "text": "Cleaning and sanitizing are both important steps in brewing, but they serve different purposes.\n\n### Cleaning:\n- **Definition**: Cleaning involves removing dirt, grime, and other contaminants from equipment and tools. It's a thorough process that removes all visible and invisible debris.\n- **Process**: Cleaning typically involves using soap and water or a cleaning solution. You might also use a scrub brush or a cloth to remove stubborn dirt. After cleaning, you might rinse the equipment with clean water to remove any soap residue.\n\n### Sanitizing:\n- **Definition**: Sanitizing is the process of killing or removing harmful microorganisms from equipment and tools. It's a more thorough process than cleaning, as it involves using a higher concentration of chemicals to ensure that all microorganisms are killed.\n- **Process**: Sanitizing typically involves using a sanitizing solution, which is usually a higher concentration of chemicals than what",
+        "generated_tokens": 180,
+        "hit_token_limit": true,
+        "generation_seconds": 90.89186154201161,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "879247f78b2fd3cbe2579e3dbd502d7c7ec6f1330090f0f47066ab5d28cc8fa6"
+      },
+      "after": {
+        "pass": true,
+        "note": "Distinguishes cleaning and sanitizing, with product instructions for dose/contact time.",
+        "text": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. This is general brewing guidance; follow the sanitizer product instructions for its dose and contact time.",
+        "generated_tokens": 51,
+        "hit_token_limit": false,
+        "generation_seconds": 31.75186339893844,
+        "complete_own_history_verified": true,
+        "prompt_sha256": "adae9a74adb74e8366e5b6d2a843d8b9597645b70bfc7613e29ae8b2f69f4507"
+      },
+      "max_new_tokens": 180
+    }
+  ],
+  "metrics": {
+    "before": {
+      "independent_passed": 0,
+      "dialogue_passed": 0,
+      "reference_answer_tokens": 1142,
+      "answer_token_cross_entropy": 2.553038421946524,
+      "conditional_perplexity": 12.846076345429783,
+      "token_limit_hits": 11,
+      "independent_median_generation_seconds": 63.9310718869674,
+      "full_guide_generation_seconds": 349.99604734010063
+    },
+    "after": {
+      "independent_passed": 6,
+      "dialogue_passed": 6,
+      "reference_answer_tokens": 1142,
+      "answer_token_cross_entropy": 0.04516561789010338,
+      "conditional_perplexity": 1.0462011151825548,
+      "token_limit_hits": 0,
+      "independent_median_generation_seconds": 28.17325397802051,
+      "full_guide_generation_seconds": 217.66119089804124
+    }
+  },
+  "signatures": {
+    "before": {
+      "independent": {
+        "suite_sha256": "f68e3cc9e59ff9b0cd925718a13a5e9972b00aa40b96eacf14c7d1cc6b971c69",
+        "mode": "base",
+        "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+        "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "evaluator_sha256": "0a9e5d36b314a1020ba26d04ebe72c51aa002c8329ee921f15d7fd3118e05948",
+        "decoding": {
+          "do_sample": false,
+          "num_beams": 1,
+          "use_cache": true,
+          "temperature": 1.0,
+          "top_p": 1.0,
+          "top_k": 50,
+          "repetition_penalty": 1.0,
+          "no_repeat_ngram_size": 0
+        },
+        "loader_sha256": "1836a364c99a5f22b841681a1dfaef5c125605d364e53b2236e0d2307764f2c3",
+        "adapter_sha256": null,
+        "adapter_config_sha256": null
+      },
+      "dialogue": {
+        "protocol_sha256": "612a434cd086089bce144bbd4ee7556923ef6f7c6bec556c9695f83f53db57f9",
+        "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+        "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "mode": "base",
+        "decoding": {
+          "do_sample": false,
+          "num_beams": 1,
+          "use_cache": true,
+          "temperature": 1.0,
+          "top_p": 1.0,
+          "top_k": 50,
+          "repetition_penalty": 1.0,
+          "no_repeat_ngram_size": 0
+        },
+        "loader_sha256": "1836a364c99a5f22b841681a1dfaef5c125605d364e53b2236e0d2307764f2c3",
+        "evaluator_sha256": "e0eaaeafc5d57916362ff339ffce9580d5ecefe7996275f3429a2d04df4b1d7d",
+        "adapter_sha256": null,
+        "adapter_config_sha256": null
+      }
+    },
+    "after": {
+      "independent": {
+        "suite_sha256": "f68e3cc9e59ff9b0cd925718a13a5e9972b00aa40b96eacf14c7d1cc6b971c69",
+        "mode": "adapter",
+        "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+        "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "evaluator_sha256": "0a9e5d36b314a1020ba26d04ebe72c51aa002c8329ee921f15d7fd3118e05948",
+        "decoding": {
+          "do_sample": false,
+          "num_beams": 1,
+          "use_cache": true,
+          "temperature": 1.0,
+          "top_p": 1.0,
+          "top_k": 50,
+          "repetition_penalty": 1.0,
+          "no_repeat_ngram_size": 0
+        },
+        "loader_sha256": "1836a364c99a5f22b841681a1dfaef5c125605d364e53b2236e0d2307764f2c3",
+        "adapter_sha256": "3909cf83dbd5182dd5d6a686b6c86af1b66ca6f4ec06d8d41fe2e753b55d6860",
+        "adapter_config_sha256": "56f5035ea78b153e60af26383136f20c3e3fb97104d772e1e8c3e661ea35c56a"
+      },
+      "dialogue": {
+        "protocol_sha256": "612a434cd086089bce144bbd4ee7556923ef6f7c6bec556c9695f83f53db57f9",
+        "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+        "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "mode": "adapter",
+        "decoding": {
+          "do_sample": false,
+          "num_beams": 1,
+          "use_cache": true,
+          "temperature": 1.0,
+          "top_p": 1.0,
+          "top_k": 50,
+          "repetition_penalty": 1.0,
+          "no_repeat_ngram_size": 0
+        },
+        "loader_sha256": "1836a364c99a5f22b841681a1dfaef5c125605d364e53b2236e0d2307764f2c3",
+        "evaluator_sha256": "e0eaaeafc5d57916362ff339ffce9580d5ecefe7996275f3429a2d04df4b1d7d",
+        "adapter_sha256": "3909cf83dbd5182dd5d6a686b6c86af1b66ca6f4ec06d8d41fe2e753b55d6860",
+        "adapter_config_sha256": "56f5035ea78b153e60af26383136f20c3e3fb97104d772e1e8c3e661ea35c56a"
+      }
+    }
+  },
+  "local_raw_files_sha256": {
+    "fresh-dialogue-after.json": "54cf79105a50e10878a4e28dda3fddaec28288148becc15eef08aaa589119b06",
+    "fresh-dialogue-before.json": "fd2879246a5b6188644f2dedc8a151dd5383d31b73f89a80307ae4d373cd34ea",
+    "fresh-after.json": "436045afc09b0377affa5da0efec4b7687d822736ed3b6687f779aeb18aa8804",
+    "fresh-before.json": "a0216b943cec6ba971fc0eea65b036f5ef598fe022291b3687a29a74766412c4",
+    "fresh-comparison.json": "4af550d7ec4a58504c5c505398469d6de47bb27823e9ee3f46414c9cb7168375"
+  },
+  "system_prompt": "You teach Helicious Helles to an adult beginner in clear, friendly language. Explain brewing terms simply. For a complete recipe request, give all listed ingredients and the whole ordered procedure. For a follow-up, answer the requested part directly. Preserve the recipe's quantities, units, timings and stage relationships. State genuine source omissions without inventing settings or denying facts that are present. Keep general brewing checks separate from recipe facts. This experiment covers one recipe only.",
+  "cli_check": {
+    "checked_at": "2026-10-27T12:10:38.549065+00:00",
+    "command": "HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.chat",
+    "explicit_adapter_flag": false,
+    "recipe_context_flags": false,
+    "turns": 2,
+    "answers_match_frozen_fresh_dialogue": true,
+    "input_sha256": "46eae5343d3baf948f777de353a5e0e1d89a4062cd408ef965cf93d7d8d045d6",
+    "output_sha256": "9838713c2b59219c6044ea4f3f9dbd0305e74e4538f74a22b97bef45454356ea"
+  },
+  "software_checks": {
+    "unit_tests_passed": 77,
+    "compileall": true,
+    "shell_syntax": true
+  }
+}

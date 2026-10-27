@@ -1,0 +1,85 @@
+# Helicious Helles: actual generated conversation
+
+Unedited output from the frozen fine-tuned Qwen2.5-1.5B-Instruct candidate. Each answer follows the model’s own previous replies. Recipe quantities and reference answers were not inserted into its runtime prompt.
+
+Source: [AHA’s Helicious Helles](https://homebrewersassociation.org/homebrew-recipe/helicious-helles/). Assistant source inspection passes all six turns; this is one trained recipe under new wording, not expert review or general brewing accuracy. The source omits water amounts, separate exact pitching conditions, gelatin dose and carbonation/bottling instructions.
+
+Model revision: `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`. Adapter SHA-256: `3909cf83dbd5182dd5d6a686b6c86af1b66ca6f4ec06d8d41fe2e753b55d6860`. Greedy decoding; actual generator metadata remains in the local evaluation JSON.
+
+## Turn 1
+
+**Brewer:** Help me make a batch of Helicious Helles. Give the whole ingredient list and talk me through every brewing stage in plain language, including gaps.
+
+**BeerLLM:**
+
+Let's make Helicious Helles. The source batch is 7 gallon batch (26.5 L).
+
+Ingredients
+- 9.5 lb (4.31 kg) Pilsner malt
+- 1.0 lb (0.45 kg) torrified wheat
+- 5.0 oz (142 g) melanoidin malt
+- 7.0 oz (198 g) acidulated malt
+- 1 tablet whirlfloc @ 10 min
+- 1.9 oz (54 g) Tettnanger pellet hops, 4% AA (60 min)
+- Wyeast Private Collection 2247 European Lager (4 L starter) (or White Labs 830 & 833)
+- Medium carbonate water
+
+What to do
+1. Mash in at 130°F (54°C) for a 10-minute protein rest. Raise to 148°F (64°C) and hold for 60 minutes. Mashing means holding the grain in warm water to make the sweet liquid called wort; these are two successive rests, not alternative temperatures.
+
+2. Mash out at 168°F (76°C), then fly sparge at 170°F (77°C). Sparging means rinsing the grain while collecting wort. The source does not give the mash or sparge water volumes.
+
+3. Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes left: that is 30 minutes after boiling starts. Add one Whirlfloc tablet with 10 minutes left: 80 minutes after the start. The ingredient times count down to the end, not up from the start.
+
+4. Cool the wort promptly. Use a clean, sanitized fermenter and sanitize anything touching cooled wort. Pitch the listed yeast; pitching means adding yeast. The source gives no separate exact pitching temperature, so confirm the chosen yeast's pitching guidance rather than borrowing a mash temperature.
+
+5. Ferment at 50°F (10°C) for two to three weeks. This is primary fermentation, before kegging. Use the separate general gravity check below to establish completion rather than relying on the calendar alone.
+
+6. After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. Lagering is this later cold-conditioning stage; do not use its temperature as the primary fermentation setting. The source gives no gelatin dose or carbonation target.
+
+Before you brew: Confirm water volumes and exact water treatment, the chosen yeast's pitching conditions, the gelatin dose and the carbonation setup before brewing. The source says medium carbonate water but gives no numeric water profile. It gives no bottling or priming-sugar instructions. The primary and lagering temperatures and durations ARE specified; those are not missing.
+
+General brewing checks, separate from the recipe: clean equipment first, then sanitize anything touching the cooled wort. Check fermentation with gravity readings that stay consistent over a few days; a quiet airlock or a calendar date alone is not proof it is finished.
+
+## Turn 2
+
+**Brewer:** I will toss the Tettnanger in at the beginning of the kettle boil. Does that match this recipe?
+
+**BeerLLM:**
+
+No. Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes remaining, which is 30 minutes after the boil starts. Add one Whirlfloc tablet with 10 minutes remaining, or 80 minutes after the start. The source does not call for a dry-hop addition.
+
+## Turn 3
+
+**Brewer:** Once the main fermentation is done, what is the next sequence, how cold and how long?
+
+**BeerLLM:**
+
+After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.
+
+## Turn 4
+
+**Brewer:** Before I get started, what are the precise mash-water and gelatin measurements?
+
+**BeerLLM:**
+
+- Gelatin: the source gives no dose. Add gelatin when kegging after primary fermentation, before later lagering.
+- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.
+Confirm both the gelatin instructions and a water plan for your equipment before brewing.
+
+## Turn 5
+
+**Brewer:** Can you explain wort and pitching without jargon?
+
+**BeerLLM:**
+
+Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.
+
+## Turn 6
+
+**Brewer:** What is the difference between cleaning gear and sanitizing it?
+
+**BeerLLM:**
+
+Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. This is general brewing guidance; follow the sanitizer product instructions for its dose and contact time.
+

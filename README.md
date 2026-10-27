@@ -2,7 +2,9 @@
 
 A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Runs on an Intel Mac with 32 GB RAM. The latest experiment uses Qwen2.5-1.5B-Instruct on CPU; the earlier SmolLM2-360M runs are preserved. No cloud account or paid API is needed.
 
-**Latest experiment:** a refined Qwen adapter has finished training on 197 distinct conversations from eleven source-checked recipes. Short factual rows receive explicit replay weighting; they are not additional independent examples. See the [refined run report](reports/refinement-run.md) for measured progress and the [reproduction guide](docs/REFINEMENT.md) for commands. The epoch-two checkpoint is selected by lowest validation loss. Strict development passes improve from **1/8 to 5/8**, but complete guides still invent steps and fail. Both reserved full-guide cases also fail before and after (0/2). The model is testable, but full recipe generation remains unreliable.
+**One-recipe demo:** Helicious Helles now passes all twelve fresh source checks: six standalone questions and a six-turn conversation. The matched base passes 0/12 under the same greedy policy and response budgets. This is one trained recipe, with assistant source inspection rather than expert brewing review. See the [actual conversation](reports/helles-conversation.md), [measured before/after report](reports/single-recipe-run.md) and [commands](docs/SINGLE-RECIPE.md).
+
+**Previous broader experiment:** a refined Qwen adapter has finished training on 197 distinct conversations from eleven source-checked recipes. Short factual rows receive explicit replay weighting; they are not additional independent examples. See the [refined run report](reports/refinement-run.md) for measured progress and the [reproduction guide](docs/REFINEMENT.md) for commands. The epoch-two checkpoint is selected by lowest validation loss. Strict development passes improve from **1/8 to 5/8**, but complete guides still invent steps and fail. Both reserved full-guide cases also fail before and after (0/2). The model is testable, but full recipe generation remains unreliable.
 
 **Why the refinement:** the [earlier instructional model](reports/instruction-run.md) and [first Qwen trial](reports/instruction-v2-run.md) failed strict answer review despite lower reference perplexity. A varied two-fact fitting check now passes both exact questions and both fixed rewordings, but that does not establish full brewing competence. Every broad run retains actual generated answers and a separate factual review. References are not expert brewer-reviewed.
 
@@ -10,7 +12,7 @@ A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Run
 
 Collect AHA and Brewer's Friend public pages alongside the BrewDog API snapshot, with resumable downloads and conservative exact deduplication. See the [collection guide](docs/COLLECTION.md) for full-queue commands, progress checks and stopping/resuming. Full collection runs for days; it is separate from fine-tuning.
 
-**Current data:** collection stopped at the requested 1,500 saved records, leaving 1,498 after exact deduplication. The [first curation pass](reports/curation-v1.md) separates 50 instruction candidates, 1,407 records needing enrichment, 16 instruction conflicts and 25 non-beer records. The latest teaching experiment uses eleven training recipes, four validation families and two separately reserved final families. It does not train on all 1,498 records. Run `.venv/bin/python -m beerllm.curate` to rebuild the local audit. See the [curation guide](docs/CURATION.md).
+**Current data:** collection stopped at the requested 1,500 saved records, leaving 1,498 after exact deduplication. The [first curation pass](reports/curation-v1.md) separates 50 instruction candidates, 1,407 records needing enrichment, 16 instruction conflicts and 25 non-beer records. The previous broader teaching experiment uses eleven training recipes, four validation families and two separately reserved final families. It does not train on all 1,498 records. Run `.venv/bin/python -m beerllm.curate` to rebuild the local audit. See the [curation guide](docs/CURATION.md).
 
 **Teaching data:** recipes become ingredient lists, ordered beginner guides, direct questions, conversational follow-ups and questions with actual source notes. Source text, hashes, family splits and missing details are retained. The [metric guide](docs/METRICS.md) explains loss, perplexity and strict answer review; lower loss alone cannot approve the model.
 
@@ -47,23 +49,19 @@ Use another terminal to watch progress:
 tail -f outputs-run.log
 ```
 
-## Chat after training
+## Chat with the one-recipe model
+
+From this repository, using the existing local environment and weights:
 
 ```bash
-HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.chat \
-  --adapter outputs/qwen-instruction-v3/best-adapter \
-  --prompt "List Helicious Helles primary fermentation and later cold storage as two stages, with the temperature and duration of each."
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -m beerllm.chat
 ```
 
-That explicitly selects the refined Qwen adapter and tests recall from its weights. Add `--recipe-title 'Helicious Helles'` to supply the saved source notes. This is an explicit context option, not proof that the weights memorized the recipe. Add `--base` to compare the same starting model and system prompt without adapter weights. Omit `--prompt` for an interactive terminal; type `exit` to stop. Oldest complete turns are removed when the context window fills; history is not saved after exit.
+Ask for the complete Helicious Helles recipe, then ask follow-up questions. Type `exit` to stop. A full guide takes several minutes on this CPU. The default selects `outputs/helles-demo-v2/adapter`, its pinned Qwen model and saved teaching/decoding profile. Recipe quantities and source notes are not injected into the prompt.
 
-The no-argument chat default remains the older failed instructional adapter at `outputs/instruction-lora-v1/adapter/`; select the experiment explicitly. To supply an older downloaded PunkAPI recipe to the original adapter:
+Add `--prompt "Explain the complete Helicious Helles recipe."` to ask once, or `--base` for the matched untuned model. Oldest complete turns are removed when the context window fills; history is not saved after exit. Earlier adapters remain available through `--adapter PATH`; the broader experiments below are historical.
 
-```bash
-.venv/bin/python -m beerllm.chat --adapter outputs/beer-lora/adapter --recipe-id 1 --prompt "Explain this recipe and its brewing procedure."
-```
-
-Named recipe recall and source interpretation both require checking the generated answer against the recipe.
+The source lacks exact water quantities, separate pitching conditions, gelatin dose and carbonation instructions. The model should acknowledge those gaps. The demo needs brewer review before practical use; other recipes and substitutions are unvalidated. A fresh clone contains code and written evidence, while generated weights, datasets and caches remain local ignored artifacts.
 
 ## Individual commands for the first API experiment
 
@@ -108,13 +106,17 @@ Use a new output directory for a new experiment. The trainer refuses to overwrit
 
 | Location | Contents |
 |---|---|
+| `outputs/helles-demo-v2/adapter/` | Default one-recipe LoRA package, tokenizer and fixed chat profile |
+| `outputs/helles-demo-eval-v2/` | Frozen selection, matching raw before/after answers and CLI checks |
+| `reports/helles-evaluation.json` | Unedited fresh answers, signatures, metrics and case verdicts |
+| `data/helles_focus_v18/` | Current 28-conversation supervised rehearsal and frozen hashes |
 | `data/instruction_v3/` | Refined conversations, frozen development/final suites and provenance |
 | `outputs/qwen-instruction-v3/best-adapter/` | Selected epoch-two Qwen adapter, used explicitly in chat |
 | `outputs/qwen-instruction-v3/adapter/` | Preserved final epoch-three adapter |
 | `outputs/instruction-v3/` | Matching baseline/adapter answers, metrics and factual inspection |
 | `outputs/qwen-instruction-v3/probes/` | Actual factual answers at each saved training checkpoint |
 | `data/instruction_v1/` | Eight-recipe teaching experiment, frozen benchmark and dataset hashes |
-| `outputs/instruction-lora-v1/adapter/` | Earlier experimental adapter, still the legacy chat default; failed quality checks |
+| `outputs/instruction-lora-v1/adapter/` | Preserved earlier adapter; failed quality checks |
 | `outputs/instruction-v1/` | Actual before/after answers, comparison and assistant review |
 | `data/punkapi/` | Original API records and field-coverage audit |
 | `data/training/` | Train/validation/test JSONL, readable guides, rejected records and dataset report |

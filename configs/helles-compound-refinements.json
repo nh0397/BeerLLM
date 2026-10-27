@@ -1,0 +1,151 @@
+{
+  "answers": {
+    "mash": "The grain-rest and rinsing stages are:\n1. First rest: 130°F (54°C) for 10 minutes.\n2. Main mash rest: raise to 148°F (64°C) for 60 minutes.\n3. Mash-out: raise to 168°F (76°C). The source gives no separate hold duration.\n4. Fly sparge: rinse the grain at 170°F (77°C) while collecting wort. These are successive stages; do not omit the mash-out or sparge.",
+    "cold": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+    "missing": "Here are the known settings:\n- Primary fermentation: 50°F (10°C) for two to three weeks.\n- Later lagering: 40°F (4°C) for three to six weeks after kegging and gelatin clarification.\nStill to confirm: mash and sparge water quantities, a numeric mineral profile, a separate exact pitching temperature, gelatin dose and carbonation setup. The source gives no bottling or priming-sugar instructions. Its batch size is given: seven gallons (26.5 L).",
+    "gravity": "Check repeated gravity readings over a few days before transferring the beer. Consistent readings help establish that primary fermentation has finished. A quiet airlock or a calendar date alone is not proof. This is a general brewing check; the recipe itself schedules primary at 50°F (10°C) for two to three weeks and does not give a universal final-gravity number."
+  },
+  "variants": {
+    "hops": [
+      "The kettle is thirty minutes into its ninety-minute boil. Which additions should I make and when?",
+      "Boiling started half an hour ago; explain what is due now and later in the kettle.",
+      "I have sixty minutes left on the boil clock. What do I add, and when is the last addition?",
+      "During boiling, tell me both measured additions and their timer settings."
+    ],
+    "cold": [
+      "The boil has ended. Give the complete sequence from cooling through lagering.",
+      "After the kettle is turned off, how do I finish this recipe?"
+    ],
+    "missing": [
+      "Which fermentation details are stated, and what quantities do I still need to confirm?"
+    ]
+  },
+  "conversation_keys": [],
+  "extra_pairs": [
+    {
+      "question": "Explain wort and pitching in plain English.",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Tell me what the liquid called wort is and what pitching yeast means.",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What do brewers mean by wort and by pitching?",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Why must I clean the fermenter before sanitizing it?",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. Follow the sanitizer product instructions for its dose and contact time.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Are cleaning and sanitizing the same job? Explain simply.",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. Follow the sanitizer product instructions for its dose and contact time.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What do cleaning and sanitizing do for cooled wort?",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. Follow the sanitizer product instructions for its dose and contact time.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What are the exact mash-water volume and gelatin quantity?",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "How much starting water and how much gelatin does this recipe specify?",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Do I have exact amounts for both the grain water and the gelatin?",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Please give both measurements: water for the grain and gelatin for clarification.",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Which water and gelatin quantities should I confirm before brewing?",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Are the mash and sparge volumes and the gelatin dose all provided?",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Tell me what the source says about water quantity as well as gelatin quantity.",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "How many liters of mash water and how many grams of gelatin are listed?",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Before brewing, do I know both the water amount and gelatin dose?",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "conversation_variant",
+      "prior_question": "Please walk me through all of this Helles recipe.",
+      "prior_answer": "guide"
+    },
+    {
+      "question": "Now tell me the source amounts for mash water and gelatin.",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "conversation_variant",
+      "prior_question": "Please walk me through all of this Helles recipe.",
+      "prior_answer": "guide"
+    },
+    {
+      "question": "I still need the water and gelatin measurements. Are they given?",
+      "answer": "- Mash and sparge water: the source gives no exact volumes. The 7-gallon (26.5 L) batch size is not the starting water amount.\n- Gelatin: add it after primary fermentation, but the source gives no dose.\nConfirm a water plan for your equipment and the gelatin instructions before brewing.",
+      "task": "conversation_variant",
+      "prior_question": "Please walk me through all of this Helles recipe.",
+      "prior_answer": "guide"
+    },
+    {
+      "question": "What batch size and gelatin dose are listed?",
+      "answer": "The batch size is 7 gallons (26.5 L). The gelatin dose is not given; the source says to keg and add gelatin after primary fermentation. Confirm that dose separately.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Tell me the primary temperature and gelatin amount together.",
+      "answer": "Primary fermentation is at 50°F (10°C) for two to three weeks. After primary, keg and add gelatin to clarify, but the source gives no gelatin dose. Confirm that quantity.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Give the cold-storage temperature and starting water amount.",
+      "answer": "Later lagering is at 40°F (4°C) for three to six weeks, after primary fermentation, kegging and gelatin clarification. The source gives no exact mash or sparge water volumes; confirm the water plan for your equipment.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Do we know water amounts, primary settings and gelatin dose?",
+      "answer": "- Water: exact mash and sparge quantities are not given.\n- Primary fermentation: 50°F (10°C) for two to three weeks is given.\n- Gelatin: its use after primary is given, but its dose is not.\nConfirm the missing quantities before brewing.",
+      "task": "followup_variant"
+    }
+  ],
+  "conversation_pairs": [
+    {
+      "prior_question": "Teach this Helles from beginning to end.",
+      "prior_answer": "guide",
+      "question": "I am running the boil now. What do I add, how much, and at which times?",
+      "answer": "hops"
+    }
+  ],
+  "confirmation_questions": {
+    "final-guide": "Teach the entire Helicious Helles recipe in everyday language: its batch, complete ingredient list, all successive stages, checks and remaining source gaps.",
+    "final-timer": "Thirty minutes into the Helles kettle boil, what measured ingredients go in now and at the later addition time?",
+    "final-wrong-temperature": "Would starting yeast fermentation at the cold lagering temperature follow this Helles method? Explain the two intended stages.",
+    "final-completion": "The airlock became quiet sooner than expected. How should I establish that the beer is ready to leave primary instead of relying on bubbling?"
+  }
+}

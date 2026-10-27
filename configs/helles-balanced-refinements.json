@@ -1,0 +1,334 @@
+{
+  "answers": {
+    "mash": "The grain-rest and rinsing stages are:\n1. First rest: 130°F (54°C) for 10 minutes.\n2. Main mash rest: raise to 148°F (64°C) for 60 minutes.\n3. Mash-out: raise to 168°F (76°C). The source gives no separate hold duration.\n4. Fly sparge: rinse the grain at 170°F (77°C) while collecting wort. These are successive stages; do not omit the mash-out or sparge.",
+    "cold": "After the boil, follow these stages:\n1. Cool the wort promptly and use clean, sanitized equipment.\n2. Pitch the listed yeast, meaning add it to cooled wort. Confirm its pitching guidance; the source gives no separate exact pitching temperature.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. Keg and add gelatin to clarify; its dose is not specified.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks. The primary stage comes before kegging and later lagering.",
+    "missing": "Given by the source:\n- Primary fermentation: 50°F (10°C) for two to three weeks.\n- Later lagering: 40°F (4°C) for three to six weeks after kegging and gelatin clarification.\nNot specified: a separate exact pitching temperature, mash/sparge water quantities or numeric water treatment, gelatin dose, carbonation target, and bottling or priming-sugar instructions. The known temperature schedules are not erased by those omissions."
+  },
+  "variants": {
+    "ingredients": [
+      "What do I need to buy?",
+      "Give me the shopping list with amounts.",
+      "List the grain bill, hops, yeast, water and clearing agent.",
+      "What are all eight ingredient entries and the intended yield?",
+      "What quantities do I weigh for this beer?",
+      "Before we start, what ingredients do I need for the batch?"
+    ],
+    "mash": [
+      "How do I handle the grain before the kettle boil?",
+      "Explain all the hot-water rests and grain rinsing, with settings.",
+      "What happens at the mash stage from beginning to end?",
+      "Tell me the mash schedule and how to rinse the grain afterward.",
+      "What are the first four grain temperature settings, in sequence?",
+      "Walk me through grain heating, mash-out and sparging."
+    ],
+    "hops": [
+      "I started the ninety-minute boil half an hour ago. Is it time for an addition?",
+      "Which ingredients go into the kettle during boiling, and when?",
+      "When do the Tettnanger and the clearing tablet go in?",
+      "Explain sixty and ten minutes remaining versus time elapsed.",
+      "Do I add the hops at the beginning of the ninety-minute boil?",
+      "The kettle has sixty minutes remaining. What goes in now and later?",
+      "At minute 30 of the boil, which ingredient is due?",
+      "When should I use the Whirlfloc tablet?"
+    ],
+    "cold": [
+      "Boiling is over. What are all the remaining stages?",
+      "What do I do with the hot wort until this lager is conditioned?",
+      "Take me from finishing the kettle boil to finishing the cold rest.",
+      "How do cooling, yeast addition, fermentation and kegging fit together?",
+      "Give all the post-boil operations and temperature schedules.",
+      "How does the beer get from boiled wort to lagered beer?"
+    ],
+    "primary": [
+      "How warm should I keep the fermenter, and for how long?",
+      "What temperature should the yeast ferment at?",
+      "What is the first fermentation schedule?",
+      "Before transferring to the keg, how long and at what temperature?",
+      "Tell me the primary temperature and time only.",
+      "How many weeks is the main yeast fermentation, and at which temperature?"
+    ],
+    "lager": [
+      "Once primary finishes, what comes next?",
+      "After fermentation ends, what happens with temperatures and times?",
+      "Explain the storage period after kegging.",
+      "What do I do after the warmer fermentation?",
+      "How long does the later cold rest last and how cold is it?",
+      "When do I condition the beer, and at which setting?"
+    ],
+    "missing": [
+      "Which settings can you state and which do we still need to decide?",
+      "What important details are missing from the published method?",
+      "Separate known temperature schedules from unknown quantities.",
+      "What do I need to confirm before brew day?",
+      "Does the recipe leave everything about fermentation unspecified?",
+      "What has the source left undecided, and which stage settings are provided?"
+    ],
+    "wrong_cold": [
+      "Can I skip primary and go straight to the cold conditioning temperature?",
+      "Would four degrees Celsius work for the whole yeast stage?",
+      "Could I use the lagering temperature for primary as well?",
+      "Is the first yeast fermentation at forty Fahrenheit?",
+      "Can I ignore the warmer fermentation and use the cold rest instead?",
+      "Are the first fermentation and cold conditioning the same temperature?"
+    ],
+    "gravity": [
+      "The airlock has gone quiet after a few days. Can I transfer now?",
+      "What proves the yeast has actually finished fermenting?",
+      "Can I move straight to kegging because the bubbles disappeared?",
+      "How can I tell whether primary is complete rather than just quiet?",
+      "Does reaching the end of the calendar schedule guarantee completion?",
+      "Before cold storage, how should I check fermentation completion?",
+      "My beer stopped bubbling early. Does that mean it is finished?",
+      "Can I just wait two weeks instead of measuring gravity?"
+    ],
+    "yeast": [
+      "What yeast should I pitch?",
+      "Which yeast strain is listed and what starter size?",
+      "What are the yeast choices for this beer?",
+      "Does the recipe give a starter for its main yeast?",
+      "Which European Lager yeast does the source call for?",
+      "Tell me the listed yeast and alternatives without making up doses."
+    ],
+    "water": [
+      "How many liters of mash water should I heat?",
+      "What is the exact sparge water volume?",
+      "Can I just use seven gallons of starting water?",
+      "Do we know how much water to measure before mashing?",
+      "What mineral profile should I set exactly?",
+      "Which water details does the recipe give and omit?"
+    ],
+    "gelatin": [
+      "How much gelatin should I add?",
+      "When does the clarifying agent go in, and is its dose given?",
+      "Should gelatin be added before primary fermentation?",
+      "What happens with gelatin after the yeast fermentation?",
+      "Do I have a specified gelatin amount to weigh?",
+      "At which step do I clarify this lager?"
+    ]
+  },
+  "conversation_keys": [],
+  "extra_pairs": [
+    {
+      "question": "Are both the Helles fermentation schedule and bottle-priming dose absent from the source?",
+      "answer": "No. Primary fermentation is given: 50°F (10°C) for two to three weeks. Later lagering is given: 40°F (4°C) for three to six weeks after kegging and gelatin. A bottle-priming sugar dose is not given. These are different fields, not all missing."
+    },
+    {
+      "question": "The Helles source omits an exact pitching temperature. Does it also omit fermentation and lagering temperatures?",
+      "answer": "No. Primary fermentation is explicitly 50°F (10°C) for two to three weeks; later lagering is 40°F (4°C) for three to six weeks after kegging and gelatin. Only the separate exact pitching temperature is absent here. Pitching and primary fermentation are different settings."
+    },
+    {
+      "question": "Tell me which are given: primary temperature, lagering temperature and priming-sugar amount.",
+      "answer": "Primary temperature: given, 50°F (10°C), for two to three weeks. Lagering temperature: given, 40°F (4°C), for three to six weeks after kegging and gelatin. Priming-sugar amount: not given; the source describes kegging and does not supply bottle-priming instructions."
+    },
+    {
+      "question": "Does Helicious Helles specify a bottle sugar dose as well as fermentation settings?",
+      "answer": "The fermentation settings are specified: primary at 50°F (10°C) for two to three weeks and later lagering at 40°F (4°C) for three to six weeks. The source does not specify a bottle-sugar dose. So the temperature settings are known while that quantity is missing."
+    },
+    {
+      "question": "Is it correct to say the Helles recipe has no primary temperature?",
+      "answer": "No. Its primary fermentation temperature is explicitly 50°F (10°C), for two to three weeks. Do not confuse that given setting with a separate pitching temperature, which the source does not state."
+    },
+    {
+      "question": "Are the Helles lagering temperature and duration missing?",
+      "answer": "No. The source explicitly gives 40°F (4°C) for three to six weeks of lagering, after primary fermentation, kegging and gelatin clarification."
+    },
+    {
+      "question": "Which exact priming-sugar mass is given for the Helles keg recipe?",
+      "answer": "No priming-sugar mass is given. This source describes kegging, gelatin clarification and later lagering, without bottle-priming instructions. Confirm a packaging plan instead of inventing a sugar dose."
+    },
+    {
+      "question": "How much priming sugar should I weigh if the source only gives primary and lagering settings?",
+      "answer": "The source provides no priming-sugar dose to weigh. Primary fermentation at 50°F (10°C) and later lagering at 40°F (4°C) are temperature settings, not sugar quantities. Confirm the intended packaging method and a suitable priming calculation instead of guessing a mass."
+    },
+    {
+      "question": "Is the seven-gallon batch volume the exact water amount for the mash?",
+      "answer": "No. Seven gallons (26.5 L) is the source batch size. The source does not give exact mash or sparge water quantities. Starting water depends on the equipment and process losses; confirm that plan rather than treating batch size as mash-water volume."
+    },
+    {
+      "question": "Which is unknown in Helles: the later cold temperature or the gelatin amount?",
+      "answer": "The gelatin amount is unknown. The later lagering temperature is given: 40°F (4°C) for three to six weeks after kegging and gelatin clarification. A missing gelatin dose does not make that temperature missing."
+    },
+    {
+      "question": "Are fermentation and yeast pitching the same setting in this Helles source?",
+      "answer": "They are separate. Pitching means adding yeast, and the source gives no separate exact pitching temperature. Primary fermentation is explicitly at 50°F (10°C) for two to three weeks. Use the chosen yeast guidance for pitching without denying the stated primary setting."
+    },
+    {
+      "question": "Does not having bottling instructions mean the Helles source gives no fermentation method?",
+      "answer": "No. It specifies primary fermentation at 50°F (10°C) for two to three weeks, then kegging and gelatin clarification, followed by lagering at 40°F (4°C) for three to six weeks. Bottling and priming-sugar instructions are absent; fermentation instructions are present."
+    },
+    {
+      "question": "Give just the two Helles temperature-and-time schedules that are explicitly stated.",
+      "answer": "Primary fermentation: 50°F (10°C) for two to three weeks. Later lagering: 40°F (4°C) for three to six weeks after kegging and gelatin clarification."
+    },
+    {
+      "question": "The Helles directions give a cooling step but no separate pitching temperature. What primary temperature should I use?",
+      "answer": "Use the stated primary fermentation setting of 50°F (10°C), for two to three weeks. The lack of a separate pitching temperature does not remove this given primary setting; confirm the chosen yeast guidance for pitching."
+    }
+  ],
+  "guide_questions": [
+    "Give me the full recipe.",
+    "Please teach me how to make this beer.",
+    "Write the whole Helicious Helles brew sheet in plain English.",
+    "Explain the complete brewing method and all ingredients.",
+    "I need a beginner brewing plan with every quantity and stage.",
+    "Show me the recipe from grain to cold storage, including missing details.",
+    "What should I do on brew day and afterward for this Helles?",
+    "Please provide ingredients followed by all the instructions.",
+    "Make a detailed instruction sheet for a first-time brewer.",
+    "Explain this lager from start to finish, defining the brewing terms.",
+    "Give a complete overview I can read before brewing Helicious Helles.",
+    "How is Helicious Helles made, with the amounts and timings?"
+  ],
+  "conversation_pairs": [
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "What do I need to buy?",
+      "answer": "ingredients"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "Give me the shopping list with amounts.",
+      "answer": "ingredients"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "How do I handle the grain before the kettle boil?",
+      "answer": "mash"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "Explain all the hot-water rests and grain rinsing, with settings.",
+      "answer": "mash"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "I started the ninety-minute boil half an hour ago. Is it time for an addition?",
+      "answer": "hops"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "Which ingredients go into the kettle during boiling, and when?",
+      "answer": "hops"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "Boiling is over. What are all the remaining stages?",
+      "answer": "cold"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "What do I do with the hot wort until this lager is conditioned?",
+      "answer": "cold"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "How warm should I keep the fermenter, and for how long?",
+      "answer": "primary"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "What temperature should the yeast ferment at?",
+      "answer": "primary"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "Once primary finishes, what comes next?",
+      "answer": "lager"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "After fermentation ends, what happens with temperatures and times?",
+      "answer": "lager"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "Which settings can you state and which do we still need to decide?",
+      "answer": "missing"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "What important details are missing from the published method?",
+      "answer": "missing"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "Can I skip primary and go straight to the cold conditioning temperature?",
+      "answer": "wrong_cold"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "Would four degrees Celsius work for the whole yeast stage?",
+      "answer": "wrong_cold"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "The airlock has gone quiet after a few days. Can I transfer now?",
+      "answer": "gravity"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "What proves the yeast has actually finished fermenting?",
+      "answer": "gravity"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "What yeast should I pitch?",
+      "answer": "yeast"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "Which yeast strain is listed and what starter size?",
+      "answer": "yeast"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "How many liters of mash water should I heat?",
+      "answer": "water"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "What is the exact sparge water volume?",
+      "answer": "water"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "How much gelatin should I add?",
+      "answer": "gelatin"
+    },
+    {
+      "prior_question": "Please teach me Helicious Helles from the beginning.",
+      "prior_answer": "guide",
+      "question": "When does the clarifying agent go in, and is its dose given?",
+      "answer": "gelatin"
+    }
+  ],
+  "confirmation_questions": {
+    "final-guide": "I would like a complete lesson on brewing Helicious Helles. Start with the entire shopping list and batch size, then explain every stage in order, define unfamiliar words, and point out information we still need.",
+    "final-timer": "For this Helles, half an hour of kettle boiling has passed. Which measured addition is due, and when is the clearing tablet due?",
+    "final-wrong-temperature": "I plan to run primary at the later lagering setting instead. Is that the method for this beer, or should I use two separate schedules?",
+    "final-completion": "The fermenter got quiet ahead of schedule. What evidence should I collect before declaring primary finished and transferring the beer?"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "answers": {
+    "mash": "The grain-rest and rinsing stages are:\n1. First rest: 130°F (54°C) for 10 minutes.\n2. Main mash rest: raise to 148°F (64°C) for 60 minutes.\n3. Mash-out: raise to 168°F (76°C). The source gives no separate hold duration.\n4. Fly sparge: rinse the grain at 170°F (77°C) while collecting wort. These are successive stages; do not omit the mash-out or sparge.",
+    "cold": "After the boil, follow these stages:\n1. Cool the wort promptly and use clean, sanitized equipment.\n2. Pitch the listed yeast, meaning add it to cooled wort. Confirm its pitching guidance; the source gives no separate exact pitching temperature.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. Keg and add gelatin to clarify; its dose is not specified.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks. The primary stage comes before kegging and later lagering."
+  },
+  "variants": {
+    "ingredients": ["For this Helles, give just the shopping list and intended batch volume."],
+    "mash": [
+      "Spell out the two grain rests, the mash-out, and the sparge for Helicious Helles, in order.",
+      "Give me every grain-rest and rinsing temperature in this Helles, including how long the rests last.",
+      "What is the full sequence from the first mash rest through fly sparging for Helicious Helles?",
+      "I need all of the Helles mash and sparge settings, not just the first rest."
+    ],
+    "cold": [
+      "What is the whole Helicious Helles process once boiling has finished, up to the end of lagering?",
+      "Walk me through cooling, adding yeast, primary fermentation, kegging, clarification and conditioning for this Helles.",
+      "For Helicious Helles, what are all the steps from hot wort to the end of cold conditioning?",
+      "How do I move from the end of the boil through the warmer yeast stage and then the colder stage?"
+    ],
+    "hops": ["How do I translate the two Helles addition times into minutes since boiling began?", "Which addition belongs with sixty minutes left, and which belongs with ten left in this Helles boil?"],
+    "missing": ["What does the Helles source actually tell us about temperatures, and what equipment-dependent quantities are absent?", "Please distinguish known Helles fermentation settings from unknown water, gelatin and carbonation amounts."],
+    "primary": ["Before I keg this Helles, what temperature and time does its yeast stage use?"],
+    "lager": ["What are the temperature and length of the Helles cold-conditioning stage after kegging?"],
+    "wrong_cold": ["Is forty degrees Fahrenheit the right setting for the first fermentation of this Helles?"],
+    "gravity": ["My Helles is no longer bubbling. What should I check before transferring it out of primary?"],
+    "yeast": ["Name the Helles yeast options and the starter size actually given in the source."],
+    "water": ["Is the seven-gallon Helles batch size enough to determine my mash and sparge water?"],
+    "gelatin": ["At what point does gelatin enter the Helles process, and is its amount specified?"]
+  },
+  "conversation_keys": ["mash", "cold"]
+}
