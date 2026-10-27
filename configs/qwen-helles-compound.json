@@ -1,0 +1,27 @@
+{
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "initial_adapter": "outputs/helles-kettle-v1/adapter",
+  "seed": 42,
+  "threads": 4,
+  "max_length": 2048,
+  "epochs": 1,
+  "learning_rate": 3e-05,
+  "gradient_accumulation_steps": 1,
+  "lora_rank": 16,
+  "lora_alpha": 32,
+  "lora_dropout": 0.0,
+  "target_modules": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "save_steps": 30,
+  "save_total_limit": 3,
+  "output_dir": "outputs/helles-compound-v1",
+  "short_fact_repeat": 1
+}

@@ -220,3 +220,22 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
 ```
 
 Use the already-frozen local datasets when present. Do not rerun earlier failed experiments simply to use a saved adapter. All original checkpoints and results remain available; a different run needs a new output directory.
+
+## Teach compound requests without hiding the failed conversation
+
+The kettle adapter passes fifteen non-conversational questions and five of six actual-history turns. Its reply to a combined water/gelatin question omits gelatin. A generic prompt cue does not fix it. The next pass keeps the original prompt and teaches both single-item and combined requests, including known/unknown contrasts.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups \
+  --source data/helles_focus_v1 --config configs/helles-compound-refinements.json \
+  --output data/helles_focus_v10
+
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \
+  --config configs/qwen-helles-compound.json --data-dir data/helles_focus_v10 --check-data
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-compound.json --data-dir data/helles_focus_v10 --eval-limit 1 \
+  > outputs-helles-compound-train.log 2>&1
+```
+
+The 53 rows all fit, no short-fact replay is applied, and the learning rate is 0.00003. The prior fifteen non-conversational questions and first six-turn chat become regression checks. A second four-question confirmation file and `configs/helles-confirmation-dialogue.json` are frozen before training and remain unopened until selection. Neither references nor recipe facts are inserted into inference history.

@@ -1,6 +1,6 @@
 # One-recipe brewing tutor: measured progress
 
-**Selected for reserved testing.** One greedy model now passes all eleven development and consumed-regression checks: the complete guide, every tested recipe stage, both beginner explanations and all four earlier wording failures. The weights and policy are frozen before four fresh questions and the six-turn conversation. Scaling remains paused until those pass.
+**One conversation turn still fails.** The kettle/definition model passes all fifteen non-conversational checks but answers only the water part of a water-and-gelatin question, scoring 5/6 in actual conversation. A short continuation now teaches compound questions explicitly. All source requirements remain unchanged; new final wording is frozen before training.
 
 The goal is one complete explanation plus direct, accurate follow-ups in ordinary language. The model must supply facts from its trained weights: no recipe lookup, source notes or recipe quantities in its system prompt. All answers are inspected against the saved source and [fixed factual rubric](../configs/helles-rubric.json). References and inspection are assistant-authored, not expert brewer-reviewed.
 
@@ -121,3 +121,11 @@ The final kettle/definition adapter passes all eleven full-answer checks under o
 Weight SHA-256: `b5088093f98cf0fbb78d5b6aea646edddde13cea077c19f297d59a6a6ef07299`. Selection is frozen locally in `outputs/helles-kettle-eval-v1/selection.json`, including the policy, evaluator/loader, rubric, suite and profile hashes, before reserved generation. The deployment package contains unchanged trained weights and an explicit greedy policy. A fresh baseline with the current evaluator is still required; older controls are historical and will not be relabeled as this comparison.
 
 The frozen candidate passes all four fresh confirmation questions on its first reserved evaluation: a complete guide, measured kettle additions, correction of a wrong fermentation temperature and an evidence-based completion check. The six-turn actual-history conversation is next. These are new phrasings for the same trained recipe; they do not establish unseen-recipe performance.
+
+## Actual history exposes one remaining omission
+
+The first six-turn conversation passes turns 1, 2, 3, 5 and 6. Turn 4 asks for both exact water quantities and gelatin dose. Its answer describes absent water quantities and the seven-gallon batch, but never answers the gelatin part. This is an incomplete answer and fails; the candidate is not accepted despite 15/15 non-conversational checks. The dialogue is now consumed regression evidence. A general multipart-answer instruction is being screened without inserting recipe facts or changing trained weights.
+
+The generic multipart-answer instruction also fails the consumed conversation question: the response again omits gelatin and adds unrelated packaging guidance. That prompt is rejected and never adopted. The next continuation retains the original system prompt and starts from the kettle adapter. Its 53 rows include the six original guides, twelve canonical follow-ups, six original conversations, kettle and explanation practice, compound missing-quantity answers, mixed known/unknown questions and four conversational variants. Learning rate is 0.00003 with no replay, one epoch and checkpoints at step 30 and the end. All examples fit; 7,394 answer tokens are supervised, maximum input 898 tokens.
+
+The first four confirmation questions and six-turn conversation are now consumed regression evidence. Before this new training, a second four-question set and a fresh six-turn conversation are frozen under different wording. Selection must retain the existing fifteen non-conversational answers and original six-turn conversation, then pass all ten fresh checks. The factual rubric is unchanged. The final before/after comparison will use the fresh ten questions and the same prompt/policy for base and adapter.
