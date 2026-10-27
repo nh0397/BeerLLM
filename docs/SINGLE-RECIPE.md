@@ -287,3 +287,23 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
   --config configs/qwen-helles-guide-scope.json --data-dir data/helles_focus_v11 --eval-limit 1 \
   > outputs-helles-guide-scope-train.log 2>&1
 ```
+
+## Fresh attention-only LoRA
+
+Successive all-projection continuations trade scope failures. The next experiment starts from the unmodified Qwen base and trains only query/value LoRA layers, using the combined teaching coverage. It inherits no previous adapter.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups \
+  --source data/helles_focus_v1 --config configs/helles-attention-refinements.json \
+  --output data/helles_focus_v12
+
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \
+  --config configs/qwen-helles-attention.json --data-dir data/helles_focus_v12 --check-data
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-attention.json --data-dir data/helles_focus_v12 --eval-limit 1 \
+  --probe-suite outputs/helles-attention-eval-v1/training-probes.jsonl \
+  > outputs-helles-attention-train.log 2>&1
+```
+
+The probe file contains four exact training rows exported in benchmark form (`training_fit`, empty lexical checks): complete-guide question, canonical ingredients question, canonical boil-timer question and `What are the exact mash-water volume and gelatin quantity?`. Budgets are 1100, 400, 180 and 180 tokens. It is a fitting diagnostic, never a final test. Use the same arguments plus `--resume` after an interruption. Run one model process at a time.

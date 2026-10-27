@@ -1,6 +1,6 @@
 # One-recipe brewing tutor: measured progress
 
-**Not accepted yet.** The fitted compound checkpoint answers both missing measurements but regresses on a complete-guide request that also asks about source gaps. A focused rehearsal now teaches the whole guide and missing-detail questions together. All earlier outputs and failures remain preserved; final wording stays unopened.
+**Not accepted yet.** Successive adapters keep trading scope failures: complete-guide requests, ingredient-only requests and combined follow-ups do not all work together. A fresh-base attention-only LoRA run now uses the combined teaching coverage, with far fewer trainable parameters. No fresh final questions have been generated for this candidate.
 
 The goal is one complete explanation plus direct, accurate follow-ups in ordinary language. The model must supply facts from its trained weights: no recipe lookup, source notes or recipe quantities in its system prompt. All answers are inspected against the saved source and [fixed factual rubric](../configs/helles-rubric.json). References and inspection are assistant-authored, not expert brewer-reviewed.
 
@@ -143,3 +143,11 @@ The next pass retains all 53 compound teaching conversations and adds twelve who
 The full-guide scope rehearsal completes 65 steps in 956.1 seconds (15.9 minutes), peak RSS 16.25 GiB, mean training loss 0.048229, with zero skipped examples. It supervises 15,518 answer tokens; maximum input is 898 tokens. A short intent screen precedes full regression and reserved testing.
 
 The final guide-scope adapter repairs the consumed complete-guide request and preserves the other completed stage/explanation screens, but the ingredient-only question now receives a full guide and hits its 400-token budget. It is rejected, and the full regression run is stopped early. A halfway checkpoint is screened on the complete-guide prefix, the full ingredient answer and the saved-history compound request before any further training. The second reserved confirmation and conversation are still unopened.
+
+## Fresh attention-only adapter instead of further patching
+
+The guide-scope halfway checkpoint also returns a truncated full guide to the ingredient-only request. Adding a generic ingredient-only stopping rule to the final checkpoint does not repair it. That rule is rejected; the original neutral teaching prompt remains in use. No new recipe facts are injected and no runtime query classifier is introduced.
+
+The next run starts from the unmodified pinned Qwen base, with rank-16 / alpha-32 LoRA on query and value projections only, dropout 0.05, learning rate 0.0001, two planned epochs and no replay. It inherits no previous adapter. This reduces the trainable parameter count from 18,464,768 to 2,179,072 (about 0.141% of the combined model). Whether that preserves instruction-following better is an empirical question, not an acceptance claim.
+
+Its 165 distinct teaching conversations combine broad follow-up coverage, 22 full guides, 12 canonical follow-ups, 106 variants, 14 known/unknown contrasts and 11 conversation examples. All fit: 25,168 supervised answer tokens, maximum input 886 tokens. There are 330 planned optimizer steps, with checkpoints and four exact-training generation probes each epoch: guide, ingredients, timer and combined quantities. Previous fifteen non-conversational cases and six-turn chat remain regression gates. The untouched second confirmation/chat wording stays reserved; one newly frozen ingredient-only wording brings the final check to five independent questions plus six actual-history turns. All use the original system prompt, and exact question overlap with training is checked.
