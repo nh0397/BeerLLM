@@ -244,6 +244,22 @@ The 53 rows all fit, no short-fact replay is applied, and the learning rate is 0
 
 One low-rate compound pass still answers water only, even for an exact training question. A second fitting pass keeps the same data, saves each epoch and generates an exact training answer at each save.
 
+Export its training-only probe first:
+
+```bash
+.venv/bin/python - <<'PROBE'
+from pathlib import Path
+from beerllm.common import read_jsonl, write_jsonl
+rows = read_jsonl('data/helles_focus_v10/train.jsonl')
+row = next(r for r in rows if r['messages'][-2]['content'] ==
+           'What are the exact mash-water volume and gelatin quantity?')
+write_jsonl(Path('outputs/helles-compound-eval-v1/training-probe.jsonl'), [{
+    'case_id': 'exact-compound-training-fit', 'category': 'training_fit',
+    'source_url': 'https://homebrewersassociation.org/homebrew-recipe/helicious-helles/',
+    'messages': row['messages'], 'checks': [], 'max_new_tokens': 180}])
+PROBE
+```
+
 ```bash
 HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
   --config configs/qwen-helles-compound-fit.json --data-dir data/helles_focus_v10 \
@@ -252,3 +268,22 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
 ```
 
 The local probe is the `What are the exact mash-water volume and gelatin quantity?` training row, exported in benchmark form with category `training_fit`, no lexical checks and a 180-token response budget. Its reference remains outside the generation prompt. The first saved checkpoint, step 53, generates the full combined answer and then passes the original failed question with its saved conversation history. The run is intentionally interrupted after that checkpoint for development checks; its optimizer remains resumable with the identical arguments plus `--resume`. This is not a completed two-epoch run. Do not use `--max-steps 53` as a substitute: that changes the learning-rate schedule. Earlier questions and the full original conversation still need to pass before final selection.
+
+## Rehearse whole recipes that also ask about gaps
+
+The fitted compound checkpoint still fails one consumed full-guide request, responding only about missing settings. A fixed 50% parameter blend does not resolve both errors and is rejected. The next pass retains all 53 compound examples and adds twelve full-guide questions that also request source omissions. Their answer remains the unchanged complete guide.
+
+The initial adapter at `outputs/helles-compound-step53-v1/adapter` is a copy of checkpoint 53 with matching tokenizer/profile metadata from its same-data parent. Its weight and config hashes match the original checkpoint; the original files are preserved.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups \
+  --source data/helles_focus_v1 --config configs/helles-guide-scope-refinements.json \
+  --output data/helles_focus_v11
+
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \
+  --config configs/qwen-helles-guide-scope.json --data-dir data/helles_focus_v11 --check-data
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-guide-scope.json --data-dir data/helles_focus_v11 --eval-limit 1 \
+  > outputs-helles-guide-scope-train.log 2>&1
+```
