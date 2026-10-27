@@ -322,3 +322,23 @@ The fresh attention-only run fails all four training-generation checks at both e
 ```
 
 The builder preserves its source and refuses an existing output. It verifies the factor pairs, rank, target modules, parameter count and matching model/profile. The rebuilt weights and config match the screened candidate byte for byte; the system prompt is unchanged. Passing a guide-prefix probe is not a complete-guide pass. All original factual requirements, previous regression questions and fresh checks remain required before calling the candidate accepted.
+
+## Consolidated rehearsal from the earlier passing adapter
+
+Module subsets trade cold-stage and ingredient-only scope failures. The next run uses the original standard trainer and the earlier kettle adapter, which had passed all fifteen non-conversational questions. It practices all teaching coverage together, adding ten ingredient-only variants. Short-answer replay gives 303 presentations of 175 distinct conversations, with 34 ingredient targets versus 22 guides.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups \
+  --source data/helles_focus_v1 --config configs/helles-rehearsal-refinements.json \
+  --output data/helles_focus_v13
+
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \
+  --config configs/qwen-helles-rehearsal.json --data-dir data/helles_focus_v13 --check-data
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-rehearsal.json --data-dir data/helles_focus_v13 --eval-limit 1 \
+  --probe-suite outputs/helles-rehearsal-eval-v1/training-probes.jsonl \
+  > outputs-helles-rehearsal-train.log 2>&1
+```
+
+Its training-only probes cover the same four exact questions as the attention-only run plus the canonical complete cold-stage question, with a 220-token response budget. Checkpoints/probes are preserved. The six fresh single-turn questions and six fresh conversation turns stay unopened until the previous regression cases pass. No rejected module subset or serving-prompt cue is promoted.
