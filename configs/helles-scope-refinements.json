@@ -1,0 +1,219 @@
+{
+  "answers": {
+    "mash": "The grain-rest and rinsing stages are:\n1. First rest: 130°F (54°C) for 10 minutes.\n2. Main mash rest: raise to 148°F (64°C) for 60 minutes.\n3. Mash-out: raise to 168°F (76°C). The source gives no separate hold duration.\n4. Fly sparge: rinse the grain at 170°F (77°C) while collecting wort. These are successive stages; do not omit the mash-out or sparge.",
+    "cold": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+    "missing": "Here are the known settings:\n- Primary fermentation: 50°F (10°C) for two to three weeks.\n- Later lagering: 40°F (4°C) for three to six weeks after kegging and gelatin clarification.\nStill to confirm: mash and sparge water quantities, a numeric mineral profile, a separate exact pitching temperature, gelatin dose and carbonation setup. The source gives no bottling or priming-sugar instructions. Its batch size is given: seven gallons (26.5 L).",
+    "gravity": "Check repeated gravity readings over a few days before transferring the beer. Consistent readings help establish that primary fermentation has finished. A quiet airlock or a calendar date alone is not proof. This is a general brewing check; the recipe itself schedules primary at 50°F (10°C) for two to three weeks and does not give a universal final-gravity number."
+  },
+  "variants": {
+    "ingredients": [
+      "What do I need to buy?"
+    ],
+    "mash": [
+      "How do I handle the grain before the kettle boil?"
+    ],
+    "hops": [
+      "I started the ninety-minute boil half an hour ago. Is it time for an addition?"
+    ],
+    "cold": [
+      "Boiling is over. What are all the remaining stages?"
+    ],
+    "primary": [
+      "How warm should I keep the fermenter, and for how long?"
+    ],
+    "lager": [
+      "Once primary finishes, what comes next?"
+    ],
+    "missing": [
+      "Which settings can you state and which do we still need to decide?"
+    ],
+    "wrong_cold": [
+      "Can I skip primary and go straight to the cold conditioning temperature?"
+    ],
+    "gravity": [
+      "The airlock has gone quiet after a few days. Can I transfer now?"
+    ],
+    "yeast": [
+      "What yeast should I pitch?"
+    ],
+    "water": [
+      "How many liters of mash water should I heat?"
+    ],
+    "gelatin": [
+      "How much gelatin should I add?"
+    ]
+  },
+  "conversation_keys": [],
+  "extra_pairs": [
+    {
+      "question": "Take me from the end of the boil through to the end of cold storage.",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant",
+      "scope_pair": 1,
+      "scope_start": "boil"
+    },
+    {
+      "question": "Take me from the end of primary fermentation through to the end of cold storage.",
+      "answer": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.",
+      "task": "followup_variant",
+      "scope_pair": 1,
+      "scope_start": "primary"
+    },
+    {
+      "question": "What happens through all the remaining stages after boiling?",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant",
+      "scope_pair": 2,
+      "scope_start": "boil"
+    },
+    {
+      "question": "What happens through all the remaining stages after primary fermentation?",
+      "answer": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.",
+      "task": "followup_variant",
+      "scope_pair": 2,
+      "scope_start": "primary"
+    },
+    {
+      "question": "After boiling, take me through yeast fermentation, kegging and lagering.",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant",
+      "scope_pair": 3,
+      "scope_start": "boil"
+    },
+    {
+      "question": "After primary fermentation, take me through kegging and lagering.",
+      "answer": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.",
+      "task": "followup_variant",
+      "scope_pair": 3,
+      "scope_start": "primary"
+    },
+    {
+      "question": "Walk me from wort cooling to the end of conditioning.",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant",
+      "scope_pair": 4,
+      "scope_start": "boil"
+    },
+    {
+      "question": "Walk me from kegging to the end of conditioning.",
+      "answer": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.",
+      "task": "followup_variant",
+      "scope_pair": 4,
+      "scope_start": "primary"
+    },
+    {
+      "question": "I need the whole post-boil sequence, including the early fermentation and the later cold rest.",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant",
+      "scope_pair": 5,
+      "scope_start": "boil"
+    },
+    {
+      "question": "I only need the later cold rest and what directly precedes it.",
+      "answer": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.",
+      "task": "followup_variant",
+      "scope_pair": 5,
+      "scope_start": "primary"
+    },
+    {
+      "question": "Include the main yeast fermentation as well as later storage. What follows the boil?",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant",
+      "scope_pair": 6,
+      "scope_start": "boil"
+    },
+    {
+      "question": "The main yeast fermentation is complete. What follows it?",
+      "answer": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.",
+      "task": "followup_variant",
+      "scope_pair": 6,
+      "scope_start": "primary"
+    },
+    {
+      "question": "Does a complete after-boil explanation cover cooling and primary, or just lagering?",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant",
+      "scope_pair": 7,
+      "scope_start": "boil"
+    },
+    {
+      "question": "Is lagering the later cold step after primary fermentation? Explain just that later part.",
+      "answer": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.",
+      "task": "followup_variant",
+      "scope_pair": 7,
+      "scope_start": "primary"
+    },
+    {
+      "question": "Give all the steps after boiling, both before kegging and after kegging.",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant",
+      "scope_pair": 8,
+      "scope_start": "boil"
+    },
+    {
+      "question": "Only explain what I do from kegging onward.",
+      "answer": "After primary fermentation, keg and add gelatin to clarify. Then lager at 40°F (4°C) for three to six weeks. That is the later cold-conditioning stage.",
+      "task": "followup_variant",
+      "scope_pair": 8,
+      "scope_start": "primary"
+    },
+    {
+      "question": "What is the meaning of wort, and what does it mean to pitch?",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "I do not understand the words wort or pitching. Please translate them into everyday language.",
+      "answer": "Wort is the sweet liquid made from grain before it becomes beer. To pitch yeast is simply to add yeast to the cooled wort. Those are names for the liquid and the action, not extra ingredients.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Why do I clean equipment and then sanitize it?",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. This is general brewing guidance; follow the sanitizer product instructions for its dose and contact time.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What is the point of sanitizing the things that touch cooled wort?",
+      "answer": "Sanitizing reduces unwanted microbes so they are less likely to contaminate the cooled wort. First clean away dirt and residue, then sanitize the clean equipment. Cleaning and sanitizing do different jobs.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Can you explain what the wort is and what adding the yeast is called?",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "conversation_variant",
+      "prior_question": "Teach me this Helles from the beginning.",
+      "prior_answer": "guide"
+    },
+    {
+      "question": "Before we continue, why should the fermenter be clean and sanitized?",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. This is general brewing guidance; follow the sanitizer product instructions for its dose and contact time.",
+      "task": "conversation_variant",
+      "prior_question": "Teach me this Helles from the beginning.",
+      "prior_answer": "guide"
+    },
+    {
+      "question": "The Helles source omits an exact pitching temperature. Does it also omit fermentation and lagering temperatures?",
+      "answer": "No. Primary fermentation is explicitly 50°F (10°C) for two to three weeks; later lagering is 40°F (4°C) for three to six weeks after kegging and gelatin. Only the separate exact pitching temperature is absent here. Pitching and primary fermentation are different settings."
+    },
+    {
+      "question": "Tell me which are given: primary temperature, lagering temperature and priming-sugar amount.",
+      "answer": "Primary temperature: given, 50°F (10°C), for two to three weeks. Lagering temperature: given, 40°F (4°C), for three to six weeks after kegging and gelatin. Priming-sugar amount: not given; the source describes kegging and does not supply bottle-priming instructions."
+    },
+    {
+      "question": "Is the seven-gallon batch volume the exact water amount for the mash?",
+      "answer": "No. Seven gallons (26.5 L) is the source batch size. The source does not give exact mash or sparge water quantities. Starting water depends on the equipment and process losses; confirm that plan rather than treating batch size as mash-water volume."
+    },
+    {
+      "question": "Which is unknown in Helles: the later cold temperature or the gelatin amount?",
+      "answer": "The gelatin amount is unknown. The later lagering temperature is given: 40°F (4°C) for three to six weeks after kegging and gelatin clarification. A missing gelatin dose does not make that temperature missing."
+    }
+  ],
+  "guide_questions": [],
+  "conversation_pairs": [],
+  "confirmation_questions": {
+    "final-guide": "I would like a complete lesson on brewing Helicious Helles. Start with the entire shopping list and batch size, then explain every stage in order, define unfamiliar words, and point out information we still need.",
+    "final-timer": "For this Helles, half an hour of kettle boiling has passed. Which measured addition is due, and when is the clearing tablet due?",
+    "final-wrong-temperature": "I plan to run primary at the later lagering setting instead. Is that the method for this beer, or should I use two separate schedules?",
+    "final-completion": "The fermenter got quiet ahead of schedule. What evidence should I collect before declaring primary finished and transferring the beer?"
+  }
+}

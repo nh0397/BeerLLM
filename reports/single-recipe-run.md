@@ -1,6 +1,6 @@
 # One-recipe brewing tutor: measured progress
 
-**Not accepted yet.** The focused teacher passes 4/5 source-development cases and 2/2 beginner explanations with greedy decoding. One broad post-boil question still omits stages. A two-beam diagnostic answers that case correctly; a complete new matched evaluation is required before selection. Scaling remains paused.
+**Not accepted yet.** Greedy decoding passes 6/7 development checks. Two beams repair the broad recipe-stage question but regress the cleaning explanation, also scoring 6/7. A targeted scope-contrast pass is running to make one greedy model answer both correctly. Scaling remains paused.
 
 The goal is one complete explanation plus direct, accurate follow-ups in ordinary language. The model must supply facts from its trained weights: no recipe lookup, source notes or recipe quantities in its system prompt. All answers are inspected against the saved source and [fixed factual rubric](../configs/helles-rubric.json). References and inspection are assistant-authored, not expert brewer-reviewed.
 
@@ -21,7 +21,8 @@ The source omits exact mash/sparge water quantities, numeric water treatment, a 
 | Balanced first epoch, step 150 | 1 | Not run | Resume planned second epoch |
 | Balanced second epoch, step 300 | 3 | Not run | Reject; beginner explanations also 0/2 |
 | Short-answer teacher, greedy | 4 | Not run | Beginner explanations 2/2; one scope failure |
-| Same teacher, two beams | Pending | Now a regression suite | Single scope diagnostic passes; full evaluation pending |
+| Same teacher, two beams | 5 | Not run | Explanations 1/2; reject combined 6/7 |
+| Scope-contrast continuation, greedy | Pending | Now a regression suite | In progress |
 
 The first adapter's complete guide is correct under development wording. A generic development-only instruction to enumerate every requested stage does not repair its two incomplete follow-ups; that diagnostic prompt is not adopted.
 
@@ -63,7 +64,7 @@ The original final set is consumed and now becomes an additional regression gate
 
 The six-turn natural dialogue retains the original four questions in order, then asks for plain meanings of wort/pitching and the reason for cleaning and sanitizing. It was frozen before checkpoint selection. The dialogue feeds each model its own generated replies. Reference answers are saved for review and never inserted into history. Both confirmation and dialogue concern the one trained recipe, not unseen recipe families. Greedy decoding, model pin, system prompt, loader/evaluator and suite hashes must match between before/after runs.
 
-All 70 software tests pass, including frozen inputs, question separation, source restrictions, continuation signatures and interrupted dialogue resumption without reference leakage. Data and weights remain local and ignored by Git. See [the reproduction commands](../docs/SINGLE-RECIPE.md). A successful bounded demonstration would still need broader testing and expert review before expansion.
+All 71 software tests pass, including frozen inputs, question separation, source restrictions, continuation signatures and interrupted dialogue resumption without reference leakage. Data and weights remain local and ignored by Git. See [the reproduction commands](../docs/SINGLE-RECIPE.md). A successful bounded demonstration would still need broader testing and expert review before expansion.
 
 
 ## Completed balanced run and focused correction
@@ -85,4 +86,19 @@ Two uniform LoRA-strength diagnostics do not fix it. Alpha 16 (half the trained 
 
 A diagnostic with **two deterministic beams and length penalty 1.0** produces all five requested post-boil stages, with correct primary/lagering settings and genuine gaps. It considers alternative continuations instead of making only locally greedy word choices. This is one development result, not a final score. A packaged candidate preserves the exact trained weights/config and system prompt, adding only an explicit decoding policy to its chat metadata. Weight SHA-256 remains `9909725a0415b15e5fa088f1d65778995710642ae1fd2dd89e632d4953198c9a`.
 
-The final protocol must use the same beam policy for both the pinned base and adapter, with fresh before/after files and matching evaluator/loader signatures. Earlier greedy baselines cannot be reused as beam controls. All seven development checks and four consumed regression cases must pass before selecting this candidate; four fresh confirmation questions and the six-turn actual-history conversation remain unopened. No source facts are inserted into prompts or postprocessed into answers. All 70 software tests pass, covering policy propagation, unchanged greedy defaults, package integrity and policy-aware dialogue resumption.
+The final protocol must use the same beam policy for both the pinned base and adapter, with fresh before/after files and matching evaluator/loader signatures. Earlier greedy baselines cannot be reused as beam controls. All seven development checks and four consumed regression cases must pass before selecting this candidate; four fresh confirmation questions and the six-turn actual-history conversation remain unopened. No source facts are inserted into prompts or postprocessed into answers. All 71 software tests pass, covering policy propagation, unchanged greedy defaults, package integrity and policy-aware dialogue resumption.
+
+
+## Beam search exposes a trade-off rather than completing the goal
+
+The packaged two-beam candidate passes all five original development cases. Its full guide remains source-faithful, and the broad post-boil answer includes cooling, yeast addition, primary fermentation, kegging/gelatin and later lagering. However, it answers the cleaning/sanitizing question with that unrelated post-boil list. The definitions of wort/pitching remain correct. Both greedy and two-beam configurations therefore pass 6/7 development cases, with different failures. Their correct answers are not combined into an artificial pass.
+
+The observed greedy cleaning answer has total sequence NLL 6.57217 over 38 tokens, whereas the unrelated 134-token process list has total NLL 1.97831. For the two observed cold-stage candidates, the complete answer needs length penalty above approximately 0.448 to outrank the incomplete answer. The cleaning pair would need a penalty below approximately -0.953 to favor its correct answer. No single length penalty can rank both of these observed pairs correctly. Re-tokenized lengths match their saved generation lengths. This diagnostic ranks these particular candidates, not all possible outputs or decoding methods.
+
+Two-beam generation is also slow on this capped Intel CPU: the complete guide takes 1,019.3 seconds (17.0 minutes), versus 371.3 seconds (6.2 minutes) for the greedy teacher. The candidate is rejected before opening confirmation or actual-history tests. All new-policy outputs and diagnostics remain local under `outputs/helles-beam-eval-v1/`. A final comparison still requires matching controls under the final selected policy and current evaluator/loader; historical greedy outputs are not silently relabeled.
+
+## Teach requested scope directly
+
+The correction initializes from the greedy teacher, preserving its correct guide, ingredients, mash, known/unknown settings and two explanations. Eight minimal-pair sets distinguish everything after boiling from only what follows primary fermentation. They retain similar wording while changing the requested starting point. Full-range answers explicitly include the early operations and primary schedule; tail-only answers give kegging/gelatin and later lagering. A short, complete cold-stage answer begins with the requested scope, “After the boil,” rather than changing every target to a new generic opening.
+
+There are 62 teaching conversations about the same source recipe: six full guides, twelve canonical follow-ups, twelve direct variants, sixteen scope-pair examples, four concept variants, eight conversations and four known/unknown contrasts. Replaying the 44 short examples three times produces 150 optimizer steps. All rows fit, with 14,763 supervised answer tokens and maximum 880 tokens. One standard assistant-only LoRA epoch runs at learning rate 0.0001. No new model, custom loss, factual prompt or runtime question router is introduced. All 71 software tests pass, including scope-pair labels and reserved-question separation. Confirmation and natural-dialogue outputs remain unopened.

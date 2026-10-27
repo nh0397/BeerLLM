@@ -184,3 +184,20 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \
 ```
 
 Use the same decoding file for the explanation, regression and confirmation benchmark pairs, and for both `recipe_focus dialogue` runs. Comparisons reject mismatched policies or evaluator/loader versions. The package copies trained weights/config unchanged, adds the policy to `beerllm.json` for normal chat and records source/output hashes. It refuses changed or conflicting packages. Omitting the policy retains the original neutral greedy behavior for historical experiments. The chat default is promoted only after all quality gates pass.
+
+
+## Distinguish whole sequences from later-only questions
+
+The beam candidate fixes the recipe-stage case but regresses the cleaning explanation. It is rejected. The next greedy correction teaches paired starting points while rehearsing the six working development answers.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups \
+  --config configs/helles-scope-refinements.json --output data/helles_focus_v8
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \
+  --config configs/qwen-helles-scope.json --data-dir data/helles_focus_v8 --check-data
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-scope.json --data-dir data/helles_focus_v8 --eval-limit 1 \
+  > outputs-helles-scope-train.log 2>&1
+```
+
+Use `configs/helles-greedy-decoding.json` for both base/adapter benchmark and dialogue runs if this candidate qualifies. A final current-version base control is still required. The old beam package and greedy/beam outputs remain preserved; none is promoted as the chat default until all factual and conversation gates pass.

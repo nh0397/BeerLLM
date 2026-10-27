@@ -22,6 +22,28 @@ def fixture(root):
 
 
 class RecipeFocusTests(unittest.TestCase):
+    def test_scope_pairs_teach_different_starting_points_without_copying_evaluation_questions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);recipes,lesson=fixture(root);source=root/'v1';out=root/'scope'
+            build(recipes,lesson,source,False)
+            path=ROOT/'configs/helles-scope-refinements.json'
+            config=json.loads(path.read_text());pairs=[x for x in config['extra_pairs'] if 'scope_pair' in x]
+            self.assertEqual(len(pairs),16)
+            for pair in range(1,9):
+                sides=[x for x in pairs if x['scope_pair']==pair]
+                self.assertEqual({x['scope_start'] for x in sides},{'boil','primary'})
+                for item in sides:
+                    self.assertIn('40°F',item['answer'])
+                    self.assertEqual('50°F' in item['answer'],item['scope_start']=='boil')
+            report=refine_followups(source,lesson,path,out);rows=read_jsonl(out/'train.jsonl')
+            self.assertEqual(report['train_examples'],62)
+            self.assertEqual(len(replay_short_facts(rows,3)),150)
+            questions={m['content'] for r in rows for m in r['messages'] if m['role']=='user'}
+            reserved={r['messages'][1]['content'] for r in read_jsonl(ROOT/'configs/helles-explanation-dev.jsonl')}
+            reserved.update(x['question'] for x in json.loads((ROOT/'configs/helles-natural-dialogue.json').read_text())['turns'])
+            self.assertFalse(questions&reserved)
+            self.assertEqual((source/'final.jsonl').read_bytes(),(out/'final.jsonl').read_bytes())
+
     def test_package_binds_decoding_to_unchanged_weights_and_rejects_tampering(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);source=root/'source';source.mkdir();out=root/'release'
