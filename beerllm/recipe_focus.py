@@ -4,9 +4,10 @@ from collections import Counter
 import hashlib
 import json
 from pathlib import Path
+import shutil
 import time
-from .common import ROOT, GREEDY_DEFAULTS, generate, load_model, model_revision, read_jsonl, write_json, write_jsonl
-from .chat import fit_history
+from .common import ROOT, decoding_policy, generate, load_model, model_revision, read_jsonl, write_json, write_jsonl
+from .chat import adapter_system_prompt,fit_history
 from .instruction_dataset import guide
 from .instruction_v2 import verify_source
 
@@ -86,10 +87,10 @@ def build(recipes, lesson_path, output, verify=True):
     return manifest
 
 
-def run_dialogue(protocol,output,model_id,adapter=None,revision=None):
+def run_dialogue(protocol,output,model_id,adapter=None,revision=None,decoding=None):
     config=json.loads(protocol.read_text())
     signature={'protocol_sha256':sha(protocol),'model_id':model_id,'model_revision':model_revision(model_id,revision),
-               'mode':'adapter' if adapter else 'base','decoding':dict(GREEDY_DEFAULTS),
+               'mode':'adapter' if adapter else 'base','decoding':decoding_policy(decoding),
                'loader_sha256':sha(Path(__file__).with_name('common.py')),'evaluator_sha256':sha(Path(__file__)),
                'adapter_sha256':sha(adapter/'adapter_model.safetensors') if adapter else None,
                'adapter_config_sha256':sha(adapter/'adapter_config.json') if adapter else None}
@@ -109,7 +110,7 @@ def run_dialogue(protocol,output,model_id,adapter=None,revision=None):
     for turn in config['turns'][len(results):]:
         prompt=fit_history(history+[{'role':'user','content':turn['question']}],tokenizer,2048,turn['max_new_tokens'])
         started=time.monotonic()
-        answer=generate(model,tokenizer,prompt,turn['max_new_tokens'],True)
+        answer=generate(model,tokenizer,prompt,turn['max_new_tokens'],True,decoding=decoding)
         results.append({'question':turn['question'],'reference':turn['reference'],'prompt':prompt,
                         'generation_seconds':time.monotonic()-started,**answer})
         # Never insert reference answers into conversation history.
@@ -118,6 +119,36 @@ def run_dialogue(protocol,output,model_id,adapter=None,revision=None):
         print(f"dialogue turn {len(results)}: {answer['generated_tokens']} tokens",flush=True)
     report['status']='complete';write_json(output,report)
     return report
+
+
+def package_adapter(source,output,decoding_path):
+    """Bundle unchanged LoRA weights and an explicit chat/evaluation policy."""
+    source=source.resolve();output=output.resolve()
+    if output==source or source in output.parents:
+        raise ValueError('Package output must be outside the source adapter')
+    overrides=json.loads(decoding_path.read_text());policy=decoding_policy(overrides)
+    adapter_system_prompt(source)
+    metadata=json.loads((source/'beerllm.json').read_text())
+    config=json.loads((source/'adapter_config.json').read_text())
+    if config['base_model_name_or_path']!=metadata['model_id'] or config.get('revision')!=metadata['model_revision']:
+        raise ValueError('Adapter and profile identify different base models')
+    origin={'source':str(source),'source_files_sha256':{str(p.relative_to(source)):sha(p) for p in sorted(source.rglob('*')) if p.is_file()},
+            'decoding':policy,'overrides':overrides}
+    if output.exists():
+        manifest=output/'release.json'
+        if not manifest.exists(): raise ValueError('Preserve the existing package directory')
+        old=json.loads(manifest.read_text());files=old.pop('files_sha256')
+        actual={str(p.relative_to(output)):sha(p) for p in sorted(output.rglob('*')) if p.is_file() and p!=manifest}
+        if old!=origin or actual!=files:
+            raise ValueError('Frozen package inputs or files changed')
+        return dict(origin,files_sha256=files)
+    output.parent.mkdir(parents=True,exist_ok=True)
+    shutil.copytree(source,output)
+    metadata['decoding']=overrides;write_json(output/'beerllm.json',metadata)
+    manifest=dict(origin,files_sha256={str(p.relative_to(output)):sha(p) for p in sorted(output.rglob('*'))
+                                     if p.is_file() and p!=(output/'release.json')})
+    write_json(output/'release.json',manifest)
+    return manifest
 
 
 def refine_followups(source,lesson_path,config_path,output):
@@ -223,10 +254,17 @@ def main():
     chat.add_argument('--output',type=Path,required=True)
     chat.add_argument('--model-id',default='Qwen/Qwen2.5-1.5B-Instruct')
     chat.add_argument('--adapter',type=Path)
+    chat.add_argument('--decoding-config',type=Path)
+    package=sub.add_parser('package')
+    package.add_argument('--adapter',type=Path,required=True)
+    package.add_argument('--output',type=Path,required=True)
+    package.add_argument('--decoding-config',type=Path,required=True)
     args=parser.parse_args()
     if args.command=='prepare':print(json.dumps(build(args.recipes,args.lesson,args.output),indent=2))
     elif args.command=='refine-followups':print(json.dumps(refine_followups(args.source,args.lesson,args.config,args.output),indent=2))
-    else:run_dialogue(args.protocol,args.output,args.model_id,args.adapter)
+    elif args.command=='package':print(json.dumps(package_adapter(args.adapter,args.output,args.decoding_config),indent=2))
+    else:run_dialogue(args.protocol,args.output,args.model_id,args.adapter,
+                      decoding=json.loads(args.decoding_config.read_text()) if args.decoding_config else None)
 
 
 if __name__=='__main__':main()

@@ -4,7 +4,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from beerllm.common import ROOT,read_jsonl,write_json,write_jsonl
-from beerllm.recipe_focus import build,run_dialogue,refine_followups
+from beerllm.recipe_focus import build,run_dialogue,refine_followups,package_adapter
+from beerllm.chat import adapter_decoding
 from beerllm.train import replay_short_facts
 
 
@@ -21,6 +22,26 @@ def fixture(root):
 
 
 class RecipeFocusTests(unittest.TestCase):
+    def test_package_binds_decoding_to_unchanged_weights_and_rejects_tampering(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'source';source.mkdir();out=root/'release'
+            (source/'adapter_model.safetensors').write_bytes(b'unchanged trained weights')
+            model='Qwen/Qwen2.5-1.5B-Instruct';revision='989aa7980e4cf806f80c7fef2b1adb7bc71aa306'
+            write_json(source/'adapter_config.json',{'base_model_name_or_path':model,'revision':revision,'r':16,'lora_alpha':32})
+            write_json(source/'beerllm.json',{'format_version':1,'model_id':model,'model_revision':revision,'system_prompt':'Teach this recipe.'})
+            policy=root/'decoding.json';write_json(policy,{'num_beams':2,'length_penalty':1.0})
+            report=package_adapter(source,out,policy)
+            self.assertEqual(package_adapter(source,out,policy),report)
+            self.assertEqual((source/'adapter_model.safetensors').read_bytes(),(out/'adapter_model.safetensors').read_bytes())
+            self.assertEqual((source/'adapter_config.json').read_bytes(),(out/'adapter_config.json').read_bytes())
+            self.assertIsNone(adapter_decoding(source))
+            self.assertEqual(adapter_decoding(out),{'num_beams':2,'length_penalty':1.0})
+            with self.assertRaisesRegex(ValueError,'outside the source'):
+                package_adapter(source,source/'nested',policy)
+            (out/'adapter_model.safetensors').write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'Frozen package'):
+                package_adapter(source,out,policy)
+
     def test_concept_followups_replay_without_leaking_reserved_questions(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);recipes,lesson=fixture(root);source=root/'v1';out=root/'teacher'
@@ -130,7 +151,9 @@ class RecipeFocusTests(unittest.TestCase):
                 'turns':[{'question':'Teach me.','reference':'REFERENCE GUIDE','max_new_tokens':10},
                          {'question':'Then what?','reference':'REFERENCE FOLLOWUP','max_new_tokens':10}]})
             prompts=[]
-            def generated(model,tokenizer,prompt,*args):
+            policy={'num_beams':2,'length_penalty':1.0}
+            def generated(model,tokenizer,prompt,*args,**kwargs):
+                self.assertEqual(kwargs['decoding'],policy)
                 prompts.append(prompt)
                 if len(prompts)==2:raise RuntimeError('simulated interruption')
                 return {'text':'ACTUAL GENERATED ANSWER','generated_tokens':3,'hit_token_limit':False}
@@ -138,16 +161,19 @@ class RecipeFocusTests(unittest.TestCase):
                  patch('beerllm.recipe_focus.fit_history',side_effect=lambda messages,*args:messages),\
                  patch('beerllm.recipe_focus.generate',side_effect=generated):
                 with self.assertRaisesRegex(RuntimeError,'simulated interruption'):
-                    run_dialogue(protocol,out,'Qwen/Qwen2.5-1.5B-Instruct')
-                result=run_dialogue(protocol,out,'Qwen/Qwen2.5-1.5B-Instruct')
+                    run_dialogue(protocol,out,'Qwen/Qwen2.5-1.5B-Instruct',decoding=policy)
+                result=run_dialogue(protocol,out,'Qwen/Qwen2.5-1.5B-Instruct',decoding=policy)
             self.assertEqual(result['status'],'complete')
             second=result['turns'][1]['prompt']
             self.assertEqual(second[-2],{'role':'assistant','content':'ACTUAL GENERATED ANSWER'})
             self.assertNotIn('REFERENCE GUIDE',str(second))
+            self.assertEqual(result['signature']['decoding']['num_beams'],2)
             with patch('beerllm.recipe_focus.load_model',side_effect=AssertionError('must not reload')):
-                self.assertEqual(run_dialogue(protocol,out,'Qwen/Qwen2.5-1.5B-Instruct'),result)
+                self.assertEqual(run_dialogue(protocol,out,'Qwen/Qwen2.5-1.5B-Instruct',decoding=policy),result)
+            with self.assertRaisesRegex(ValueError,'signature differs'):
+                run_dialogue(protocol,out,'Qwen/Qwen2.5-1.5B-Instruct')
             changed=json.loads(protocol.read_text());changed['turns'][0]['question']='Changed';write_json(protocol,changed)
-            with self.assertRaisesRegex(ValueError,'signature differs'):run_dialogue(protocol,out,'Qwen/Qwen2.5-1.5B-Instruct')
+            with self.assertRaisesRegex(ValueError,'signature differs'):run_dialogue(protocol,out,'Qwen/Qwen2.5-1.5B-Instruct',decoding=policy)
 
 
 if __name__=='__main__':unittest.main()

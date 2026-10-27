@@ -21,7 +21,8 @@ class InstructionV2Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);write_jsonl(root/'data/curated_v1/recipes.jsonl',[recipe()])
             calls=[]
-            def answer(model,tokenizer,messages,max_new_tokens):
+            def answer(model,tokenizer,messages,max_new_tokens,decoding=None):
+                self.assertIsNone(decoding)
                 calls.append(messages)
                 return 'A plain explanation.'
             with patch('beerllm.chat.ROOT',root), patch('sys.argv',['chat','--base','--recipe-title','Example Ale','--max-new-tokens','20','--context-limit','3000']), \

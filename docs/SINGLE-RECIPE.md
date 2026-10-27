@@ -159,3 +159,28 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
 ```
 
 There are 132 distinct teaching conversations about one source recipe. Replaying the 100 short follow-ups three times produces 332 training rows. `--resume` uses the identical config/data/parent hashes after an interruption. Evaluate with the unchanged development and consumed regression suites plus `configs/helles-explanation-dev.jsonl`; only after selecting a passing candidate open `confirmation.jsonl` and `configs/helles-natural-dialogue.json`.
+
+
+## Explicit decoding policy and immutable chat package
+
+The greedy teacher scores 6/7 development checks. A two-beam diagnostic repairs its remaining scope failure. This candidate needs a complete matched evaluation before it is recommended.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus package \
+  --adapter outputs/helles-teacher-v1/adapter \
+  --output outputs/helles-teacher-beam-v1/adapter \
+  --decoding-config configs/helles-decoding.json
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \
+  --model-id Qwen/Qwen2.5-1.5B-Instruct --suite data/helles_focus_v7/development.jsonl \
+  --mode base --decoding-config configs/helles-decoding.json \
+  --output outputs/helles-beam-eval-v1/development-before.json
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.benchmark run \
+  --model-id Qwen/Qwen2.5-1.5B-Instruct --suite data/helles_focus_v7/development.jsonl \
+  --mode adapter --adapter outputs/helles-teacher-beam-v1/adapter \
+  --decoding-config configs/helles-decoding.json \
+  --output outputs/helles-beam-eval-v1/development-after.json
+```
+
+Use the same decoding file for the explanation, regression and confirmation benchmark pairs, and for both `recipe_focus dialogue` runs. Comparisons reject mismatched policies or evaluator/loader versions. The package copies trained weights/config unchanged, adds the policy to `beerllm.json` for normal chat and records source/output hashes. It refuses changed or conflicting packages. Omitting the policy retains the original neutral greedy behavior for historical experiments. The chat default is promoted only after all quality gates pass.

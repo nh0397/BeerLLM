@@ -2,7 +2,7 @@
 
 A local LoRA fine-tuning experiment for beer recipes and brewing procedures. Runs on an Intel Mac with 32 GB RAM. The latest experiment uses Qwen2.5-1.5B-Instruct on CPU; the earlier SmolLM2-360M runs are preserved. No cloud account or paid API is needed.
 
-**Current focus:** get one complete recipe, Helicious Helles, and its follow-ups working before scaling. A candidate passes five development questions but fails three of four reserved phrasings, so it is rejected. A broader one-recipe curriculum is training. See the [one-recipe report](reports/single-recipe-run.md) and [commands](docs/SINGLE-RECIPE.md).
+**Current focus:** get one complete recipe, Helicious Helles, and its follow-ups working before scaling. Earlier candidates fail reserved phrasings or omit stages. The focused teacher now passes six of seven development checks; a two-beam diagnostic repairs the remaining scope case. Full matched evaluation is pending. See the [one-recipe report](reports/single-recipe-run.md) and [commands](docs/SINGLE-RECIPE.md).
 
 **Previous broader experiment:** a refined Qwen adapter has finished training on 197 distinct conversations from eleven source-checked recipes. Short factual rows receive explicit replay weighting; they are not additional independent examples. See the [refined run report](reports/refinement-run.md) for measured progress and the [reproduction guide](docs/REFINEMENT.md) for commands. The epoch-two checkpoint is selected by lowest validation loss. Strict development passes improve from **1/8 to 5/8**, but complete guides still invent steps and fail. Both reserved full-guide cases also fail before and after (0/2). The model is testable, but full recipe generation remains unreliable.
 

@@ -1,6 +1,6 @@
 # One-recipe brewing tutor: measured progress
 
-**Not accepted yet.** The known/unknown candidate passes development but fails reserved wording. The larger balanced continuation finishes at 3/5 original development questions and 0/2 beginner explanations. A focused short-answer teaching run is underway. Scaling remains paused.
+**Not accepted yet.** The focused teacher passes 4/5 source-development cases and 2/2 beginner explanations with greedy decoding. One broad post-boil question still omits stages. A two-beam diagnostic answers that case correctly; a complete new matched evaluation is required before selection. Scaling remains paused.
 
 The goal is one complete explanation plus direct, accurate follow-ups in ordinary language. The model must supply facts from its trained weights: no recipe lookup, source notes or recipe quantities in its system prompt. All answers are inspected against the saved source and [fixed factual rubric](../configs/helles-rubric.json). References and inspection are assistant-authored, not expert brewer-reviewed.
 
@@ -20,7 +20,8 @@ The source omits exact mash/sparge water quantities, numeric water treatment, a 
 | Known/unknown continuation, step 120 | 5 | 1 | Rejected on reserved wording |
 | Balanced first epoch, step 150 | 1 | Not run | Resume planned second epoch |
 | Balanced second epoch, step 300 | 3 | Not run | Reject; beginner explanations also 0/2 |
-| Short-answer teacher | Pending | Now a regression suite | In progress |
+| Short-answer teacher, greedy | 4 | Not run | Beginner explanations 2/2; one scope failure |
+| Same teacher, two beams | Pending | Now a regression suite | Single scope diagnostic passes; full evaluation pending |
 
 The first adapter's complete guide is correct under development wording. A generic development-only instruction to enumerate every requested stage does not repair its two incomplete follow-ups; that diagnostic prompt is not adopted.
 
@@ -46,7 +47,7 @@ All runs use pinned `Qwen/Qwen2.5-1.5B-Instruct` revision `989aa7980e4cf806f80c7
 | Complete follow-ups | 46 | 138 | 37.3 min | 14.64 GiB | Complete-guide adapter |
 | Known versus missing | 60 | 120 | 18.7 min | 14.93 GiB | Follow-up adapter |
 | Balanced questions | 150 | 300 | ~88.6 min across both active phases | 16.02 GiB during resume | Complete-guide adapter |
-| Short-answer teacher | 132 / 332 replayed | 332 planned | Pending | Pending | Known/unknown adapter |
+| Short-answer teacher | 132 / 332 replayed | 332 | 68.3 min | 14.26 GiB | Known/unknown adapter |
 
 The first three runs total 97.3 training minutes. Mean losses are respectively 0.398605, 0.107404 and 0.411845; changed curricula make them unsuitable as a ranking of answer quality. No examples were silently truncated or skipped. All previous datasets, adapters, checkpoints, raw answers and logs remain preserved.
 
@@ -62,7 +63,7 @@ The original final set is consumed and now becomes an additional regression gate
 
 The six-turn natural dialogue retains the original four questions in order, then asks for plain meanings of wort/pitching and the reason for cleaning and sanitizing. It was frozen before checkpoint selection. The dialogue feeds each model its own generated replies. Reference answers are saved for review and never inserted into history. Both confirmation and dialogue concern the one trained recipe, not unseen recipe families. Greedy decoding, model pin, system prompt, loader/evaluator and suite hashes must match between before/after runs.
 
-All 67 software tests pass, including frozen inputs, question separation, source restrictions, continuation signatures and interrupted dialogue resumption without reference leakage. Data and weights remain local and ignored by Git. See [the reproduction commands](../docs/SINGLE-RECIPE.md). A successful bounded demonstration would still need broader testing and expert review before expansion.
+All 70 software tests pass, including frozen inputs, question separation, source restrictions, continuation signatures and interrupted dialogue resumption without reference leakage. Data and weights remain local and ignored by Git. See [the reproduction commands](../docs/SINGLE-RECIPE.md). A successful bounded demonstration would still need broader testing and expert review before expansion.
 
 
 ## Completed balanced run and focused correction
@@ -74,3 +75,14 @@ The first phase reports 44:24 of progress time. The resumed phase records 2,654.
 The next run returns to the known/unknown adapter, which already passed the original five development questions, rather than inheriting the rejected balanced weights. Its 132 examples include ten full guides, twelve canonical follow-ups, 76 recipe follow-up variants, twelve plain-language concept variants, fourteen known/unknown contrasts and eight conversations. One hundred short examples are replayed three times: 332 optimizer steps, not 332 distinct recipes or questions. Cold-stage and completion answers start with the requested action; known settings and real gaps are separated clearly. General explanations define wort/pitching and distinguish cleaning from sanitizing, including two follow-ups after a complete guide.
 
 This is standard assistant-only LoRA training with the existing replay sampler, learning rate 0.0001 and one pass over the weighted dataset. No custom loss, factual system prompt or lookup is introduced. All full-guide source facts remain intact; evaluation files are copied unchanged. All 132 examples / 332 replayed rows fit, with 32,047 supervised answer tokens and maximum 880 tokens. The original five development questions, two explanation-development questions and consumed four-case regression set must pass before selecting the model. The four confirmation questions and six-turn actual-history conversation are still unopened.
+
+
+## Focused teacher: explanations work; decoding scope remains
+
+The teacher finishes all 332 steps with no skips. It passes the complete guide, ingredients, mash and known/unknown questions, including the correct seven-gallon batch and absent packaging instructions. Both beginner explanations pass: wort/pitching are defined in everyday language, and cleaning is distinguished from sanitizing. The broad post-boil question still receives only later kegging/gelatin/lagering. This is 6/7 development checks, not acceptance.
+
+Two uniform LoRA-strength diagnostics do not fix it. Alpha 16 (half the trained strength) invents extra carbonation, cabinet, bottling and re-kegging operations. Alpha 40 (1.25 times trained strength) returns the same incomplete later-stage answer. Both are rejected; the original alpha-32 weights/config remain unchanged.
+
+A diagnostic with **two deterministic beams and length penalty 1.0** produces all five requested post-boil stages, with correct primary/lagering settings and genuine gaps. It considers alternative continuations instead of making only locally greedy word choices. This is one development result, not a final score. A packaged candidate preserves the exact trained weights/config and system prompt, adding only an explicit decoding policy to its chat metadata. Weight SHA-256 remains `9909725a0415b15e5fa088f1d65778995710642ae1fd2dd89e632d4953198c9a`.
+
+The final protocol must use the same beam policy for both the pinned base and adapter, with fresh before/after files and matching evaluator/loader signatures. Earlier greedy baselines cannot be reused as beam controls. All seven development checks and four consumed regression cases must pass before selecting this candidate; four fresh confirmation questions and the six-turn actual-history conversation remain unopened. No source facts are inserted into prompts or postprocessed into answers. All 70 software tests pass, covering policy propagation, unchanged greedy defaults, package integrity and policy-aware dialogue resumption.

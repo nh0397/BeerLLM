@@ -2,7 +2,7 @@
 import argparse
 import json
 from pathlib import Path
-from .common import MODEL_ID, ROOT, generate, load_model, read_jsonl
+from .common import MODEL_ID, ROOT, decoding_policy, generate, load_model, read_jsonl
 from .curate import SYSTEM
 from .dataset import compact_recipe
 from .instruction_dataset import source_notes
@@ -16,6 +16,13 @@ def adapter_system_prompt(adapter):
     if metadata.get('format_version')!=1 or not isinstance(prompt,str) or not prompt.strip():
         raise ValueError('Invalid adapter system-prompt metadata')
     return prompt
+
+
+def adapter_decoding(adapter):
+    path=adapter/'beerllm.json'
+    overrides=json.loads(path.read_text()).get('decoding') if path.exists() else None
+    decoding_policy(overrides)
+    return overrides
 
 
 def chat_profile(adapter,base,model_id=None):
@@ -63,7 +70,9 @@ def main():
     args=parser.parse_args()
     if args.max_new_tokens<1: parser.error('--max-new-tokens must be positive')
     if args.context_limit<=args.max_new_tokens: parser.error('--context-limit must exceed --max-new-tokens')
-    try: model_id,system_prompt=chat_profile(args.adapter,args.base,args.model_id)
+    try:
+        model_id,system_prompt=chat_profile(args.adapter,args.base,args.model_id)
+        decoding=adapter_decoding(args.adapter)
     except ValueError as error: parser.error(str(error))
     context=''
     if args.recipe_id is not None:
@@ -93,7 +102,7 @@ def main():
             if args.prompt: parser.error(str(error))
             print(str(error));continue
         if len(fitted)<len(proposed): print('Older turns were removed to fit the context window.')
-        answer=generate(model,tokenizer,fitted,args.max_new_tokens)
+        answer=generate(model,tokenizer,fitted,args.max_new_tokens,decoding=decoding)
         # Attach the fixed source only to the current generation, rather than
         # storing another copy in every older user turn.
         messages=fitted[:-1]+[{'role':'user','content':prompt},{'role':'assistant','content':answer}]
