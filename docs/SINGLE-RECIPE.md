@@ -342,3 +342,26 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
 ```
 
 Its training-only probes cover the same four exact questions as the attention-only run plus the canonical complete cold-stage question, with a 220-token response budget. Checkpoints/probes are preserved. The six fresh single-turn questions and six fresh conversation turns stay unopened until the previous regression cases pass. No rejected module subset or serving-prompt cue is promoted.
+
+## Preserve previous examples when adding a new distinction
+
+The completed rehearsal passes fourteen of fifteen independent questions and all six actual-history turns. The remaining standalone timer question confuses ongoing boiling with the after-boil stage. Several earlier successful kettle phrasings were accidentally omitted when manually combining curricula.
+
+The refiner now retains previous teaching datasets explicitly. List older parents first; later parents win for identical full inputs. Distinct histories remain distinct. Parent file hashes, the shared frozen recipe, system prompt and original held-question guard are checked.
+
+```bash
+.venv/bin/python -m beerllm.recipe_focus refine-followups \
+  --source data/helles_focus_v1 \
+  --retain-training-from data/helles_focus_v9 data/helles_focus_v13 \
+  --config configs/helles-boil-state-refinements.json --output data/helles_focus_v14
+
+HF_HUB_OFFLINE=1 .venv/bin/python -m beerllm.train \
+  --config configs/qwen-helles-boil-state.json --data-dir data/helles_focus_v14 --check-data
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-boil-state.json --data-dir data/helles_focus_v14 --eval-limit 1 \
+  --probe-suite outputs/helles-boil-state-eval-v1/development-probe.jsonl \
+  > outputs-helles-boil-state-train.log 2>&1
+```
+
+The probe is the consumed original timer question, reclassified as `seen_fact_new_wording` development evidence. Its reference stays outside the generation prompt and it is not added to training. The twelve fresh final questions remain separate. Retention adds no runtime lookup or routing.

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from beerllm.common import ROOT,read_jsonl,write_json,write_jsonl
-from beerllm.recipe_focus import build,run_dialogue,refine_followups,package_adapter
+from beerllm.recipe_focus import build,run_dialogue,refine_followups,package_adapter,sha
 from beerllm.chat import adapter_decoding
 from beerllm.train import replay_short_facts
 
@@ -22,6 +22,62 @@ def fixture(root):
 
 
 class RecipeFocusTests(unittest.TestCase):
+    def test_retained_training_preserves_old_questions_and_latest_answer_without_duplicates(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);recipes,lesson=fixture(root);source=root/'v1'
+            build(recipes,lesson,source,False)
+            config=root/'refine.json'
+            base={'answers':{},'variants':{},'conversation_keys':[]}
+            write_json(config,dict(base,extra_pairs=[{'question':'An older kettle wording?', 'answer':'Original answer.'},
+                                                    {'question':'Retain this older question?', 'answer':'Keep this answer.'}]))
+            first=root/'first';refine_followups(source,lesson,config,first)
+            write_json(config,dict(base,extra_pairs=[{'question':'An older kettle wording?', 'answer':'Updated answer.'}]))
+            second=root/'second';refine_followups(source,lesson,config,second)
+            snapshots={p:(p/'train.jsonl').read_bytes() for p in [first,second]}
+            write_json(config,base);out=root/'combined'
+            result=refine_followups(source,lesson,config,out,[first,second])
+            rows=read_jsonl(out/'train.jsonl')
+            self.assertEqual(len(rows),26)
+            selected=[r for r in rows if r['messages'][-2]['content']=='An older kettle wording?']
+            self.assertEqual(len(selected),1)
+            self.assertEqual(selected[0]['messages'][-1]['content'],'Updated answer.')
+            self.assertTrue(any(r['messages'][-2]['content']=='Retain this older question?' for r in rows))
+            self.assertEqual(result['retained_training_manifests_sha256'],[sha(first/'manifest.json'),sha(second/'manifest.json')])
+            self.assertEqual(refine_followups(source,lesson,config,out,[first,second]),result)
+            for parent,content in snapshots.items():self.assertEqual((parent/'train.jsonl').read_bytes(),content)
+            for name in ['development.jsonl','final.jsonl','dialogue.json','validation.jsonl']:
+                self.assertEqual((source/name).read_bytes(),(out/name).read_bytes())
+
+    def test_retained_training_rejects_tampering_and_a_different_recipe(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);recipes,lesson=fixture(root);source=root/'v1'
+            build(recipes,lesson,source,False)
+            config=root/'refine.json';write_json(config,{'answers':{},'variants':{},'conversation_keys':[]})
+            parent=root/'parent';refine_followups(source,lesson,config,parent)
+            original=(parent/'train.jsonl').read_bytes();(parent/'train.jsonl').write_text('{}\n')
+            with self.assertRaisesRegex(ValueError,'Retained training file changed'):
+                refine_followups(source,lesson,config,root/'tampered',[parent])
+            (parent/'train.jsonl').write_bytes(original)
+            recipe=read_jsonl(parent/'recipe.jsonl');recipe[0]['recipe_id']='different'
+            write_jsonl(parent/'recipe.jsonl',recipe)
+            manifest=json.loads((parent/'manifest.json').read_text());manifest['files_sha256']['recipe.jsonl']=sha(parent/'recipe.jsonl')
+            write_json(parent/'manifest.json',manifest)
+            with self.assertRaisesRegex(ValueError,'same frozen recipe'):
+                refine_followups(source,lesson,config,root/'mixed',[parent])
+
+    def test_retention_does_not_bypass_reserved_question_guard(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);recipes,lesson=fixture(root);source=root/'v1'
+            build(recipes,lesson,source,False)
+            config=root/'refine.json';write_json(config,{'answers':{},'variants':{},'conversation_keys':[]})
+            parent=root/'parent';refine_followups(source,lesson,config,parent)
+            rows=read_jsonl(parent/'train.jsonl');leak=dict(rows[0]);leak['messages']=read_jsonl(source/'final.jsonl')[0]['messages'];rows.append(leak)
+            write_jsonl(parent/'train.jsonl',rows)
+            manifest=json.loads((parent/'manifest.json').read_text());manifest['files_sha256']['train.jsonl']=sha(parent/'train.jsonl')
+            write_json(parent/'manifest.json',manifest)
+            with self.assertRaisesRegex(ValueError,'Evaluation question copied'):
+                refine_followups(source,lesson,config,root/'leaked',[parent])
+
     def test_scope_pairs_teach_different_starting_points_without_copying_evaluation_questions(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);recipes,lesson=fixture(root);source=root/'v1';out=root/'scope'

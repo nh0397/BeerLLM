@@ -151,7 +151,7 @@ def package_adapter(source,output,decoding_path):
     return manifest
 
 
-def refine_followups(source,lesson_path,config_path,output):
+def refine_followups(source,lesson_path,config_path,output,retain_training_from=()):
     """Expand question coverage while keeping the original evaluation bytes frozen."""
     original=json.loads((source/'manifest.json').read_text())
     for name,digest in original['files_sha256'].items():
@@ -160,6 +160,21 @@ def refine_followups(source,lesson_path,config_path,output):
     lesson=json.loads(lesson_path.read_text());config=json.loads(config_path.read_text())
     canonical={x['key']:x['question'] for x in lesson['followups']}
     train=read_jsonl(source/'train.jsonl')
+    retained=[]
+    for parent in retain_training_from:
+        parent=Path(parent)
+        previous=json.loads((parent/'manifest.json').read_text())
+        for name,digest in previous['files_sha256'].items():
+            if sha(parent/name)!=digest: raise ValueError('Retained training file changed')
+        if (parent/'recipe.jsonl').read_bytes()!=(source/'recipe.jsonl').read_bytes():
+            raise ValueError('Retained training must use the same frozen recipe')
+        rows=read_jsonl(parent/'train.jsonl')
+        if any(r['messages'][0]!={'role':'system','content':lesson['system_prompt']} for r in rows):
+            raise ValueError('Retained training system prompt differs')
+        train.extend(rows);retained.append(sha(parent/'manifest.json'))
+    if retained:
+        # Later parents win for the same complete input; keep distinct histories.
+        train=list({json.dumps(r['messages'][:-1],sort_keys=True):r for r in train}.values())
     direct={k:next(r for r in train if r['task']=='followup' and r['messages'][-2]['content']==q)
             for k,q in canonical.items()}
     replacements={direct[k]['messages'][-1]['content']:answer for k,answer in config['answers'].items()}
@@ -204,6 +219,8 @@ def refine_followups(source,lesson_path,config_path,output):
             r['messages'][1:1]=[{'role':'user','content':item['prior_question']},
                                 {'role':'assistant','content':prior['messages'][-1]['content']}]
         train.append(r)
+    if retained:
+        train=list({json.dumps(r['messages'][:-1],sort_keys=True):r for r in train}.values())
     frozen=['validation.jsonl','development.jsonl','final.jsonl','recipe.jsonl','dialogue.json']
     heldout={r['messages'][1]['content'] for name in ['development.jsonl','final.jsonl','validation.jsonl'] for r in read_jsonl(source/name)}
     heldout.update(x['question'] for x in json.loads((source/'dialogue.json').read_text())['turns'])
@@ -213,7 +230,8 @@ def refine_followups(source,lesson_path,config_path,output):
     probes.extend({'case_id':'exact-'+k,'category':'training_fit','messages':direct[k]['messages'],'max_new_tokens':240} for k in ['mash','cold'])
     manifest={'source_manifest_sha256':sha(source/'manifest.json'),'config_sha256':sha(config_path),
               'builder_sha256':sha(Path(__file__)),'scope':original['scope'],'expert_reviewed':False,
-              'train_examples':len(train),'tasks':dict(Counter(r['task'] for r in train))}
+              'lesson_sha256':sha(lesson_path),'train_examples':len(train),'tasks':dict(Counter(r['task'] for r in train))}
+    if retained: manifest['retained_training_manifests_sha256']=retained
     if (output/'manifest.json').exists():
         old=json.loads((output/'manifest.json').read_text());hashes=old.pop('files_sha256')
         if old!=manifest or any(sha(output/name)!=digest for name,digest in hashes.items()):
@@ -249,6 +267,8 @@ def main():
     refine.add_argument('--lesson',type=Path,default=ROOT/'configs/helles-lesson.json')
     refine.add_argument('--config',type=Path,default=ROOT/'configs/helles-followup-refinements.json')
     refine.add_argument('--output',type=Path,default=ROOT/'data/helles_focus_v2')
+    refine.add_argument('--retain-training-from',type=Path,nargs='+',default=[],
+                        help='Retain prior question coverage for the same recipe; list older datasets first')
     chat=sub.add_parser('dialogue')
     chat.add_argument('--protocol',type=Path,default=ROOT/'data/helles_focus_v1/dialogue.json')
     chat.add_argument('--output',type=Path,required=True)
@@ -261,7 +281,7 @@ def main():
     package.add_argument('--decoding-config',type=Path,required=True)
     args=parser.parse_args()
     if args.command=='prepare':print(json.dumps(build(args.recipes,args.lesson,args.output),indent=2))
-    elif args.command=='refine-followups':print(json.dumps(refine_followups(args.source,args.lesson,args.config,args.output),indent=2))
+    elif args.command=='refine-followups':print(json.dumps(refine_followups(args.source,args.lesson,args.config,args.output,args.retain_training_from),indent=2))
     elif args.command=='package':print(json.dumps(package_adapter(args.adapter,args.output,args.decoding_config),indent=2))
     else:run_dialogue(args.protocol,args.output,args.model_id,args.adapter,
                       decoding=json.loads(args.decoding_config.read_text()) if args.decoding_config else None)

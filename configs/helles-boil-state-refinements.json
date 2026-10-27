@@ -1,0 +1,63 @@
+{
+  "answers": {},
+  "variants": {},
+  "conversation_keys": [],
+  "extra_pairs": [
+    {
+      "question": "The kettle is still boiling. Which measured additions do I make before turning off the heat?",
+      "answer": "Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes remaining, which is 30 minutes after the boil starts. Add one Whirlfloc tablet with 10 minutes remaining, or 80 minutes after the start. The source does not call for a dry-hop addition.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "The kettle has stopped boiling. Which stages follow turning off the heat?",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Boiling has been going for thirty minutes. Explain the remaining kettle additions.",
+      "answer": "Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes remaining, which is 30 minutes after the boil starts. Add one Whirlfloc tablet with 10 minutes remaining, or 80 minutes after the start. The source does not call for a dry-hop addition.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Boiling has ended. Explain cooling, fermentation and later storage.",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "I am partway through the hot boil and need the ingredient-addition schedule.",
+      "answer": "Boil for 90 minutes total. Add 1.9 oz (54 g) Tettnanger with 60 minutes remaining, which is 30 minutes after the boil starts. Add one Whirlfloc tablet with 10 minutes remaining, or 80 minutes after the start. The source does not call for a dry-hop addition.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "I am past the hot boil and need the fermentation and storage schedule.",
+      "answer": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "The wort has been boiling for thirty minutes. Tell me the next measured kettle additions.",
+      "answer": "You are still in the 90-minute boil. At 30 minutes elapsed, add 1.9 oz (54 g) Tettnanger: 60 minutes remain. Add one Whirlfloc tablet with 10 minutes remaining, at 80 minutes elapsed. Cooling and fermentation follow the full 90-minute boil.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "It is thirty minutes since boiling began. What goes into the kettle at this point and later?",
+      "answer": "You are still in the 90-minute boil. At 30 minutes elapsed, add 1.9 oz (54 g) Tettnanger: 60 minutes remain. Add one Whirlfloc tablet with 10 minutes remaining, at 80 minutes elapsed. Cooling and fermentation follow the full 90-minute boil.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Half an hour of boiling is over, but the kettle is still running. Which additions do I time from here?",
+      "answer": "You are still in the 90-minute boil. At 30 minutes elapsed, add 1.9 oz (54 g) Tettnanger: 60 minutes remain. Add one Whirlfloc tablet with 10 minutes remaining, at 80 minutes elapsed. Cooling and fermentation follow the full 90-minute boil.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "I am thirty minutes into kettle boiling. Give the additions due now and toward the finish.",
+      "answer": "You are still in the 90-minute boil. At 30 minutes elapsed, add 1.9 oz (54 g) Tettnanger: 60 minutes remain. Add one Whirlfloc tablet with 10 minutes remaining, at 80 minutes elapsed. Cooling and fermentation follow the full 90-minute boil.",
+      "task": "followup_variant"
+    }
+  ],
+  "confirmation_questions": {
+    "final-guide": "Teach the entire Helicious Helles recipe in everyday language: its batch, complete ingredient list, all successive stages, checks and remaining source gaps.",
+    "final-timer": "Thirty minutes into the Helles kettle boil, what measured ingredients go in now and at the later addition time?",
+    "final-wrong-temperature": "Would starting yeast fermentation at the cold lagering temperature follow this Helles method? Explain the two intended stages.",
+    "final-completion": "The airlock became quiet sooner than expected. How should I establish that the beer is ready to leave primary instead of relying on bubbling?"
+  }
+}
