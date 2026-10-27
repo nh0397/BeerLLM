@@ -365,3 +365,25 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
 ```
 
 The probe is the consumed original timer question, reclassified as `seen_fact_new_wording` development evidence. Its reference stays outside the generation prompt and it is not added to training. The twelve fresh final questions remain separate. Retention adds no runtime lookup or routing.
+
+## Current supervised rehearsal and untouched confirmation
+
+All fifteen consumed independent cases and the original six-turn conversation are now supervised practice. Their later fitting results must be labeled as such. The final comparison uses the separate six fresh questions and six actual-history turns, frozen before this rehearsal. The tracked fresh files are byte-identical to that frozen reservation.
+
+```bash
+.venv/bin/python -m scripts.prepare_helles_rehearsal \
+  --source data/helles_focus_v14 \
+  --cases configs/helles-consumed-rehearsal.jsonl \
+  --dialogue configs/helles-consumed-rehearsal-dialogue.json \
+  --fresh-suite configs/helles-fresh-confirmation.jsonl \
+  --fresh-dialogue configs/helles-fresh-dialogue.json \
+  --output data/helles_focus_v16
+
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
+  --config configs/qwen-helles-consumed-rehearsal.json \
+  --data-dir data/helles_focus_v16 --eval-limit 1 \
+  --probe-suite data/helles_focus_v16/probes.jsonl \
+  > outputs-helles-consumed-rehearsal-v2.log 2>&1
+```
+
+The actual preparation used identical fresh input bytes at their original local output paths; the manifest preserves those paths and hashes. Use a new dataset/output directory when rebuilding to preserve earlier runs. Resume the existing training only with its original arguments plus `--resume`.
