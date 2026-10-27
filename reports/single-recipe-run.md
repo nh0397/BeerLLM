@@ -1,6 +1,6 @@
 # One-recipe brewing tutor: measured progress
 
-**Not accepted yet.** The scope correction passes all five recipe-development checks and three of four consumed regression checks, but adds a confusing sentence to one glossary answer and gives the wrong stage for a kettle-timer question. A smaller correction teaches kettle additions and plain definitions together. Scaling remains paused.
+**Selected for reserved testing.** One greedy model now passes all eleven development and consumed-regression checks: the complete guide, every tested recipe stage, both beginner explanations and all four earlier wording failures. The weights and policy are frozen before four fresh questions and the six-turn conversation. Scaling remains paused until those pass.
 
 The goal is one complete explanation plus direct, accurate follow-ups in ordinary language. The model must supply facts from its trained weights: no recipe lookup, source notes or recipe quantities in its system prompt. All answers are inspected against the saved source and [fixed factual rubric](../configs/helles-rubric.json). References and inspection are assistant-authored, not expert brewer-reviewed.
 
@@ -23,6 +23,7 @@ The source omits exact mash/sparge water quantities, numeric water treatment, a 
 | Short-answer teacher, greedy | 4 | Not run | Beginner explanations 2/2; one scope failure |
 | Same teacher, two beams | 5 | Not run | Explanations 1/2; reject combined 6/7 |
 | Scope-contrast continuation, greedy | 5 | 3 | Explanations 1/2; reject combined 9/11 |
+| Kettle/definition continuation, greedy | 5 | 4 | Explanations 2/2; select for reserved testing |
 
 The first adapter's complete guide is correct under development wording. A generic development-only instruction to enumerate every requested stage does not repair its two incomplete follow-ups; that diagnostic prompt is not adopted.
 
@@ -112,3 +113,9 @@ Checkpoint 75 passes the glossary and broad post-boil screen, but its timer answ
 The next correction continues from step 150 with balanced practice on in-boil additions, the post-boil sequence and concise word definitions. It retains all six original full-guide targets, twelve canonical follow-ups and six original conversations. New wording is distinct from evaluation questions. The learning rate is halved to 0.00005 and short-answer replay is disabled for this small pass. No recipe facts are added to the system prompt, and no runtime routing or answer editing is introduced. Fresh confirmation and natural dialogue remain unopened.
 
 The kettle/definition correction completes 54 steps in 860.9 seconds (14.3 minutes), peak RSS 15.72 GiB, mean training loss 0.045923, with zero skipped examples. Both initial development screens pass: a clean three-sentence glossary and the correct 90-minute boil with measured additions at 30/80 minutes elapsed. Full selection and reserved testing are still pending; the screen alone does not establish acceptance.
+
+## One candidate passes selection
+
+The final kettle/definition adapter passes all eleven full-answer checks under one fixed greedy policy. Both differently worded complete guides include every ingredient and the whole procedure. The kettle-timer answer, primary-versus-lagering correction, general completion check, known/unknown distinction and two beginner explanations all pass. No output is trimmed or combined with another checkpoint.
+
+Weight SHA-256: `b5088093f98cf0fbb78d5b6aea646edddde13cea077c19f297d59a6a6ef07299`. Selection is frozen locally in `outputs/helles-kettle-eval-v1/selection.json`, including the policy, evaluator/loader, rubric, suite and profile hashes, before reserved generation. The deployment package contains unchanged trained weights and an explicit greedy policy. A fresh baseline with the current evaluator is still required; older controls are historical and will not be relabeled as this comparison.
