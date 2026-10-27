@@ -1,6 +1,6 @@
 # One-recipe brewing tutor: Helicious Helles
 
-The frozen model passes all twelve fresh checks on its first reserved evaluation: six independent questions and a six-turn conversation using its own replies. It also retains all seventeen fitting inputs and all six consumed history turns. Matched untuned-base controls and the final terminal integration check are still running.
+The one-recipe candidate passes all twelve fresh checks on its first reserved evaluation: six independent questions and a six-turn conversation using its own replies. The matched untuned base passes zero of these twelve full-answer checks. It is the default local chat model. A real two-turn terminal chat reproduces the complete fresh guide and follow-up exactly, using no adapter override or recipe-context flags. All 77 software tests, compilation and shell syntax checks pass.
 
 ## Source and scope
 
@@ -16,6 +16,22 @@ The source omits water volumes and a numeric mineral profile, separate exact pit
 | Six consumed actual-history turns | 6/6 | Uses the model’s own previous replies |
 | Six reserved independent questions | 6/6 | New wording about the same trained recipe |
 | Six reserved actual-history turns | 6/6 | New wording and the model’s own history |
+
+## Matched before/after results
+
+| Measure | Untuned base | Fine-tuned model |
+|---|---:|---:|
+| Fresh independent full-answer passes | 0/6 | 6/6 |
+| Fresh actual-history full-answer passes | 0/6 | 6/6 |
+| Responses hitting their token limit | 11/12 | 0/12 |
+| Reference answer-token cross-entropy | 2.5530 | 0.04517 |
+| Conditional reference perplexity | 12.8461 | 1.0462 |
+
+Cross-entropy/perplexity use the same 1,142 reference answer tokens from the six independent questions. The base controls were generated after training, using the unchanged pinned base weights and the same prompt, greedy policy, budgets, loader and evaluator as the frozen adapter. “Before” names the untuned model state. Conversation turns use each model’s own history and are inspected separately.
+
+The base invents recipe quantities and repeats equipment/ingredient text. Its completion answer suggests measuring pH with a hydrometer; its definition answer incorrectly calls boiling mashing. Its sanitation answer overstates sanitizing as killing all microbes. Some basic definitions are partly correct, but no full response passes the fixed rubric. Truncation also contributes to its failures. These results apply to this recipe, wording set and decoding policy; they are not a general ranking of base-model brewing ability.
+
+Read [all unedited before/after answers and case-level verdicts](helles-evaluation.json) and [the actual fresh conversation](helles-conversation.md).
 
 The consumed questions were explicitly promoted into training after earlier errors. They cannot support held-out accuracy claims. The twelve fresh questions were frozen before that rehearsal, with exact training-question overlap checks. All factual acceptance rules remain in [the rubric](../configs/helles-rubric.json). Correct keywords or low loss alone cannot pass an answer.
 
@@ -43,4 +59,14 @@ The fresh base/adapter pair must use the same pinned base, original system promp
 
 This is a one-recipe learning experiment. New wording on a trained recipe does not establish competence on other recipes, unusual substitutions, scaling or equipment choices. The instruction data and generated guides need brewer review before practical use. CPU generation can take several minutes for a full guide.
 
-[Commands](../docs/SINGLE-RECIPE.md) · [Actual fresh conversation](helles-conversation.md) · [Earlier development conversation](helles-development-conversation.md) · [Preserved experiments and failures](helles-experiments.md). Weights, raw evaluation outputs, data and model caches are local ignored artifacts; a fresh Git clone does not contain them.
+[Commands](../docs/SINGLE-RECIPE.md) · [Actual fresh conversation](helles-conversation.md) · [Earlier development conversation](helles-development-conversation.md) · [Preserved experiments and failures](helles-experiments.md). Weights, raw evaluation outputs, data and model caches are local ignored artifacts; a fresh Git clone does not contain the model weights or full generated corpora. The final source-reviewed rehearsal labels and selected unedited evaluation answers are tracked as text evidence.
+
+## Use the saved model
+
+From the repository root:
+
+```bash
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -m beerllm.chat
+```
+
+Type `exit` to finish. The measured fresh full guide takes 217.7 seconds (3.6 minutes); the median independent answer takes 28.2 seconds on this Intel CPU.

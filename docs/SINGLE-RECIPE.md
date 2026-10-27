@@ -1,19 +1,18 @@
 # Helicious Helles: run and evaluate
 
-The trained one-recipe candidate is saved locally at `outputs/helles-demo-v2/adapter`. It passes the twelve fresh wording/conversation checks; matched base controls and the final integration check are still running. See [the current report](../reports/single-recipe-run.md) for measured status and source gaps.
+The trained one-recipe candidate is saved locally at `outputs/helles-demo-v2/adapter`. It passes all twelve fresh checks against 0/12 for the matched base. A real two-turn terminal chat and all 77 software tests pass. See [the current report](../reports/single-recipe-run.md) for measured status and source gaps.
 
-## Try the candidate after the active model job finishes
+## Start the one-recipe chat
 
 Run from this repository’s root:
 
 ```bash
-HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -m beerllm.chat \
-  --adapter outputs/helles-demo-v2/adapter
+HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -m beerllm.chat
 ```
 
 Ask for the whole Helicious Helles recipe, then ask follow-ups. Type `exit` to finish. Recipe quantities and source notes are not added to the prompt. The saved profile supplies the pinned model and original teaching instruction. A full guide can take several minutes on the Intel CPU. Weights and caches are already local; a fresh clone does not include them.
 
-## Reproduce the current terminal training
+## Reproduce the current training
 
 The existing frozen `data/helles_focus_v18` contains 28 **consumed** teaching conversations with source-reviewed practice labels. The parent checkpoint and all preceding curricula remain local. Preserve the existing outputs. Resume an interrupted original run with `--resume` and the same arguments; use `--output` with a new directory for a separate run.
 

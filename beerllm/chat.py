@@ -58,7 +58,7 @@ def fit_history(messages,tokenizer,context_limit,max_new_tokens):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--adapter',type=Path,default=ROOT/'outputs/instruction-lora-v1/adapter')
+    parser.add_argument('--adapter',type=Path,default=ROOT/'outputs/helles-demo-v2/adapter')
     parser.add_argument('--base',action='store_true',help='Use the selected adapter base and prompt without adapter weights')
     parser.add_argument('--model-id',help='Explicit starting-model override for --base')
     context_group=parser.add_mutually_exclusive_group()
