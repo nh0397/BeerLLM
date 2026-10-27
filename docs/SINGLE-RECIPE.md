@@ -307,3 +307,18 @@ HF_HUB_OFFLINE=1 caffeinate -i .venv/bin/python -u -m beerllm.train \
 ```
 
 The probe file contains four exact training rows exported in benchmark form (`training_fit`, empty lexical checks): complete-guide question, canonical ingredients question, canonical boil-timer question and `What are the exact mash-water volume and gelatin quantity?`. Budgets are 1100, 400, 180 and 180 tokens. It is a fitting diagnostic, never a final test. Use the same arguments plus `--resume` after an interruption. Run one model process at a time.
+
+## Reproduce the feed-forward candidate
+
+The fresh attention-only run fails all four training-generation checks at both epochs. The next candidate keeps the trained feed-forward LoRA modules from `helles-guide-scope-v1` and removes attention adapters. This is one fixed adapter for every query. Its 14.1 million retained parameters were learned during the earlier all-projection training run.
+
+```bash
+.venv/bin/python scripts/build_helles_mlp.py
+
+.venv/bin/python -m beerllm.recipe_focus package \
+  --adapter outputs/helles-mlp-selected-v1/adapter \
+  --output outputs/helles-demo-v1/adapter \
+  --decoding-config configs/helles-greedy-decoding.json
+```
+
+The builder preserves its source and refuses an existing output. It verifies the factor pairs, rank, target modules, parameter count and matching model/profile. The rebuilt weights and config match the screened candidate byte for byte; the system prompt is unchanged. Passing a guide-prefix probe is not a complete-guide pass. All original factual requirements, previous regression questions and fresh checks remain required before calling the candidate accepted.
