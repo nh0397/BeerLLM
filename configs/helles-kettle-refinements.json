@@ -1,0 +1,123 @@
+{
+  "answers": {
+    "mash": "The grain-rest and rinsing stages are:\n1. First rest: 130°F (54°C) for 10 minutes.\n2. Main mash rest: raise to 148°F (64°C) for 60 minutes.\n3. Mash-out: raise to 168°F (76°C). The source gives no separate hold duration.\n4. Fly sparge: rinse the grain at 170°F (77°C) while collecting wort. These are successive stages; do not omit the mash-out or sparge.",
+    "cold": "After the boil:\n1. Cool the wort and use clean, sanitized equipment.\n2. Add the listed yeast to the cooled wort.\n3. Primary fermentation: 50°F (10°C) for two to three weeks.\n4. After primary finishes, keg and add gelatin to clarify.\n5. Lager, or cold condition, at 40°F (4°C) for three to six weeks.\nThe source gives no separate exact pitching temperature or gelatin dose.",
+    "missing": "Here are the known settings:\n- Primary fermentation: 50°F (10°C) for two to three weeks.\n- Later lagering: 40°F (4°C) for three to six weeks after kegging and gelatin clarification.\nStill to confirm: mash and sparge water quantities, a numeric mineral profile, a separate exact pitching temperature, gelatin dose and carbonation setup. The source gives no bottling or priming-sugar instructions. Its batch size is given: seven gallons (26.5 L).",
+    "gravity": "Check repeated gravity readings over a few days before transferring the beer. Consistent readings help establish that primary fermentation has finished. A quiet airlock or a calendar date alone is not proof. This is a general brewing check; the recipe itself schedules primary at 50°F (10°C) for two to three weeks and does not give a universal final-gravity number."
+  },
+  "variants": {
+    "hops": [
+      "The kettle is thirty minutes into its ninety-minute boil. Which additions should I make and when?",
+      "Boiling started half an hour ago; explain what is due now and later in the kettle.",
+      "I have sixty minutes left on the boil clock. What do I add, and when is the last addition?",
+      "During boiling, tell me both measured additions and their timer settings.",
+      "Are the hops added at elapsed minute thirty or when boiling finishes?",
+      "Which ingredients belong in the boiling kettle, and what are their amounts and timings?",
+      "Please explain the hop addition and the clearing tablet with elapsed minutes.",
+      "Explain the ninety-minute countdown for hops and Whirlfloc.",
+      "When are Tettnanger pellets added, and when do I add the tablet?",
+      "The boil is still running. What goes into it before I turn off the heat?",
+      "I need the kettle additions, not the later fermentation procedure.",
+      "At the start of the boil should I add everything, or wait for particular times?"
+    ],
+    "cold": [
+      "The boil has ended. Give the complete sequence from cooling through lagering.",
+      "After the kettle is turned off, how do I finish this recipe?"
+    ],
+    "missing": [
+      "Which fermentation details are stated, and what quantities do I still need to confirm?"
+    ]
+  },
+  "conversation_keys": [],
+  "extra_pairs": [
+    {
+      "question": "Explain wort and pitching in plain English.",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Tell me what the liquid called wort is and what pitching yeast means.",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What do brewers mean by wort and by pitching?",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Explain those two words: wort, pitching.",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "When I add yeast to the sweet grain liquid, what are the liquid and action called?",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Give simple definitions of wort and pitching without adding other instructions.",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Why must I clean the fermenter before sanitizing it?",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. Follow the sanitizer product instructions for its dose and contact time.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Are cleaning and sanitizing the same job? Explain simply.",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. Follow the sanitizer product instructions for its dose and contact time.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "What do cleaning and sanitizing do for cooled wort?",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. Follow the sanitizer product instructions for its dose and contact time.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Does the word pitching mean a temperature or adding yeast?",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Is the definition of wort a temperature setting?",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "followup_variant"
+    },
+    {
+      "question": "Explain wort and pitching again, in everyday words.",
+      "answer": "Wort is the sweet grain liquid before fermentation. Pitching means adding yeast to that cooled liquid. The yeast then ferments sugars to make beer.",
+      "task": "conversation_variant",
+      "prior_question": "Give the complete recipe for this Helles.",
+      "prior_answer": "guide"
+    },
+    {
+      "question": "Why clean and sanitize the equipment touching cooled wort?",
+      "answer": "Cleaning removes dirt and sticky residue. Sanitizing comes afterward and reduces unwanted microbes on the clean equipment. This helps keep them out of the cooled wort. Follow the sanitizer product instructions for its dose and contact time.",
+      "task": "conversation_variant",
+      "prior_question": "Give the complete recipe for this Helles.",
+      "prior_answer": "guide"
+    }
+  ],
+  "conversation_pairs": [
+    {
+      "prior_question": "Teach this Helles from beginning to end.",
+      "prior_answer": "guide",
+      "question": "I am running the boil now. What do I add, how much, and at which times?",
+      "answer": "hops"
+    },
+    {
+      "prior_question": "Tell me the whole Helicious Helles recipe.",
+      "prior_answer": "guide",
+      "question": "The kettle is at minute thirty. Tell me both kettle additions.",
+      "answer": "hops"
+    }
+  ],
+  "confirmation_questions": {
+    "final-guide": "I would like a complete lesson on brewing Helicious Helles. Start with the entire shopping list and batch size, then explain every stage in order, define unfamiliar words, and point out information we still need.",
+    "final-timer": "For this Helles, half an hour of kettle boiling has passed. Which measured addition is due, and when is the clearing tablet due?",
+    "final-wrong-temperature": "I plan to run primary at the later lagering setting instead. Is that the method for this beer, or should I use two separate schedules?",
+    "final-completion": "The fermenter got quiet ahead of schedule. What evidence should I collect before declaring primary finished and transferring the beer?"
+  }
+}

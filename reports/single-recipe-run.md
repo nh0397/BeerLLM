@@ -1,6 +1,6 @@
 # One-recipe brewing tutor: measured progress
 
-**Not accepted yet.** Greedy decoding passes 6/7 development checks. Two beams repair the broad recipe-stage question but regress the cleaning explanation, also scoring 6/7. A targeted scope-contrast pass is running to make one greedy model answer both correctly. Scaling remains paused.
+**Not accepted yet.** The scope correction passes all five recipe-development checks and three of four consumed regression checks, but adds a confusing sentence to one glossary answer and gives the wrong stage for a kettle-timer question. A smaller correction teaches kettle additions and plain definitions together. Scaling remains paused.
 
 The goal is one complete explanation plus direct, accurate follow-ups in ordinary language. The model must supply facts from its trained weights: no recipe lookup, source notes or recipe quantities in its system prompt. All answers are inspected against the saved source and [fixed factual rubric](../configs/helles-rubric.json). References and inspection are assistant-authored, not expert brewer-reviewed.
 
@@ -22,7 +22,7 @@ The source omits exact mash/sparge water quantities, numeric water treatment, a 
 | Balanced second epoch, step 300 | 3 | Not run | Reject; beginner explanations also 0/2 |
 | Short-answer teacher, greedy | 4 | Not run | Beginner explanations 2/2; one scope failure |
 | Same teacher, two beams | 5 | Not run | Explanations 1/2; reject combined 6/7 |
-| Scope-contrast continuation, greedy | Pending | Now a regression suite | In progress |
+| Scope-contrast continuation, greedy | 5 | 3 | Explanations 1/2; reject combined 9/11 |
 
 The first adapter's complete guide is correct under development wording. A generic development-only instruction to enumerate every requested stage does not repair its two incomplete follow-ups; that diagnostic prompt is not adopted.
 
@@ -102,3 +102,11 @@ Two-beam generation is also slow on this capped Intel CPU: the complete guide ta
 The correction initializes from the greedy teacher, preserving its correct guide, ingredients, mash, known/unknown settings and two explanations. Eight minimal-pair sets distinguish everything after boiling from only what follows primary fermentation. They retain similar wording while changing the requested starting point. Full-range answers explicitly include the early operations and primary schedule; tail-only answers give kegging/gelatin and later lagering. A short, complete cold-stage answer begins with the requested scope, “After the boil,” rather than changing every target to a new generic opening.
 
 There are 62 teaching conversations about the same source recipe: six full guides, twelve canonical follow-ups, twelve direct variants, sixteen scope-pair examples, four concept variants, eight conversations and four known/unknown contrasts. Replaying the 44 short examples three times produces 150 optimizer steps. All rows fit, with 14,763 supervised answer tokens and maximum 880 tokens. One standard assistant-only LoRA epoch runs at learning rate 0.0001. No new model, custom loss, factual prompt or runtime question router is introduced. All 71 software tests pass, including scope-pair labels and reserved-question separation. Confirmation and natural-dialogue outputs remain unopened.
+
+## Scope correction results and next correction
+
+The 150-step scope run finishes in 40.8 minutes at peak process RSS 14.65 GiB, mean loss 0.063477, with zero skipped rows. It passes 5/5 recipe development, 1/2 explanation development and 3/4 consumed regression checks. Its glossary correctly defines both words, then adds the confusing claim “This is a separate exact pitching temperature from the general brewing setup.” Its boil-timer reply incorrectly supplies the post-boil process. These whole answers fail; neither is trimmed to create a pass.
+
+Checkpoint 75 passes the glossary and broad post-boil screen, but its timer answer invents torrified wheat in cooled wort and repeats until the token limit. It is rejected without further full-suite evaluation. Both checkpoint screens and all generated answers are retained.
+
+The next correction continues from step 150 with balanced practice on in-boil additions, the post-boil sequence and concise word definitions. It retains all six original full-guide targets, twelve canonical follow-ups and six original conversations. New wording is distinct from evaluation questions. The learning rate is halved to 0.00005 and short-answer replay is disabled for this small pass. No recipe facts are added to the system prompt, and no runtime routing or answer editing is introduced. Fresh confirmation and natural dialogue remain unopened.
