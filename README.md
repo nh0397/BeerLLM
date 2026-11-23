@@ -63,6 +63,8 @@ Add `--prompt "Explain the complete Helicious Helles recipe."` to ask once, or `
 
 The source lacks exact water quantities, separate pitching conditions, gelatin dose and carbonation instructions. The model should acknowledge those gaps. The demo needs brewer review before practical use; other recipes and substitutions are unvalidated. A fresh clone contains code and written evidence, while generated weights, datasets and caches remain local ignored artifacts.
 
+For remote API access, follow the [Hugging Face hosting steps](docs/HUGGINGFACE.md). The uploadable merged model is prepared locally; a hosted endpoint has not been created.
+
 ## Individual commands for the first API experiment
 
 ```bash
